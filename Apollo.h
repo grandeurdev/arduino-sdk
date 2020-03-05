@@ -125,6 +125,10 @@ class ApolloHandler {
                 int getParms(Payload* payload, Callback callback);
                 int setSummary(Payload* payload, Callback callback);
                 int setParms(Payload* payload, Callback callback);
+                // Method to subscribe to a topic
+                void subscribe(void);
+                // Method to unsubscribe from a topic
+                void unsubscribe(void);
         };
 
 
@@ -134,10 +138,6 @@ class ApolloHandler {
 
         // Getter for Apollo state
         static char* getState(void);
-        // Method to subscribe to a topic
-        void subscribe(void);
-        // Method to unsubscribe from a topic
-        void unsubscribe(void);
 
         // Handler objects
         WiFiHandler wifi;
