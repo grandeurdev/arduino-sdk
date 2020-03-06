@@ -157,25 +157,49 @@ A list of all the methods under these classes can be found [here][Methods].
 
 Method to initialize device's WiFi ( SSID and Passphrase ) and duplex configurations ( API Key and Auth Token ) in one go.
 
+#### Parameters `(Config {char* apiKey, char* token, char* ssid, char* passphrase})`
+
+#### Returns (`void`)
+
 ### `apollo.wifi.init()`
 
 Initializes WiFi configurations ( SSID and Passphrase ) of the device.
+
+#### Parameters `(WiFiConfig {char* ssid, char* passphrase})`
+
+#### Returns  (`void`)
 
 ### `apollo.wifi.smartConfig()`
 
 Puts device in smart configuration mode.
 
+#### Parameters `(void)`
+
+#### Returns   (`void`)
+
 ### `apollo.wifi.getSSID()`
 
 Gets WiFi SSID currently in use by the device.
+
+#### Parameters  `(void)`
+
+#### Returns   (`char* wifiSSID`)
 
 ### `apollo.wifi.getPassphrase()`
 
 Gets WiFi Passphrase currently in use by the device.
 
+#### Parameters   `(void)`
+
+#### Returns   (`char* wifiPassphrase`)
+
 ### `apollo.wifi.getDeviceIP()`
 
 Gets the dynamic IP allocated to the device after it's connected to WiFi.
+
+#### Parameters    `(void)`
+
+#### Returns   (`char* deviceIP`)
 
 ### `apollo.duplex.init()`
 
