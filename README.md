@@ -157,17 +157,17 @@ A list of all the methods under these classes can be found [here][Methods].
 
 Method to initialize device's WiFi ( SSID and Passphrase ) and duplex configurations ( API Key and Auth Token ) in one go.
 
-#### Parameters `(Config {char* apiKey, char* token, char* ssid, char* passphrase})`
+__Parameters__ `(Config {char* apiKey, char* token, char* ssid, char* passphrase})`
 
-#### Returns `void`
+__Returns__ `void`
 
 ### `apollo.wifi.init()`
 
 Initializes WiFi configurations ( SSID and Passphrase ) of the device.
 
-#### Parameters `(WiFiConfig {char* ssid, char* passphrase})`
+_Parameters_ `(WiFiConfig {char* ssid, char* passphrase})`
 
-#### Returns  `void`
+_Returns_  `void`
 
 ### `apollo.wifi.smartConfig()`
 
