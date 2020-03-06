@@ -1,6 +1,6 @@
 # Apollo Device
 
-`Apollo Device` is the hardware SDK that utilizes apollo API to authenticate and connect a hardware device to the matrix of [Grandeur Cloud][Grandeur Cloud].
+`Apollo Device` is the official SDK for hardware utilizes `Apollo` API to authenticate and connect it to the matrix of [Grandeur Cloud][Grandeur Cloud].
 
 _**NOTE**_: Currently, `Apollo Device` SDK is available only for Arduino IDE.
 
