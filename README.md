@@ -234,21 +234,21 @@ Method to unsubscribe a device [topic][topic].
 [parms]: https://link/to/parms "Parms"
 [topic]: https://link/to/topic "Topic"
 
-[apollo.init]: #apolloinit()
-[apollo.wifi.init]: #apollowifiinit()
-[apollo.wifi.smartConfigure]: #apollowifismartConfigure()
-[apollo.wifi.getSSID]: #apollowifigetSSID()
-[apollo.wifi.getPassphrase]: #apollowifigetPassphrase()
-[apollo.wifi.getDeviceIP]: #apollowifigetDeviceIP()
-[apollo.duplex.init]: #apolloduplexinit()
-[apollo.duplex.update]: #apolloduplexupdate()
-[apollo.duplex.getApiKey]: #apolloduplexgetApiKey()
-[apollo.duplex.getToken]: #apolloduplexgetToken()
-[apollo.duplex.onConnected]: #apolloduplexonConnected()
-[apollo.duplex.onDisconnected]: #apolloduplexonDisconnected()
-[apollo.device.getSummary]: #apollodevicegetSummary()
-[apollo.device.getParms]: #apollodevicegetParms()
-[apollo.device.setSummary]: #apollodevicesetSummary()
-[apollo.device.setParms]: #apollodevicesetParms()
-[apollo.device.subscribe]: #apollodevicesubscribe()
-[apollo.device.unsubscribe]: #apollodeviceunsubscribe()
+[apollo.init]: #apolloinit
+[apollo.wifi.init]: #apollowifiinit
+[apollo.wifi.smartConfigure]: #apollowifismartConfigure
+[apollo.wifi.getSSID]: #apollowifigetSSID
+[apollo.wifi.getPassphrase]: #apollowifigetPassphrase
+[apollo.wifi.getDeviceIP]: #apollowifigetDeviceIP
+[apollo.duplex.init]: #apolloduplexinit
+[apollo.duplex.update]: #apolloduplexupdate
+[apollo.duplex.getApiKey]: #apolloduplexgetApiKey
+[apollo.duplex.getToken]: #apolloduplexgetToken
+[apollo.duplex.onConnected]: #apolloduplexonConnected
+[apollo.duplex.onDisconnected]: #apolloduplexonDisconnected
+[apollo.device.getSummary]: #apollodevicegetSummary
+[apollo.device.getParms]: #apollodevicegetParms
+[apollo.device.setSummary]: #apollodevicesetSummary
+[apollo.device.setParms]: #apollodevicesetParms
+[apollo.device.subscribe]: #apollodevicesubscribe
+[apollo.device.unsubscribe]: #apollodeviceunsubscribe
