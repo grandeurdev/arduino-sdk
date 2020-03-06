@@ -239,7 +239,7 @@ Method to unsubscribe a device [topic][topic].
 [apollo.wifi.smartConfig]: #apollowifismartconfig
 [apollo.wifi.getSSID]: #apollowifigetssid
 [apollo.wifi.getPassphrase]: #apollowifigetpassphrase
-[apollo.wifi.getDeviceIP]: #apollowifigetdevicip
+[apollo.wifi.getDeviceIP]: #apollowifigetdeviceip
 [apollo.duplex.init]: #apolloduplexinit
 [apollo.duplex.update]: #apolloduplexupdate
 [apollo.duplex.getApiKey]: #apolloduplexgetapikey
