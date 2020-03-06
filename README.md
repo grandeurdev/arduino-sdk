@@ -111,7 +111,7 @@ A list of all the methods under these classes can be found [here][Methods].
 
 * [`init()`][apollo.wifi.init]: Initializes WiFi configurations ( SSID and Passphrase ) of the device.
 
-* [`smartConfigure()`][apollo.wifi.smartConfigure]: Puts device in smart configuration mode.
+* [`smartConfig()`][apollo.wifi.smartConfig]: Puts device in smart configuration mode.
 
 * [`getSSID()`][apollo.wifi.getSSID]: Gets WiFi SSID currently in use by the device.
 
@@ -161,7 +161,7 @@ Method to initialize device's WiFi ( SSID and Passphrase ) and duplex configurat
 
 Initializes WiFi configurations ( SSID and Passphrase ) of the device.
 
-### `apollo.wifi.smartConfigure()`
+### `apollo.wifi.smartConfig()`
 
 Puts device in smart configuration mode.
 
@@ -236,10 +236,10 @@ Method to unsubscribe a device [topic][topic].
 
 [apollo.init]: #apolloinit
 [apollo.wifi.init]: #apollowifiinit
-[apollo.wifi.smartConfigure]: #apollowifismartconfigure
+[apollo.wifi.smartConfig]: #apollowifismartconfig
 [apollo.wifi.getSSID]: #apollowifigetssid
 [apollo.wifi.getPassphrase]: #apollowifigetpassphrase
-[apollo.wifi.getDeviceIP]: #apollowifigetdeviceIP
+[apollo.wifi.getDeviceIP]: #apollowifigetdevicip
 [apollo.duplex.init]: #apolloduplexinit
 [apollo.duplex.update]: #apolloduplexupdate
 [apollo.duplex.getApiKey]: #apolloduplexgetapikey
