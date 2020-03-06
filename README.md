@@ -6,7 +6,7 @@ _**NOTE**_: Currently, `Apollo Device` SDK is available only for Arduino IDE.
 
 ## Features
 
-## How does it work
+## How Does It Work
 
 ## Installation
 
@@ -32,9 +32,9 @@ Smart configuration is a protocol by which you can configure the WiFi of your de
 
 Duplex is the protocol by which a device makes realtime connection to `Apollo` server. `Apollo Device` takes care of the duplex connectivity of the device. All you do is provide your project's API Key and your device's Auth Token while `apollo.init()` or later through `apollo.duplex.init()`. As soon as the WiFi gets connected, `Apollo Device` begins trying to connect to the `Apollo` server using the __API Key__ and the __Auth Token__. When it connects, only then can it request to the `Apollo` server to fetch, update or subscribe to any data of the device.
 
-### Quick Example
+## Quick Example
 
-#### Case 1: Doing `apollo.init()`
+### Case 1: Doing `apollo.init()`
 
 ```cpp
 void setup() {
@@ -56,7 +56,7 @@ void loop() {
 }
 ```
 
-#### Case 2: Doing `apollo.wifi.smartConfig()`
+### Case 2: Doing `apollo.wifi.smartConfig()`
 
 ```cpp
 void setup() {
@@ -81,9 +81,11 @@ void loop() {
 }
 ```
 
-## Subclasses
+## Documentation Summary
 
-`Apollo`  is the main class that wraps the whole functionality of `Apollo Device` SDK. It classifies and expose these functionalities through objects of these _three_ subclasses:
+### Subclasses
+
+`Apollo` is the main class that wraps the whole functionality of `Apollo Device` SDK. It classifies and expose these functionalities through objects of these _three_ subclasses:
 
 1. _WiFi class_: Provides methods to initialize WiFi connectivity and an interface to interact with WiFi configurations of the device.
 
@@ -95,59 +97,134 @@ You can access methods of these subclasses using dot notation on the global obje
 
 A list of all the methods under these classes can be found [here][Methods].
 
-## Methods
+### Methods
 
-### Apollo Class
+#### Apollo Class
 
 `Apollo`, the global class, only provides one method:
 
-* `init()`: Method to initialize device's WiFi ( SSID and Passphrase ) and duplex configurations ( API Key and Auth Token ) in one go.
+* [`init()`][apollo.init]: Method to initialize device's WiFi ( SSID and Passphrase ) and duplex configurations ( API Key and Auth Token ) in one go.
 
-### WiFi Class
+#### WiFi Class
 
 `Apollo WiFi` subclass provides interface for WiFi related functions:
 
-* `init()`: Initializes WiFi configurations ( SSID and Passphrase ) of the device.
+* [`init()`][apollo.wifi.init]: Initializes WiFi configurations ( SSID and Passphrase ) of the device.
 
-* `smartConfigure()`: Puts device in smart configuration mode.
+* [`smartConfigure()`][apollo.wifi.smartConfigure]: Puts device in smart configuration mode.
 
-* `getSSID()`: Gets WiFi SSID currently in use by the device.
+* [`getSSID()`][apollo.wifi.getSSID]: Gets WiFi SSID currently in use by the device.
 
-* `getPassphrase()`: Gets WiFi Passphrase currently in use by the device.
+* [`getPassphrase()`][apollo.wifi.getPassphrase]: Gets WiFi Passphrase currently in use by the device.
 
-* `getDeviceIP()`: Gets the dynamic IP allocated to the device after it's connected to WiFi.
+* [`getDeviceIP()`][apollo.wifi.getDeviceIP]: Gets the dynamic IP allocated to the device after it's connected to WiFi.
 
-### Duplex Class
+#### Duplex Class
 
 `Apollo Duplex` subclass provides interface to manage realtime connection to `Apollo` server:
 
-* `init()`: Initializes device's duplex configurations ( API Key and Auth Token).
+* [`init()`][apollo.duplex.init]: Initializes device's duplex configurations ( API Key and Auth Token).
 
-* `update()`: Updates device's duplex buffer. This must be called in `loop()` and without being suspected to any kind of `delay()`.
+* [`update()`][apollo.duplex.update]: Updates device's duplex buffer. This must be called in `loop()` and without being suspected to any kind of `delay()`.
 
-* `getApiKey()`: Gets the API Key currently in use by the device for connecting to `Apollo` server.
+* [`getApiKey()`][apollo.duplex.getApiKey]: Gets the API Key currently in use by the device for connecting to `Apollo` server.
 
-* `getToken()`: Gets the Auth Token currently in use by the device for connecting to `Apollo` server.
+* [`getToken()`][apollo.duplex.getToken]: Gets the Auth Token currently in use by the device for connecting to `Apollo` server.
 
-* `onConnected()`: Receives a function to call when the device successfully connects to `Apollo` server.
+* [`onConnected()`][apollo.duplex.onConnected]: Receives a function to call when the device successfully connects to `Apollo` server.
 
-* `onDisconnected()`: Receives a function to call when the device disconnects from `Apollo` server.
+* [`onDisconnected()`][apollo.duplex.onDisconnected]: Receives a function to call when the device disconnects from `Apollo` server.
 
-### Device Class
+#### Device Class
 
 `Apollo Device` subclass provides methods to interact with device's data on `Apollo` server:
 
-* `getSummary()`: Getter method for device's [summary][summary].
+* [`getSummary()`][apollo.device.getSummary]: Getter method for device's [summary][summary].
 
-* `getParms()`: Getter method for device's [parms][parms].
+* [`getParms()`][apollo.device.getParms]: Getter method for device's [parms][parms].
 
-* `setSummary()`: Setter method for device's [summary][summary].
+* [`setSummary()`][apollo.device.setSummary]: Setter method for device's [summary][summary].
 
-* `setParms()`: Setter method for device's [parms][parms].
+* [`setParms()`][apollo.device.setParms]: Setter method for device's [parms][parms].
 
-* `subscribe()`: Method to subscribe a device [topic][topic].
+* [`subscribe()`][apollo.device.subscribe]: Method to subscribe a device [topic][topic].
 
-* `unsubscribe()`: Method to unsubscribe a device [topic][topic].
+* [`unsubscribe()`][apollo.device.unsubscribe]: Method to unsubscribe a device [topic][topic].
+
+## Documentation
+
+### `apollo.init()`
+
+Method to initialize device's WiFi ( SSID and Passphrase ) and duplex configurations ( API Key and Auth Token ) in one go.
+
+### `apollo.wifi.init()`
+
+Initializes WiFi configurations ( SSID and Passphrase ) of the device.
+
+### `apollo.wifi.smartConfigure()`
+
+Puts device in smart configuration mode.
+
+### `apollo.wifi.getSSID()`
+
+Gets WiFi SSID currently in use by the device.
+
+### `apollo.wifi.getPassphrase()`
+
+Gets WiFi Passphrase currently in use by the device.
+
+### `apollo.wifi.getDeviceIP()`
+
+Gets the dynamic IP allocated to the device after it's connected to WiFi.
+
+### `apollo.duplex.init()`
+
+Initializes device's duplex configurations ( API Key and Auth Token).
+
+### `apollo.duplex.update()`
+
+Updates device's duplex buffer. This must be called in `loop()` and without being suspected to any kind of `delay()`.
+
+### `apollo.duplex.getApiKey()`
+
+Gets the API Key currently in use by the device for connecting to `Apollo` server.
+
+### `apollo.duplex.getToken()`
+
+Gets the Auth Token currently in use by the device for connecting to `Apollo` server.
+
+### `apollo.duplex.onConnected()`
+
+Receives a function to call when the device successfully connects to `Apollo` server.
+
+### `apollo.duplex.onDisconnected()`
+
+Receives a function to call when the device disconnects from `Apollo` server.
+
+### `apollo.device.getSummary()`
+
+Getter method for device's [summary][summary].
+
+### `apollo.device.getParms()`
+
+Getter method for device's [parms][parms].
+
+### `apollo.device.setSummary()`
+
+Setter method for device's [summary][summary].
+
+### `apollo.device.setParms()`
+
+Setter method for device's [parms][parms].
+
+### `apollo.device.subscribe()`
+
+Method to subscribe a device [topic][topic].
+
+### `apollo.device.unsubscribe()`
+
+Method to unsubscribe a device [topic][topic].
+
 
 [Grandeur Cloud]: https://cloud.grandeur.tech "Grandeur Cloud"
 [Apollo Device SDK]: https://gitlab.com/grandeurtech/apollo-device "Apollo Device"
@@ -156,3 +233,22 @@ A list of all the methods under these classes can be found [here][Methods].
 [summary]: https://link/to/summary "Summary"
 [parms]: https://link/to/parms "Parms"
 [topic]: https://link/to/topic "Topic"
+
+[apollo.init]: #apollo.init()
+[apollo.wifi.init]: #apollo.wifi.init()
+[apollo.wifi.smartConfigure]: #apollo.wifi.smartConfigure()
+[apollo.wifi.getSSID]: #apollo.wifi.getSSID()
+[apollo.wifi.getPassphrase]: #apollo.wifi.getPassphrase()
+[apollo.wifi.getDeviceIP]: #apollo.wifi.getDeviceIP()
+[apollo.duplex.init]: #apollo.duplex.init()
+[apollo.duplex.update]: #apollo.duplex.update()
+[apollo.duplex.getApiKey]: #apollo.duplex.getApiKey()
+[apollo.duplex.getToken]: #apollo.duplex.getToken()
+[apollo.duplex.onConnected]: #apollo.duplex.onConnected()
+[apollo.duplex.onDisconnected]: #apollo.duplex.onDisconnected()
+[apollo.device.getSummary]: #apollo.device.getSummary()
+[apollo.device.getParms]: #apollo.device.getParms()
+[apollo.device.setSummary]: #apollo.device.setSummary()
+[apollo.device.setParms]: #apollo.device.setParms()
+[apollo.device.subscribe]: #apollo.device.subscribe()
+[apollo.device.unsubscribe]: #apollo.device.unsubscribe()
