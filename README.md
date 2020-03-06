@@ -81,7 +81,7 @@ void loop() {
 }
 ```
 
-## Documentation Summary
+## Summary
 
 ### Subclasses
 
