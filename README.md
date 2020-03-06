@@ -159,7 +159,7 @@ Method to initialize device's WiFi ( SSID and Passphrase ) and duplex configurat
 
 #### Parameters `(Config {char* apiKey, char* token, char* ssid, char* passphrase})`
 
-#### Returns (`void`)
+#### Returns `void`
 
 ### `apollo.wifi.init()`
 
@@ -167,7 +167,7 @@ Initializes WiFi configurations ( SSID and Passphrase ) of the device.
 
 #### Parameters `(WiFiConfig {char* ssid, char* passphrase})`
 
-#### Returns  (`void`)
+#### Returns  `void`
 
 ### `apollo.wifi.smartConfig()`
 
@@ -175,7 +175,7 @@ Puts device in smart configuration mode.
 
 #### Parameters `(void)`
 
-#### Returns   (`void`)
+#### Returns   `void`
 
 ### `apollo.wifi.getSSID()`
 
