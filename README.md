@@ -34,7 +34,7 @@ Duplex is the protocol by which a device makes realtime connection to `Apollo` s
 
 ### Quick Example
 
-#### Case 1: `apollo.init()`
+#### Case 1: Doing `apollo.init()`
 
 ```cpp
 void setup() {
@@ -56,7 +56,7 @@ void loop() {
 }
 ```
 
-#### Case 2: `apollo.wifi.smartConfig()`
+#### Case 2: Doing `apollo.wifi.smartConfig()`
 
 ```cpp
 void setup() {
@@ -99,7 +99,7 @@ A list of all the methods under these classes can be found [here][Methods].
 
 ### Apollo Class
 
-`Apollo`, the global class, provides the following methods:
+`Apollo`, the global class, only provides one method:
 
 * `init()`: Method to initialize device's WiFi ( SSID and Passphrase ) and duplex configurations ( API Key and Auth Token ) in one go.
 
