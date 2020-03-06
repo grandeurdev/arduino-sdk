@@ -242,7 +242,7 @@ Method to unsubscribe a device [topic][topic].
 [apollo.wifi.getDeviceIP]: #apollowifigetdeviceIP
 [apollo.duplex.init]: #apolloduplexinit
 [apollo.duplex.update]: #apolloduplexupdate
-[apollo.duplex.getApiKey]: #apolloduplexgetapiKey
+[apollo.duplex.getApiKey]: #apolloduplexgetapikey
 [apollo.duplex.getToken]: #apolloduplexgettoken
 [apollo.duplex.onConnected]: #apolloduplexonconnected
 [apollo.duplex.onDisconnected]: #apolloduplexondisconnected
