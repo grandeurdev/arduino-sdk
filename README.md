@@ -1,8 +1,8 @@
 # Apollo Device
 
-`Apollo Device` is the official SDK for hardware that utilizes `Apollo` API to authenticate and connect it to the matrix of [Grandeur Cloud][Grandeur Cloud].
+__Apollo Device__ is the official SDK for hardware that utilizes __Apollo__ API to authenticate and connect it to the matrix of [Grandeur Cloud][Grandeur Cloud].
 
-_**NOTE**_: Currently, `Apollo Device` SDK is available only for Arduino IDE.
+_**NOTE**_: Currently, __Apollo Device__ SDK is available only for Arduino IDE.
 
 ## Features
 
@@ -14,11 +14,11 @@ You can clone `Apollo Device` SDK from [here][Apollo Device SDK].
 
 ## Basics of Apollo Device
 
-`Apollo Device` provides a global `apollo` object to interact with all functionalities of the SDK. All `Apollo` variables are private and can be accessed and updated using `Apollo` getters and setters.
+__Apollo Device__ provides a global `apollo` object to interact with all functionalities of the SDK. All `apollo` variables are private and can be accessed and updated using `apollo` getters and setters.
 
 ### WiFi Connectivity of the Device
 
-`Apollo Device` takes care of the WiFi connectivity of the device. You can either:
+__Apollo Device__ takes care of the WiFi connectivity of the device. You can either:
 
 1. _provide_ __WiFi SSID__ and __Passphrase__ along with __API Key__ and __Auth Token__ while `apollo.init()`, in which case it starts trying to connect to the WiFi and then Duplex right away.
 OR
@@ -30,11 +30,11 @@ Smart configuration is a protocol by which you can configure the WiFi of your de
 
 ### Duplex Connectivity of the Device
 
-Duplex is the protocol by which a device makes realtime connection to `Apollo` server. `Apollo Device` takes care of the duplex connectivity of the device. All you do is provide your project's API Key and your device's Auth Token while `apollo.init()` or later through `apollo.duplex.init()`. As soon as the WiFi gets connected, `Apollo Device` begins trying to connect to the `Apollo` server using the __API Key__ and the __Auth Token__. When it connects, only then can it request to the `Apollo` server to fetch, update or subscribe to any data of the device.
+Duplex is the communication protocol by which a device makes realtime connection to __Apollo__ server. __Apollo Device__ takes care of the duplex connectivity of the device. All you do is provide your __project's API Key__ and your __device's Auth Token__ while `apollo.init()` or later through `apollo.duplex.init()`. As soon as the WiFi gets connected, __Apollo Device__ begins trying to connect to the __Apollo__ server using the __API Key__ and the __Auth Token__. When it connects, only then can it request to the __Apollo__ server to fetch, update or subscribe to any data of the device.
 
 ### Payload
 
-Serialized JSON packet from _Apollo server_ is parsed by _Apollo device_ into this special object. Payload is based on three parameters:
+Serialized JSON packet from __Apollo server__ is parsed by __Apollo device__ into this special object. Payload is based on three parameters:
 
 * `numberOfKeys`
 * `keys`
@@ -66,29 +66,31 @@ is parsed into Payload as
 
 ### Callback
 
-`Callback` is a special type of function that can be passed to another function which calls it before exiting or when some type of event occurs.
+`Callback` is a special type of function that can be passed to another function to call it before exiting or when some type of event occurs.
 
 `Apollo Device` methods only accept a function that _receives_ a `pointer to Payload object` and _returns_ `void`.
 
 ```cpp
+/* Only this type of functions are accepted as callback
+*/
 void function(Payload* payload) {
     /*
-    ** Parses payload
+    ** Your logic here
     */
 }
 ```
 
 ### Device Summary
 
-Summary includes those device variables which _are not directly controllable_. For example, in an air conditioner, the controllable variable is its state (ON/OFF) or the temperature dial you see on its display.
+Summary includes those device variables which _are not directly controllable_. For example, in an air conditioner, the controllable variable is its state (ON/OFF) or the temperature dial you see on its display. Whereas, its voltage, current, power consumption would be non-controllable variables, thus opted to be under summary.
 
 ### Device Parms
 
-Parms are those device variables which _are directly controllable_. In the previous air conditioner example, its state and the temperature dial would be opted for parms category.
+Parms are _the directly controllable_ variables. In the previous air conditioner example, its state and the temperature dial would be opted for parms category.
 
 ### Topic
 
-Topics are the device _variables that can be subscribed to_. For example, _device summary_ could be the type of variable device should be notified about if any change occur.
+Topics are the device _variables that can be subscribed_. For example, _device summary_ could be the type of variable device should be notified about if any change occur.
 
 ## A Case Study
 
@@ -100,9 +102,9 @@ Now the consumer might want to see live voltage and current waveforms in his app
 
 Since, AC voltage and current are defined under _device summary_, the app would subscribe to _device summary_ so that any updates to variables under _summary_ would be sent to the app in realtime.
 
-Similarly, the device can subscribe to _parms_ to get realtime updates when the consumer changes them AC ON/OFF state or its percentage power consumption.
+Similarly, the device can subscribe to _parms_ to get realtime updates when the consumer toggles its state or changes its percentage power consumption.
 
-## Quick Example
+## Quickly Starting with Apollo Device
 
 ### Case 1: Doing `apollo.init()`
 
@@ -155,11 +157,11 @@ void loop() {
 
 ### Subclasses
 
-`Apollo` is the main class that wraps the whole functionality of `Apollo Device` SDK. It classifies and expose these functionalities through objects of these _three_ subclasses:
+__Apollo__ is the main class that wraps the whole functionality of __Apollo Device__ SDK. It classifies and exposes these functionalities through objects of these _three_ subclasses:
 
 1. _WiFi class_: Provides methods to initialize WiFi connectivity and an interface to interact with WiFi configurations of the device.
 
-2. _Duplex class_: Provides methods to initialize Duplex connectivity, set listeners to events related to duplex connectivity or triggered by `Apollo` server.
+2. _Duplex class_: Provides methods to initialize Duplex connectivity, set listeners to events related to duplex connectivity or triggered by __Apollo__ server.
 
 3. _Device class_: Provides methods to interact with device's own parameters.
 
@@ -171,15 +173,15 @@ A list of all the methods under these classes can be found [here][Methods].
 
 #### Apollo Class
 
-`Apollo`, the global class, only provides one method:
+__Apollo__, the global class, only provides one method:
 
-* [`init()`][apollo.init]: Method to initialize device's WiFi ( SSID and Passphrase ) and duplex configurations ( API Key and Auth Token ) in one go.
+* [`init()`][apollo.init]: Method to initialize device's WiFi (SSID and Passphrase) and duplex configurations ( API Key and Auth Token ) in one go.
 
 #### WiFi Class
 
 `Apollo WiFi` subclass provides interface for WiFi related functions:
 
-* [`init()`][apollo.wifi.init]: Initializes WiFi configurations ( SSID and Passphrase ) of the device.
+* [`init()`][apollo.wifi.init]: Initializes WiFi configurations (SSID and Passphrase) of the device.
 
 * [`smartConfig()`][apollo.wifi.smartConfig]: Puts device in smart configuration mode.
 
@@ -191,23 +193,23 @@ A list of all the methods under these classes can be found [here][Methods].
 
 #### Duplex Class
 
-`Apollo Duplex` subclass provides interface to manage realtime connection to `Apollo` server:
+`Apollo Duplex` subclass provides interface to manage realtime connection to __Apollo__ server:
 
-* [`init()`][apollo.duplex.init]: Initializes device's duplex configurations ( API Key and Auth Token).
+* [`init()`][apollo.duplex.init]: Initializes device's duplex configurations (API Key and Auth Token).
 
-* [`update()`][apollo.duplex.update]: Updates device's duplex buffer. This must be called in `loop()` and without being suspected to any kind of `delay()`.
+* [`update()`][apollo.duplex.update]: Updates device's duplex buffer. This must be called in `loop()` and without being suspected to any kind of _delay_.
 
-* [`getApiKey()`][apollo.duplex.getApiKey]: Gets the API Key currently in use by the device for connecting to `Apollo` server.
+* [`getApiKey()`][apollo.duplex.getApiKey]: Gets the API Key currently in use by the device for connecting to __Apollo__ server.
 
-* [`getToken()`][apollo.duplex.getToken]: Gets the Auth Token currently in use by the device for connecting to `Apollo` server.
+* [`getToken()`][apollo.duplex.getToken]: Gets the Auth Token currently in use by the device for connecting to __Apollo__ server.
 
-* [`onConnected()`][apollo.duplex.onConnected]: Receives a function to call when the device successfully connects to `Apollo` server.
+* [`onConnected()`][apollo.duplex.onConnected]: Receives a function to call when the device successfully connects to __Apollo__ server.
 
-* [`onDisconnected()`][apollo.duplex.onDisconnected]: Receives a function to call when the device disconnects from `Apollo` server.
+* [`onDisconnected()`][apollo.duplex.onDisconnected]: Receives a function to call when the device disconnects from __Apollo__ server.
 
 #### Device Class
 
-`Apollo Device` subclass provides methods to interact with device's data on `Apollo` server:
+`Apollo Device` subclass provides methods to interact with device's data on __Apollo__ server:
 
 * [`getSummary()`][apollo.device.getSummary]: Getter method for device's [summary][summary].
 
@@ -225,7 +227,7 @@ A list of all the methods under these classes can be found [here][Methods].
 
 ### `apollo.init()`
 
-Method to initialize device's WiFi (SSID and Passphrase) and duplex configurations ( API Key and Auth Token ) in one go.
+Method to initialize device's WiFi (SSID and Passphrase) and duplex configurations (API Key and Auth Token) in one go.
 
 __Parameters__ `(Config {char* apiKey, char* token, char* ssid, char* passphrase})`
 
@@ -281,7 +283,7 @@ __Returns__ `char* wifiSSID`
 
 ### `apollo.duplex.update()`
 
-Updates device's duplex buffer. This must be called in `loop()` and without being suspected to any kind of `delay()`.
+Updates device's duplex buffer. This must be called in `loop()` and without being suspected to any kind of _delay_.
 
 __Parameters__ `(void)`
 
@@ -289,7 +291,7 @@ __Returns__ `void`
 
 ### `apollo.duplex.getApiKey()`
 
-Gets the API Key currently in use by the device for connecting to `Apollo` server.
+Gets the API Key currently in use by the device for connecting to __Apollo__ server.
 
 __Parameters__ `(void)`
 
@@ -299,7 +301,7 @@ More on API key [here][apikey].
 
 ### `apollo.duplex.getToken()`
 
-Gets the Auth Token currently in use by the device for connecting to `Apollo` server.
+Gets the Auth Token currently in use by the device for connecting to __Apollo__ server.
 
 __Parameters__ `(void)`
 
@@ -309,7 +311,7 @@ More on Auth token [here][token].
 
 ### `apollo.duplex.onConnected()`
 
-Receives a function to call when the device successfully connects to `Apollo` server.
+Receives a function to call when the device successfully connects to __Apollo__ server.
 
 __Parameters__ `(Callback callback)`
 
@@ -319,7 +321,7 @@ More on Callback [here][callback].
 
 ### `apollo.duplex.onDisconnected()`
 
-Receives a function to call when the device disconnects from `Apollo` server.
+Receives a function to call when the device disconnects from __Apollo__ server.
 
 __Parameters__ `(Callback callback)`
 
