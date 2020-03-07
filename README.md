@@ -56,7 +56,7 @@ _Auth Token_ is an identification token that lets _Apollo server_ identify who a
 
 When a consumer logs in using its password, an _Auth token_ is sent back to it. This _Auth token_ along with the project's _[API key][apiKey]_ is sent with every request made to _Apollo server_ for the request to be considered valid.
 
-When a consumer _pairs_ a device, a _device [Auth token][auth token]_ is sent to the _[consumer][consumer]_ who forwards it to the _[device][device]_ to make the device live in the project.
+When a consumer _pairs_ a device, a _device Auth token_ is sent to the _[consumer][consumer]_ who forwards it to the _[device][device]_ to make the device live in the project.
 
 A _consumer_ Auth token cannot be used in place of a device token or vice versa.
 
@@ -455,7 +455,7 @@ More on Payload [here][payload].
 
 [Grandeur Cloud]: https://cloud.grandeur.tech "Grandeur Cloud"
 [Apollo Device SDK]: https://gitlab.com/grandeurtech/apollo-device "Apollo Device"
-[WiFi Smart Configuration]: #wiFi-smart-configuration "WiFi Smart Configuration"
+[WiFi Smart Configuration]: #wifi-smart-configuration "WiFi Smart Configuration"
 [project]: #project "Project"
 [api key]: #api-key "API Key"
 [user]: #user "User"
