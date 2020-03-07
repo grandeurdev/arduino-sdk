@@ -12,83 +12,85 @@ A _project_ is the most top level entity in __[Grandeur Cloud][Grandeur Cloud]__
 
 Each project is identified by a unique string of characters. We call it the [API Key][api key].
 
-A project is created by a _user_.
+A project is created by a _[user][user]_.
 
 A project can have any number of consumers and devices, interconnected in any number of ways.
 
 ### API key
 
-_API Key_ is a unique string of characters that is generated when you create a new _project_ on __[Grandeur Cloud][Grandeur cloud]__. It is an identifier for the _[project][project]_ you are trying to interact with.
+_API Key_ is a unique string of characters, generated when you create a new _[project][project]_ on __[Grandeur Cloud][Grandeur cloud]__. It is an identifier for the _project_ you request to interact with.
 
-Each node (device in this case) that belongs to project A must send project A's _API Key_ with every request to be able to interact with project A's ecosystem.
+Each node that belongs to project A must send project A's _API Key_ with every request to be able to interact with project A's ecosystem.
 
 ### Users
 
-A _user_ is an entity that creates, develops and maintains one or more _projects_ on __[Grandeur Cloud][Grandeur Cloud]__. It's the admin of the _project_ and has the full authority to monitor and control all its _projects_ from [Grandeur Dashboard][grandeur dashboard].
+A _user_ is an entity that creates, develops and maintains one or more _[projects][project]_ on __[Grandeur Cloud][Grandeur Cloud]__. It's the admin of the _project_ and has the full authority to monitor and control all its _projects_ from [Grandeur Dashboard][grandeur dashboard].
 
 A _user_ can create any number of _projects_ but a _project_ can have at the most one admin aka _user_.
 
 ### Consumers
 
-A _consumer_ is the end user that uses the _user_'s product. It lives in the ecosystem aka project created by the _user_, and interacts with other nodes (devices and other consumers) of the _project_.
+A _consumer_ is the end user that uses the _user_'s product. It lives in the ecosystem aka project created by the _user_, and interacts with other nodes (devices and other consumers) of the _[project][project]_.
 
 ### Devices
 
-A _device_ is the hardware product that a _consumer_ can monitor and control.
+A _device_ is the hardware product that a _consumer_ can monitor and control. To be precise, there are some _device_ variables that a _[consumer][consumer]_ actually interacts with. These interactive variables are specified under _device_'s _[summary][summary]_ and _[parms][parms]_.
 
-All the nodes in a _project_ interact with each other through _Apollo server_.
+All the nodes in a _project_ interact with each other through _[Apollo server][apollo server]_.
 
 ### Apollo Server
 
-_Apollo server_ is the central hub for all the communications happening between all the _consumers_ and all the _devices_ in all the _projects_. _Apollo server_ is what isolates _projects_ from each other, and routes messages among all nodes in a project.
+_Apollo server_ is the central hub for all the communications happening among all the _[consumers][consumer]_ and all the _[devices][device]_ in all the _[projects][project]_. _Apollo server_ is what isolates _projects_ from each other, maintains _[duplex connection][duplex]_ with all nodes, and routes messages among them.
 
-Each node communicate with the other through a realtime _[duplex][duplex]_ channel.
+Each node communicate with the other through a realtime _duplex_ channel.
 
 ### Duplex Channel
 
-__Duplex__ is the channel through which realtime communication is done between a node and _Apollo server_. An _interaction_ between two nodes happens through two _duplex_ channels, one between the source node and _Apollo server_ and the other between _Apollo server_ and destination node.
+__Duplex__ is the channel on which realtime communication is done between a node and _Apollo server_. An _interaction_ between two nodes happens through two _duplex_ channels, one between the source node and _Apollo server_ and the other between _Apollo server_ and destination node.
 
 A _project_ can open as many _duplex_ channels as it needs.
 
 ### Auth Token
 
-Auth Token is an identification token that lets _Apollo server_ identify who a node is in a _project_'s ecosystem.
+_Auth Token_ is an identification token that lets _Apollo server_ identify who a node is in a _[project][project]_'s ecosystem.
 
-When a consumer logs in using its password, an _Auth token_ is sent back to it. This _Auth token_ along with the project's _API key_ is sent with every request made to _Apollo server_ for the request to be considered valid.
+When a consumer logs in using its password, an _Auth token_ is sent back to it. This _Auth token_ along with the project's _[API key][apiKey]_ is sent with every request made to _Apollo server_ for the request to be considered valid.
 
-When a consumer _pairs_ a device, a _device Auth token_ is sent to the _consumer_ who forwards it to the _device_ to make it live in the project.
+When a consumer _pairs_ a device, a _device [Auth token][auth token]_ is sent to the _[consumer][consumer]_ who forwards it to the _[device][device]_ to make the device live in the project.
 
 A _consumer_ Auth token cannot be used in place of a device token or vice versa.
 
 ### Device Summary
 
-Each device as some variables that a consumer might want to interact with (monitor or control).
+Each device has some variables that a consumer might want to interact with (monitor or control).
 
-Summary includes those device variables which _are not directly controllable_. For example, in an air conditioner, the controllable variable is its state (ON/OFF) or the temperature dial you see on its display, while its voltage, current and power consumption would be non-controllable variables, thus opted to be under summary.
+_Summary_ includes those device variables which _are not directly controllable_. For example, in an air conditioner, the controllable variable is its state (ON/OFF) or the temperature dial you see on its display, while its voltage, current and power consumption would be non-controllable variables, thus opted to be under _summary_.
 
 ### Device Parms
 
-Parms are _the directly controllable_ variables. In the previous air conditioner example, its state and the temperature dial would be opted for parms category.
+_Parms_ are _the directly controllable_ variables. In the previous air conditioner example, its state and the temperature dial would be opted for _parms_ category.
 
 ### Subscription
 
-Subscription is the way by which a node in a consumer-device pair shows its interest in some device variables. Whenever an update occurs in those variables, the subscribing node is notified about it.
+_Subscription_ is the way by which a node in a consumer-device pair shows its interest in some device variables. Whenever an update occurs in those variables, the subscribing node is notified about it.
 
 ### Topic
 
-Topics are the device _variables that can be subscribed_. For example, a _consumer_ may want to be notified if air conditioner's power consumption changed or if a _device_ turned off for some reason.
+_Topics_ are the device _variables that can be [subscribed][subscription]_. For example, a _consumer_ may want to be notified if air conditioner's power consumption changed or if a _device_ turned off for some reason.
 
 ## A Quick Case Study
 
-Let's say, a person A (consumer) buys a smart invertor developed by a person B (developer). He uses it to stabilize the power consumption of his air conditioner. He gets to monitor the voltage, current and power consumption of his AC on an app provided by the developer person B. He can also turn his AC ON/OFF, or regulate the percentage of power it would consume.
+Let's say, a person A (consumer) buys a smart invertor developed by a person B (developer). He uses it to stabilize the power consumption of his air conditioner. On an app provided by the developer person B, he gets to monitor the voltage, current and power consumption of his AC. He can also turn his AC ON/OFF, or regulate the percentage of total power it would consume.
 
-In this case, the controllable parameters are AC's ON/OFF state and its power consumption, and therefore, can be defined under _parms_. On the other hand, voltage and current of the AC are not directly controllable, but can be monitored. Therefore, they can be defined under _summary_.
+In this case, the controllable parameters are AC's ON/OFF state and its percentage power consumption, and therefore, can be defined under _[parms][parms]_. On the other hand, voltage and current of the AC are not directly controllable, but can be monitored. Therefore, they can be defined under _[summary][summary]_.
 
 Now the consumer might want to see live voltage and current waveforms in his app and turn the AC ON/OFF or regulate its percentage power consumption in realtime.
 
-Since, AC voltage and current are defined under _device summary_, the app would subscribe to _device summary_ so that any updates to variables under _summary_ would be sent to the app in realtime.
+Since, AC voltage and current are defined under _device summary_, the app would subscribe to _device summary_ so that any updates to variables under _summary_ would be sent to the app in realtime and displayed in a graph.
 
 Similarly, the device can subscribe to _parms_ to get realtime updates when the consumer toggles its state or changes its percentage power consumption.
+
+Also, the app may also subscribe to _parms_ to get notification if and when the device goes offline (turns OFF).
 
 ## Installation
 
@@ -183,6 +185,8 @@ void loop() {
         ** Your logic here
         */
     }
+    // Updating duplex buffer
+    apollo.duplex.update();
 }
 ```
 
@@ -208,6 +212,8 @@ void loop() {
         ** Your logic here
         */
     }
+    // Updating duplex buffer
+    apollo.duplex.update();
 }
 ```
 
@@ -257,7 +263,7 @@ _Apollo_, the global class, only provides one method:
 
 * [`update()`][apollo.duplex.update]: Updates device's duplex buffer. This must be called in `loop()` and without being suspected to any kind of _delay_.
 
-* [`getApiKey()`][apollo.duplex.getApiKey]: Gets the API Key currently in use by the device for connecting to _Apollo server_.
+* [`getApiKey()`][apollo.duplex.getApiKey]: Gets the API Key currently in use by the device for connecting to _Apollo server_. This method is what receives and pushes messages to and from the duplex channel.
 
 * [`getToken()`][apollo.duplex.getToken]: Gets the Auth Token currently in use by the device for connecting to _Apollo server_.
 
@@ -341,7 +347,7 @@ __Returns__ `char* wifiSSID`
 
 ### `apollo.duplex.update()`
 
-Updates device's duplex buffer. This must be called in `loop()` and without being suspected to any kind of _delay_.
+Updates device's duplex buffer. This must be called in `loop()` and without being suspected to any kind of _delay_. This method is what receives and pushes messages to and from the duplex channel.
 
 __Parameters__ `(void)`
 
@@ -452,12 +458,18 @@ More on Payload [here][payload].
 [WiFi Smart Configuration]: #wiFi-smart-configuration "WiFi Smart Configuration"
 [project]: #project "Project"
 [api key]: #api-key "API Key"
-[duplex]: #duplex "Duplex"
+[users]: #users "User"
+[consumers]: #consumers "Consumer"
+[devices]: #devices "Device"
+[apollo server]: #apollo-server "Apollo Server"
+[duplex]: #duplex-channel "Duplex Channel"
+[auth token]: #auth-token "Auth Token"
 [grandeur dashboard]: https://cloud.grandeur.tech/dashboard "Grandeur Dashboard"
 [Methods]: #methods "Methods"
-[summary]: #summary "Summary"
-[parms]: #parms "Parms"
+[summary]: #device-summary "Summary"
+[parms]: #device-parms "Parms"
 [topic]: #topic "Topic"
+[subscription]: #subscription "Subscription"
 [callback]: #callback "Callback"
 [payload]: #payload "Payload"
 
