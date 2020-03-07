@@ -22,17 +22,17 @@ _API Key_ is a unique string of characters, generated when you create a new _[pr
 
 Each node that belongs to project A must send project A's _API Key_ with every request to be able to interact with project A's ecosystem.
 
-### Users
+### User
 
 A _user_ is an entity that creates, develops and maintains one or more _[projects][project]_ on __[Grandeur Cloud][Grandeur Cloud]__. It's the admin of the _project_ and has the full authority to monitor and control all its _projects_ from [Grandeur Dashboard][grandeur dashboard].
 
 A _user_ can create any number of _projects_ but a _project_ can have at the most one admin aka _user_.
 
-### Consumers
+### Consumer
 
 A _consumer_ is the end user that uses the _user_'s product. It lives in the ecosystem aka project created by the _user_, and interacts with other nodes (devices and other consumers) of the _[project][project]_.
 
-### Devices
+### Device
 
 A _device_ is the hardware product that a _consumer_ can monitor and control. To be precise, there are some _device_ variables that a _[consumer][consumer]_ actually interacts with. These interactive variables are specified under _device_'s _[summary][summary]_ and _[parms][parms]_.
 
@@ -458,9 +458,9 @@ More on Payload [here][payload].
 [WiFi Smart Configuration]: #wiFi-smart-configuration "WiFi Smart Configuration"
 [project]: #project "Project"
 [api key]: #api-key "API Key"
-[users]: #users "User"
-[consumers]: #consumers "Consumer"
-[devices]: #devices "Device"
+[user]: #user "User"
+[consumer]: #consumer "Consumer"
+[device]: #device "Device"
 [apollo server]: #apollo-server "Apollo Server"
 [duplex]: #duplex-channel "Duplex Channel"
 [auth token]: #auth-token "Auth Token"
