@@ -1,70 +1,20 @@
 // Including headers
 #include <Ticker.h>
 #include <ESP8266WiFi.h>
-#include <cstring>
 #include "DuplexClient.h"
 #include "EventTable.h"
-#include "types.h"
+#include "apollotypes.h"
+#include "apollomacros.h"
 
 #ifndef APOLLO_H_
 #define APOLLO_H_
 
-// Connection macros
-#define APOLLO_URL "10.50.202.122"
-#define APOLLO_PORT 3000
-#define APOLLO_FINGERPRINT ""
-
-// Defining general macros
-#define MAX_CONFIG_TRIES 30
-#define SSID_SIZE 32
-#define PASSPHRASE_SIZE 32
-#define APIKEY_SIZE 32
-#define TOKEN_SIZE 512
-#define IP_SIZE 16
-#define FINGERPRINT_SIZE 256
-
-// Ping interval
-#define PING_INTERVAL 5
-
-// Defining macros for Apollo states
-#define WIFI_NOT_CONNECTED 0
-#define WIFI_CONNECTED 1
-#define DUPLEX_CONNECTED 2
-
-// Indexes for functions in eventQueue
-#define LOGOUT 0
-
-// Indexes for handlers callbacks
-#define ONCONNECTED 0
-#define ONDISCONNECTED 1
-#define ONMESSAGE 2
-
-// Config structure for apollo configurations
-typedef struct {
-    char apiKey[APIKEY_SIZE];
-    char token[TOKEN_SIZE];
-    char ssid[SSID_SIZE];
-    char passphrase[PASSPHRASE_SIZE];
-} Config;
-
 class ApolloHandler {
     private:
-        // Config struct
-        static Config _config;
-        // Apollo state variable
-        static int _state;
-        // Device IP Address
-        static char _deviceIP[IP_SIZE];
-        // Events Table
-        static EventTable eventsTable;
-        
         // Handler classes
         class WiFiHandler {
             // Class for handling WiFi of the device
             private:
-                // Method to stop WiFi connection loop
-                void stopConnectionLoop(void);
-
                 // Event handlers
                 static void onWiFiConnected(const WiFiEventStationModeConnected& event);
                 static void onWiFiDisconnected(const WiFiEventStationModeDisconnected& event);
@@ -72,10 +22,8 @@ class ApolloHandler {
             public:
                 // WiFi initializer
                 void init(void);
-                // Method to begin connecting to WiFI
-                void connect(void);
                 // Method to begin quick configuration
-                Config quickConfigure(void);
+                //Config quickConfigure(void);
 
                 // Getter Methods
                 char* getSSID(void);
@@ -98,9 +46,7 @@ class ApolloHandler {
                 char* getToken(void);
 
                 // Duplex initializer
-                void init(String apiKey, String token);
-                // Method to read/write data from client buffer
-                void update(void);
+                void init();
                 // Event handlers
                 void onConnected(Receiver receiver);
                 void onDisconnected(Receiver receiver);
@@ -121,27 +67,33 @@ class ApolloHandler {
             // Class for handling device related functions
             private:
             public:
-                int getSummary(Payload* payload, Callback callback);
-                int getParms(Payload* payload, Callback callback);
-                int setSummary(Payload* payload, Callback callback);
-                int setParms(Payload* payload, Callback callback);
-                // Method to subscribe to a topic
-                void subscribe(void);
-                // Method to unsubscribe from a topic
-                void unsubscribe(void);
+                int getSummary(Payload* feedOut, Callback callback);
+                int getParms(Payload* feedOut, Callback callback);
+                int setSummary(Payload* summary, Payload* feedOut, Callback callback);
+                int setParms(Payload* parms, Payload* feedOut, Callback callback);
         };
 
+        // Apollo state variable
+        static int _state;
+        // Device IP Address
+        static char _deviceIP[IP_SIZE];
+        // Events Table
+        static EventTable eventsTable;
+
+        DuplexHandler duplex;
 
     public:
         // Apollo init Method
-        void init(Config configuration);
+        void init(char* deviceID, char* apiKey, char* token, char* ssid, char* passphrase);
 
         // Getter for Apollo state
         static char* getState(void);
+        
+        // Method to read/write data from client buffer
+        void update(void);
 
         // Handler objects
         WiFiHandler wifi;
-        DuplexHandler duplex;
         DeviceHandler device;
         PayloadHandler format;
 };

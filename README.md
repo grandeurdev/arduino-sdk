@@ -6,6 +6,8 @@ _**NOTE**_: Currently, __Apollo Device__ SDK is available only for Arduino IDE.
 
 ## A Peek into Grandeur's Ecosystem
 
+/* DESCRIPTION OF GRANDEUR CLOUD */
+
 ### Project
 
 A _project_ is the most top level entity in __[Grandeur Cloud][Grandeur Cloud]__. It defines an isolated ecosystem for all your nodes (Users and devices), which means no node in one project can be related to or interact with any node of some other project.
@@ -114,10 +116,13 @@ Smart configuration is a protocol by which you can configure the WiFi of your de
 
 ### Duplex Connectivity of the Device
 
+/* HIDE THIS UNDER THE SHADOWS. NO DUPLEX EXISTS FROM NOW ON. */
+
 Duplex is the communication protocol by which a device makes realtime connection to _Apollo server_. __Apollo Device__ takes care of the duplex connectivity of the device. All you do is provide your _project's API Key_ and your _device's Auth Token_ while `apollo.init()` or later through `apollo.duplex.init()`. As soon as the WiFi gets connected, __Apollo Device__ begins trying to connect to _Apollo server_ using the _API Key_ and the _Auth Token_. When it connects, only then can it request to the _Apollo server_ to fetch, update or subscribe to any data of the device.
 
 ### Payload
 
+/* REMOVE PAYLOAD */
 Serialized JSON packet from _Apollo server_ is parsed by __Apollo device__ into this special object. Payload is based on three parameters:
 
 * `numberOfKeys`
@@ -241,6 +246,8 @@ _Apollo_, the global class, only provides one method:
 
 * [`init()`][apollo.init]: Method to initialize device's WiFi (SSID and Passphrase) and duplex configurations ( API Key and Auth Token ) in one go.
 
+
+
 #### WiFi Class
 
 `Apollo WiFi` subclass provides interface for WiFi related functions:
@@ -289,6 +296,9 @@ _Apollo_, the global class, only provides one method:
 
 ## Documentation
 
+/* PUT ALL THE METHODS UNDER THE DEVICE OBJECT */
+/* HIDE DUPLEX UNDER THE SHADOWS */
+
 ### `apollo.init()`
 
 Method to initialize device's WiFi (SSID and Passphrase) and duplex configurations (API Key and Auth Token) in one go.
@@ -296,6 +306,8 @@ Method to initialize device's WiFi (SSID and Passphrase) and duplex configuratio
 __Parameters__ `(Config {char* apiKey, char* token, char* ssid, char* passphrase})`
 
 __Returns__ `void`
+
+#### Example
 
 ### `apollo.wifi.init()`
 

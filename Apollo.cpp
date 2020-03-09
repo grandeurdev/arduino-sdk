@@ -2,11 +2,11 @@
 #include <iostream>
 
 /* STATIC VARIABLES */
-Config ApolloHandler::_config = {"", "", "", ""};
 char ApolloHandler::_deviceIP[] = "";
 int ApolloHandler::_state = 0;
 Receiver ApolloHandler::DuplexHandler::handlers[] = {};
 EventTable ApolloHandler::eventsTable;
+Config* config;
 
 /* GLOBAL VARIABLES */
 // DuplexClient object
@@ -59,6 +59,7 @@ void ApolloHandler::DuplexHandler::eventHandler(WStype_t eventType, uint8_t* pac
             Serial.printf("Received packet is: %s\n", packet);
             // When a duplex message is received
             // Fetching task and id from the message packet
+            
             char* headerKeys[] = {"task", "id"};
             char* headerValues[2];
             Payload* header = new Payload(2, headerKeys, headerValues);
@@ -68,10 +69,10 @@ void ApolloHandler::DuplexHandler::eventHandler(WStype_t eventType, uint8_t* pac
                 EventData eventCallback = eventsTable.findAndRemove(header->values[0], (EventID) strtoul(header->values[1], NULL, 0));
                 eventsTable.print();
                 if(eventCallback != NULL) {
-                    char* payloadKeys[6];
-                    char* payloadValues[6];
+                    char* payloadKeys[1];
+                    char* payloadValues[1];
                     // If event callback is found
-                    if(apollo.format.getPayloadKeys(packet, payloadKeys, 6, 20) == 0) {
+                    if(apollo.format.getPayloadKeys(packet, payloadKeys, 1, 20) == 0) {
                         Payload* payload = new Payload(6, payloadKeys, payloadValues);
                         if(apollo.format.getPayload(packet, payload, 50) == 0) {
                             // Calling the callback function
@@ -82,6 +83,7 @@ void ApolloHandler::DuplexHandler::eventHandler(WStype_t eventType, uint8_t* pac
                 }
             }
             delete header;
+            
             break;
     }
 }
@@ -95,16 +97,16 @@ void ApolloHandler::DuplexHandler::onDisconnected(Receiver receiver) {
 }
 
 /* INITIALIZERS */
-void ApolloHandler::init(Config configuration) {
+void ApolloHandler::init(char* apiKey, char* token, char* ssid, char* passphrase) {
     // Setting Apollo config
-    _config = configuration;
+    config = new Config(apiKey, token, ssid, passphrase);
     // Initializing wifi
     wifi.init();
     // Initializing duplex connection
-    duplex.init(_config.apiKey, _config.token);
+    duplex.init();
     // Setting up connection event handlers
-    apollo.duplex.onConnected(onDuplexConnected);
-    apollo.duplex.onDisconnected(onDuplexDisconnected);
+    duplex.onConnected(onDuplexConnected);
+    duplex.onDisconnected(onDuplexDisconnected);
 }
 
 void ApolloHandler::WiFiHandler::init(void) {
@@ -113,17 +115,17 @@ void ApolloHandler::WiFiHandler::init(void) {
     // Set WiFi mode to Station
     WiFi.mode(WIFI_STA);
     // Begin connecting to WiFi
-    Serial.println("Connecting to WiFi " + String(_config.ssid) + " using passphrase " + _config.passphrase);
-    WiFi.begin(_config.ssid, _config.passphrase);
+    Serial.printf("Connecting to WiFi %s using passphrase %s\n", config->ssid, config->passphrase);
+    WiFi.begin(config->ssid, config->passphrase);
     // Setting WiFi event handlers
     onWiFiConnectedHandler = WiFi.onStationModeConnected(&onWiFiConnected);
     onWiFiDisconnectedHandler = WiFi.onStationModeDisconnected(&onWiFiDisconnected);
 }
 
-void ApolloHandler::DuplexHandler::init(String apiKey, String token) {
+void ApolloHandler::DuplexHandler::init() {
     // Starting duplex client
-    client.begin(APOLLO_URL, APOLLO_PORT, "/?type=device&apiKey=" + apiKey + "&token=" + token, "node");
-    //duplex.beginSSL(APOLLO_URL, APOLLO_PORT, "/?type=device&apiKey=" + apiKey + "&token=" + token, APOLLO_FINGERPRINT, "node");
+    client.begin(APOLLO_URL, APOLLO_PORT, "/?type=device&apiKey=" + String(config->apiKey) + "&token=" + String(config->token), "node");
+    //client.beginSSL(APOLLO_URL, APOLLO_PORT, "/?type=device&apiKey=" + String(config->apiKey) + "&token=" + String(config->token), APOLLO_FINGERPRINT, "node");
     client.onEvent(&eventHandler);
     // Reconnecting every 5 seconds if disconnects
     client.setReconnectInterval(5000);
@@ -131,6 +133,7 @@ void ApolloHandler::DuplexHandler::init(String apiKey, String token) {
     ticker.attach(PING_INTERVAL, ping);
 }
 
+/*
 Config ApolloHandler::WiFiHandler::quickConfigure(void) {
     int configTries = 1;
     Serial.println("\n\n Starting Quick Configuration\n");
@@ -157,6 +160,7 @@ Config ApolloHandler::WiFiHandler::quickConfigure(void) {
     WiFi.stopSmartConfig();
     Serial.println("\n Quick configuration timed out.");
 }
+*/
 
 /* GETTER METHODS */
 char* ApolloHandler::getState(void) {
@@ -171,11 +175,11 @@ char* ApolloHandler::getState(void) {
 }
 
 char* ApolloHandler::WiFiHandler::getSSID(void) {
-    return _config.ssid;
+    return config->ssid;
 }
 
 char* ApolloHandler::WiFiHandler::getPassphrase(void) {
-    return _config.passphrase;
+    return config->passphrase;
 }
 
 char* ApolloHandler::WiFiHandler::getDeviceIP(void) {
@@ -186,22 +190,23 @@ char* ApolloHandler::WiFiHandler::getDeviceIP(void) {
 
 // DuplexHandler functions
 char* ApolloHandler::DuplexHandler::getApiKey(void) {
-    return _config.apiKey;
+    return config->apiKey;
 }
 
 char* ApolloHandler::DuplexHandler::getToken(void) {
-    return _config.token;
+    return config->token;
 }
 
 unsigned long previousMillis = 0;
-void ApolloHandler::DuplexHandler::update(void) {
+void ApolloHandler::update(void) {
     if(apollo.getState() != "WIFI_NOT_CONNECTED") {
         // If WiFi is connected
         // Running duplex loop
-        //Serial.println("Looping...");
+        Serial.print(".");
         client.loop();
     }
 }
+
 
 void ApolloHandler::DuplexHandler::ping() {
     if(apollo.getState() != "WIFI_NOT_CONNECTED") {
@@ -215,6 +220,7 @@ void ApolloHandler::DuplexHandler::ping() {
         client.sendTXT(payload);
     }
 }
+
 
 int ApolloHandler::PayloadHandler::getValue(uint8_t* payload, char* key, char* value) {
     if(*key == '\0') {
@@ -361,24 +367,22 @@ int ApolloHandler::PayloadHandler::getPayload(uint8_t* packet, Payload* payload,
     }
 }
 
-int ApolloHandler::DeviceHandler::getSummary(Payload* payload, Callback callback) {
+
+int ApolloHandler::DeviceHandler::getSummary(Payload* feedOut, Callback callback) {
     if(apollo.getState() == "DUPLEX_CONNECTED") {
-        if(payload->numberOfKeys > 1 || payload->keys[0] != "deviceID") {
-            return -1;
-        }
         char* packet= "";
         unsigned long packetID = millis();
         // Saving callback to eventsTable
         eventsTable.insert("getDeviceSummary", packetID, callback);
         // Formatting the packet
-        sprintf(packet, "{\"header\": {\"id\": %lu, \"task\": \"getDeviceSummary\"}, \"payload\": {\"%s\": \"%s\"}}", packetID, payload->keys[0], payload->values[0]);
+        sprintf(packet, "{\"header\": {\"id\": %lu, \"task\": \"getDeviceSummary\"}, \"payload\": {\"deviceID\": \"%s\"}}", packetID, config->deviceID);
         // Sending to server
         client.sendTXT(packet);
         return 0;
     }
 }
 
-int ApolloHandler::DeviceHandler::getParms(Payload* payload, Callback callback) {
+int ApolloHandler::DeviceHandler::getParms(Payload* feedOut, Callback callback) {
     if(apollo.getState() == "DUPLEX_CONNECTED") {
         if(payload->numberOfKeys > 1 || payload->keys[0] != "deviceID") {
             return -1;
@@ -395,7 +399,7 @@ int ApolloHandler::DeviceHandler::getParms(Payload* payload, Callback callback) 
     }
 }
 
-int ApolloHandler::DeviceHandler::setSummary(Payload* payload, Callback callback) {
+int ApolloHandler::DeviceHandler::setSummary(Payload* summary, Payload* feedOut, Callback callback) {
     if(apollo.getState() == "DUPLEX_CONNECTED") {
         if(payload->numberOfKeys > 1 || payload->keys[0] != "deviceID") {
             return -1;
@@ -412,7 +416,7 @@ int ApolloHandler::DeviceHandler::setSummary(Payload* payload, Callback callback
     }
 }
 
-int ApolloHandler::DeviceHandler::setParms(Payload* payload, Callback callback) {
+int ApolloHandler::DeviceHandler::setParms(Payload* parms, Payload* feedOut, Callback callback) {
     if(apollo.getState() == "DUPLEX_CONNECTED") {
         if(payload->numberOfKeys > 1 || payload->keys[0] != "deviceID") {
             return -1;

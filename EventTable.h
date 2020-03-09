@@ -1,6 +1,6 @@
 #include <cstdlib>
 #include <string>
-#include "types.h"
+#include "apollotypes.h"
 
 #ifndef EVENTTABLE_H_
 #define EVENTTABLE_H_
