@@ -1,8 +1,39 @@
+# Grandeur Cloud [![Version](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://cloud.grandeur.tech)
+
+We are making it easier for you to build internet of things based smart products with our cloud platform and software development kit. [Let`s Sign Up][Grandeur Cloud] and create something amazing rightnow!
+
 # Apollo Device
 
-__Apollo Device__ is the official SDK for hardware that utilizes _Apollo_ API to authenticate and connect it to __[Grandeur Cloud][Grandeur Cloud]__.
+**Apollo Device** is the official SDK for hardware that utilizes _Apollo_ API to authenticate and connect it to **[Grandeur Cloud][Grandeur Cloud]**.
 
-_**NOTE**_: Currently, __Apollo Device__ SDK is available only for Arduino IDE.
+_**NOTE**_ : Currently, **Apollo Device** SDK is available only for Arduino IDE.
+
+# List of Contents
+- [Get Started](#get-started)
+- [Documentation](#documentation)
+  * [init](#init)
+  * [getSSID](#getSSID)
+  * [getPassphrase](#getPassphrase)
+  * [getDeviceIP](#getDeviceIP)
+  * [update](#update)
+  * [getApiKey](#getApiKey)
+  * [getToken](#getToken)
+  * [onConnected](#onConnected)
+  * [onDisconnected](#onDisconnected)
+  * [getSummary](#getSummary)
+  * [getParms](#getParms)
+  * [setSummary](#setSummary)
+  * [setParms](#setParms)
+  * [subscribe](#subscribe)
+  * [unsubscribe](#unsubscribe)
+  * [](#)
+  * [](#)
+  * [](#)
+
+   
+
+
+
 
 ## A Peek into Grandeur's Ecosystem
 
@@ -10,7 +41,7 @@ _**NOTE**_: Currently, __Apollo Device__ SDK is available only for Arduino IDE.
 
 ### Project
 
-A _project_ is the most top level entity in __[Grandeur Cloud][Grandeur Cloud]__. It defines an isolated ecosystem for all your nodes (Users and devices), which means no node in one project can be related to or interact with any node of some other project.
+A _project_ is the most top level entity in **[Grandeur Cloud][Grandeur Cloud]**. It defines an isolated ecosystem for all your nodes (Users and devices), which means no node in one project can be related to or interact with any node of some other project.
 
 Each project is identified by a unique string of characters. We call it the [API Key][api key].
 
@@ -20,13 +51,13 @@ A project can have any number of consumers and devices, interconnected in any nu
 
 ### API key
 
-_API Key_ is a unique string of characters, generated when you create a new _[project][project]_ on __[Grandeur Cloud][Grandeur cloud]__. It is an identifier for the _project_ you request to interact with.
+_API Key_ is a unique string of characters, generated when you create a new _[project][project]_ on **[Grandeur Cloud][Grandeur cloud]**. It is an identifier for the _project_ you request to interact with.
 
 Each node that belongs to project A must send project A's _API Key_ with every request to be able to interact with project A's ecosystem.
 
 ### User
 
-A _user_ is an entity that creates, develops and maintains one or more _[projects][project]_ on __[Grandeur Cloud][Grandeur Cloud]__. It's the admin of the _project_ and has the full authority to monitor and control all its _projects_ from [Grandeur Dashboard][grandeur dashboard].
+A _user_ is an entity that creates, develops and maintains one or more _[projects][project]_ on **[Grandeur Cloud][Grandeur Cloud]**. It's the admin of the _project_ and has the full authority to monitor and control all its _projects_ from [Grandeur Dashboard][grandeur dashboard].
 
 A _user_ can create any number of _projects_ but a _project_ can have at the most one admin aka _user_.
 
@@ -48,7 +79,7 @@ Each node communicate with the other through a realtime _duplex_ channel.
 
 ### Duplex Channel
 
-__Duplex__ is the channel on which realtime communication is done between a node and _Apollo server_. An _interaction_ between two nodes happens through two _duplex_ channels, one between the source node and _Apollo server_ and the other between _Apollo server_ and destination node.
+**Duplex** is the channel on which realtime communication is done between a node and _Apollo server_. An _interaction_ between two nodes happens through two _duplex_ channels, one between the source node and _Apollo server_ and the other between _Apollo server_ and destination node.
 
 A _project_ can open as many _duplex_ channels as it needs.
 
@@ -96,19 +127,19 @@ Also, the app may also subscribe to _parms_ to get notification if and when the 
 
 ## Installation
 
-You can clone __Apollo Device SDK__ from [here][Apollo Device SDK].
+You can clone **Apollo Device SDK** from [here][Apollo Device SDK].
 
 ## Basics of Apollo Device
 
-__Apollo Device__ provides a global `apollo` object to interact with all functionalities of the SDK. All `apollo` variables are private and can be accessed and updated using `apollo` getters and setters.
+**Apollo Device** provides a global `apollo` object to interact with all functionalities of the SDK. All `apollo` variables are private and can be accessed and updated using `apollo` getters and setters.
 
 ### WiFi Connectivity of the Device
 
-__Apollo Device__ takes care of the WiFi connectivity of the device. You can either:
+**Apollo Device** takes care of the WiFi connectivity of the device. You can either:
 
-1. _provide_ __WiFi SSID__ and __Passphrase__ along with __API Key__ and __Auth Token__ while `apollo.init()`, in which case it starts trying to connect to the WiFi and then Duplex right away.
+1. _provide_ **WiFi SSID** and **Passphrase** along with **API Key** and **Auth Token** while `apollo.init()`, in which case it starts trying to connect to the WiFi and then Duplex right away.
 OR
-2. call `apollo.wifi.smartConfig()` to put device in [smart configuration][WiFi Smart Configuration] and provide __API Key__ and __Auth Token__ through `apollo.duplex.init()`.
+2. call `apollo.wifi.smartConfig()` to put device in [smart configuration][WiFi Smart Configuration] and provide **API Key** and **Auth Token** through `apollo.duplex.init()`.
 
 #### WiFi Smart Configuration
 
@@ -118,12 +149,12 @@ Smart configuration is a protocol by which you can configure the WiFi of your de
 
 /* HIDE THIS UNDER THE SHADOWS. NO DUPLEX EXISTS FROM NOW ON. */
 
-Duplex is the communication protocol by which a device makes realtime connection to _Apollo server_. __Apollo Device__ takes care of the duplex connectivity of the device. All you do is provide your _project's API Key_ and your _device's Auth Token_ while `apollo.init()` or later through `apollo.duplex.init()`. As soon as the WiFi gets connected, __Apollo Device__ begins trying to connect to _Apollo server_ using the _API Key_ and the _Auth Token_. When it connects, only then can it request to the _Apollo server_ to fetch, update or subscribe to any data of the device.
+Duplex is the communication protocol by which a device makes realtime connection to _Apollo server_. **Apollo Device** takes care of the duplex connectivity of the device. All you do is provide your _project's API Key_ and your _device's Auth Token_ while `apollo.init()` or later through `apollo.duplex.init()`. As soon as the WiFi gets connected, **Apollo Device** begins trying to connect to _Apollo server_ using the _API Key_ and the _Auth Token_. When it connects, only then can it request to the _Apollo server_ to fetch, update or subscribe to any data of the device.
 
 ### Payload
 
 /* REMOVE PAYLOAD */
-Serialized JSON packet from _Apollo server_ is parsed by __Apollo device__ into this special object. Payload is based on three parameters:
+Serialized JSON packet from _Apollo server_ is parsed by **Apollo device** into this special object. Payload is based on three parameters:
 
 * `numberOfKeys`
 * `keys`
@@ -226,7 +257,7 @@ void loop() {
 
 ### Subclasses
 
-_Apollo_ is the main class that wraps the whole functionality of __Apollo Device__ SDK. It classifies and exposes these functionalities through objects of these _three_ subclasses:
+_Apollo_ is the main class that wraps the whole functionality of **Apollo Device** SDK. It classifies and exposes these functionalities through objects of these _three_ subclasses:
 
 1. _WiFi class_: Provides methods to initialize WiFi connectivity and an interface to interact with WiFi configurations of the device.
 
@@ -246,16 +277,6 @@ _Apollo_, the global class, only provides one method:
 
 * [`init()`][apollo.init]: Method to initialize device's WiFi (SSID and Passphrase) and duplex configurations ( API Key and Auth Token ) in one go.
 
-
-
-#### WiFi Class
-
-`Apollo WiFi` subclass provides interface for WiFi related functions:
-
-* [`init()`][apollo.wifi.init]: Initializes WiFi configurations (SSID and Passphrase) of the device.
-
-* [`smartConfig()`][apollo.wifi.smartConfig]: Puts device in smart configuration mode.
-
 * [`getSSID()`][apollo.wifi.getSSID]: Gets WiFi SSID currently in use by the device.
 
 * [`getPassphrase()`][apollo.wifi.getPassphrase]: Gets WiFi Passphrase currently in use by the device.
@@ -265,8 +286,6 @@ _Apollo_, the global class, only provides one method:
 #### Duplex Class
 
 `Apollo Duplex` subclass provides interface to manage realtime connection to _Apollo server_:
-
-* [`init()`][apollo.duplex.init]: Initializes device's duplex configurations (API Key and Auth Token).
 
 * [`update()`][apollo.duplex.update]: Updates device's duplex buffer. This must be called in `loop()` and without being suspected to any kind of _delay_.
 
@@ -299,79 +318,97 @@ _Apollo_, the global class, only provides one method:
 /* PUT ALL THE METHODS UNDER THE DEVICE OBJECT */
 /* HIDE DUPLEX UNDER THE SHADOWS */
 
-### `apollo.init()`
+### Init
+> 
 
 Method to initialize device's WiFi (SSID and Passphrase) and duplex configurations (API Key and Auth Token) in one go.
 
-__Parameters__ `(Config {char* apiKey, char* token, char* ssid, char* passphrase})`
+**Parameters**  
 
-__Returns__ `void`
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Type</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>apiKey</td>
+    <td><em>char*</em></td>
+    <td>your valid API key.</td>
+  </tr>
+  <tr>
+    <td>token</td>
+    <td><em>char*</em></td>
+    <td>your auth token.</td>
+  </tr>
+  <tr>
+    <td>ssid</td>
+    <td><em>char*</em></td>
+    <td>your WIFI ssid.</td>
+  </tr>
+  <tr>
+    <td>passphrase</td>
+    <td><em>char*</em></td>
+    <td>your WIFI password.</td>
+  </tr>
+</table>
 
-#### Example
-
-### `apollo.wifi.init()`
-
-Initializes WiFi configurations (SSID and Passphrase) of the device.
-
-__Parameters__ `(WiFiConfig {char* ssid, char* passphrase})`
-
-__Returns__ `void`
 
 ### `apollo.wifi.smartConfig()`
 
 Puts device in smart configuration mode.
 
-__Parameters__ `(void)`
+**Parameters** `(void)`
 
-__Returns__ `void`
+**Returns** `void`
 
 ### `apollo.wifi.getSSID()`
 
 Gets WiFi SSID currently in use by the device.
 
-__Parameters__ `(void)`
+**Parameters** `(void)`
 
-__Returns__ `char* wifiSSID`
+**Returns** `char* wifiSSID`
 
 ### `apollo.wifi.getPassphrase()`
 
 Gets WiFi Passphrase currently in use by the device.
 
-__Parameters__ `(void)`
+**Parameters** `(void)`
 
-__Returns__ `char* wifiPassphrase`
+**Returns** `char* wifiPassphrase`
 
 ### `apollo.wifi.getDeviceIP()`
 
 Gets the dynamic IP allocated to the device after it's connected to WiFi.
 
-__Parameters__ `(void)`
+**Parameters** `(void)`
 
-__Returns__ `char* deviceIP`
+**Returns** `char* deviceIP`
 
 ### `apollo.duplex.init()`
 
 Initializes device's duplex configurations (API Key and Auth Token).
 
-__Parameters__ `(DuplexConfig {char* ssid, char* passphrase})`
+**Parameters** `(DuplexConfig {char* ssid, char* passphrase})`
 
-__Returns__ `char* wifiSSID`
+**Returns** `char* wifiSSID`
 
 ### `apollo.duplex.update()`
 
 Updates device's duplex buffer. This must be called in `loop()` and without being suspected to any kind of _delay_. This method is what receives and pushes messages to and from the duplex channel.
 
-__Parameters__ `(void)`
+**Parameters** `(void)`
 
-__Returns__ `void`
+**Returns** `void`
 
 ### `apollo.duplex.getApiKey()`
 
 Gets the API Key currently in use by the device for connecting to _Apollo server_.
 
-__Parameters__ `(void)`
+**Parameters** `(void)`
 
-__Returns__ `char* apiKey`
+**Returns** `char* apiKey`
 
 More on API key [here][apikey].
 
@@ -379,9 +416,9 @@ More on API key [here][apikey].
 
 Gets the Auth Token currently in use by the device for connecting to _Apollo server_.
 
-__Parameters__ `(void)`
+**Parameters** `(void)`
 
-__Returns__ `char* token`
+**Returns** `char* token`
 
 More on Auth token [here][token].
 
@@ -389,9 +426,9 @@ More on Auth token [here][token].
 
 Receives a function to call when the device successfully connects to _Apollo server_.
 
-__Parameters__ `(Callback callback)`
+**Parameters** `(Callback callback)`
 
-__Returns__ `void`
+**Returns** `void`
 
 More on Callback [here][callback].
 
@@ -399,9 +436,9 @@ More on Callback [here][callback].
 
 Receives a function to call when the device disconnects from _Apollo server_.
 
-__Parameters__ `(Callback callback)`
+**Parameters** `(Callback callback)`
 
-__Returns__ `void`
+**Returns** `void`
 
 More on Callback [here][callback].
 
@@ -409,9 +446,9 @@ More on Callback [here][callback].
 
 Getter method for device's [summary][summary].
 
-__Parameters__ `(void)`
+**Parameters** `(void)`
 
-__Returns__ `char* summary`
+**Returns** `char* summary`
 
 More on device Summary [here][summary].
 
@@ -419,9 +456,9 @@ More on device Summary [here][summary].
 
 Getter method for device's [parms][parms].
 
-__Parameters__ `(void)`
+**Parameters** `(void)`
 
-__Returns__ `char* parms`
+**Returns** `char* parms`
 
 More on device Parms [here][parms].
 
@@ -429,9 +466,9 @@ More on device Parms [here][parms].
 
 Setter method for device's [summary][summary].
 
-__Parameters__ `(Payload payload)`
+**Parameters** `(Payload payload)`
 
-__Returns__ `void`
+**Returns** `void`
 
 More on Payload [here][payload].
 
@@ -439,9 +476,9 @@ More on Payload [here][payload].
 
 Setter method for device's [parms][parms].
 
-__Parameters__ `(Payload payload)`
+**Parameters** `(Payload payload)`
 
-__Returns__ `void`
+**Returns** `void`
 
 More on Payload [here][payload].
 
@@ -449,9 +486,9 @@ More on Payload [here][payload].
 
 Method to subscribe a device [topic][topic].
 
-__Parameters__ `(Payload payload)`
+**Parameters** `(Payload payload)`
 
-__Returns__ `void`
+**Returns** `void`
 
 More on Payload [here][payload].
 
@@ -459,9 +496,9 @@ More on Payload [here][payload].
 
 Method to unsubscribe a device [topic][topic].
 
-__Parameters__ `(Payload payload)`
+**Parameters** `(Payload payload)`
 
-__Returns__ `void`
+**Returns** `void`
 
 More on Payload [here][payload].
 
