@@ -12,101 +12,23 @@ We are making it easier for you to build internet of things based smart products
 - [Get Started](#get-started)
 - [Documentation](#documentation)
   * [init](#init)
-  * [getSSID](#getSSID)
-  * [getPassphrase](#getPassphrase)
-  * [getDeviceIP](#getDeviceIP)
+  * [getSSID](#get-SSID)
+  * [getPassphrase](#get-Passphrase)
+  * [getDeviceIP](#get-DeviceIP)
   * [update](#update)
-  * [getApiKey](#getApiKey)
-  * [getToken](#getToken)
-  * [onConnected](#onConnected)
-  * [onDisconnected](#onDisconnected)
-  * [getSummary](#getSummary)
-  * [getParms](#getParms)
-  * [setSummary](#setSummary)
-  * [setParms](#setParms)
+  * [getApiKey](#get-Api-Key)
+  * [getToken](#get-Token)
+  * [onConnected](#on-Connected)
+  * [onDisconnected](#on-Disconnected)
+  * [getSummary](#get-Summary)
+  * [getParms](#get-Parms)
+  * [setSummary](#set-Summary)
+  * [setParms](#set-Parms)
   * [subscribe](#subscribe)
   * [unsubscribe](#unsubscribe)
+- [A peek into Grandeur Ecosystem](#)
 
    
-
-
-
-
-## A Peek into Grandeur's Ecosystem
-
-/* DESCRIPTION OF GRANDEUR CLOUD */
-
-### Project
-
-A *project* is the most top level entity in **[Grandeur Cloud][Grandeur Cloud]**. It defines an isolated ecosystem for all your nodes (Users and devices), which means no node in one project can be related to or interact with any node of some other project.
-
-Each project is identified by a unique string of characters. We call it the [API Key][api key].
-
-A project is created by a *[user][user]*.
-
-A project can have any number of consumers and devices, interconnected in any number of ways.
-
-### API key
-
-*API Key* is a unique string of characters, generated when you create a new *[project][project]* on **[Grandeur Cloud][Grandeur cloud]**. It is an identifier for the *project* you request to interact with.
-
-Each node that belongs to project A must send project A's *API Key* with every request to be able to interact with project A's ecosystem.
-
-### User
-
-A *user* is an entity that creates, develops and maintains one or more *[projects][project]* on **[Grandeur Cloud][Grandeur Cloud]**. It's the admin of the *project* and has the full authority to monitor and control all its *projects* from [Grandeur Dashboard][grandeur dashboard].
-
-A *user* can create any number of *projects* but a *project* can have at the most one admin aka *user*.
-
-### Consumer
-
-A *consumer* is the end user that uses the *user*'s product. It lives in the ecosystem aka project created by the *user*, and interacts with other nodes (devices and other consumers) of the *[project][project]*.
-
-### Device
-
-A *device* is the hardware product that a *consumer* can monitor and control. To be precise, there are some *device* variables that a *[consumer][consumer]* actually interacts with. These interactive variables are specified under *device*'s *[summary][summary]* and *[parms][parms]*.
-
-All the nodes in a *project* interact with each other through *[Apollo server][apollo server]*.
-
-### Apollo Server
-
-*Apollo server* is the central hub for all the communications happening among all the *[consumers][consumer]* and all the *[devices][device]* in all the *[projects][project]*. *Apollo server* is what isolates *projects* from each other, maintains *[duplex connection][duplex]* with all nodes, and routes messages among them.
-
-Each node communicate with the other through a realtime *duplex* channel.
-
-### Duplex Channel
-
-**Duplex** is the channel on which realtime communication is done between a node and *Apollo server*. An *interaction* between two nodes happens through two *duplex* channels, one between the source node and *Apollo server* and the other between *Apollo server* and destination node.
-
-A *project* can open as many *duplex* channels as it needs.
-
-### Auth Token
-
-*Auth Token* is an identification token that lets *Apollo server* identify who a node is in a *[project][project]*'s ecosystem.
-
-When a consumer logs in using its password, an *Auth token* is sent back to it. This *Auth token* along with the project's *[API key][apiKey]* is sent with every request made to *Apollo server* for the request to be considered valid.
-
-When a consumer *pairs* a device, a *device Auth token* is sent to the *[consumer][consumer]* who forwards it to the *[device][device]* to make the device live in the project.
-
-A *consumer* Auth token cannot be used in place of a device token or vice versa.
-
-### Device Summary
-
-Each device has some variables that a consumer might want to interact with (monitor or control).
-
-*Summary* includes those device variables which *are not directly controllable*. For example, in an air conditioner, the controllable variable is its state (ON/OFF) or the temperature dial you see on its display, while its voltage, current and power consumption would be non-controllable variables, thus opted to be under *summary*.
-
-### Device Parms
-
-*Parms* are *the directly controllable* variables. In the previous air conditioner example, its state and the temperature dial would be opted for *parms* category.
-
-### Subscription
-
-*Subscription* is the way by which a node in a consumer-device pair shows its interest in some device variables. Whenever an update occurs in those variables, the subscribing node is notified about it.
-
-### Topic
-
-*Topics* are the device *variables that can be [subscribed][subscription]*. For example, a *consumer* may want to be notified if air conditioner's power consumption changed or if a *device* turned off for some reason.
 
 ## A Quick Case Study
 
@@ -264,7 +186,7 @@ void loop() {
 
 You can access methods of these subclasses using dot notation on the global object `apollo`. For example, doing `apollo.wifi.METHOD`, you can access any method of WiFi class. Similarly, you can do `apollo.duplex.METHOD` and `apollo.device.METHOD` to access methods of duplex and device subclass respectively.
 
-A list of all the methods under these classes can be found [here][Methods].
+<!-- A list of all the methods under these classes can be found [here][Methods].
 
 ### Methods
 
@@ -308,12 +230,9 @@ A list of all the methods under these classes can be found [here][Methods].
 
 * [`subscribe()`][apollo.device.subscribe]: Method to subscribe a device [topic][topic].
 
-* [`unsubscribe()`][apollo.device.unsubscribe]: Method to unsubscribe a device [topic][topic].
+* [`unsubscribe()`][apollo.device.unsubscribe]: Method to unsubscribe a device [topic][topic]. -->
 
 ## Documentation
-
-/* PUT ALL THE METHODS UNDER THE DEVICE OBJECT */
-/* HIDE DUPLEX UNDER THE SHADOWS */
 
 ### Init
 > init ( ) : returns *void*
@@ -453,12 +372,88 @@ Method to subscribe a device [topic][topic].
 
 More on Payload [here][payload].
 
-### Unsubscribe()`
+### Unsubscribe
 > unsubscribe (payload : *Payload*) : returns *void*   
 
 Method to unsubscribe a device [topic][topic].
 
-More on Payload [here][payload].
+More on Payload [here][payload].  
+
+
+## A Peek into Grandeur's Ecosystem
+
+### Project
+
+A *project* is the most top level entity in **[Grandeur Cloud][Grandeur Cloud]**. It defines an isolated ecosystem for all your nodes (Users and devices), which means no node in one project can be related to or interact with any node of some other project.
+
+Each project is identified by a unique string of characters. We call it the [API Key][api key].
+
+A project is created by a *[user][user]*.
+
+A project can have any number of consumers and devices, interconnected in any number of ways.
+
+### API key
+
+*API Key* is a unique string of characters, generated when you create a new *[project][project]* on **[Grandeur Cloud][Grandeur cloud]**. It is an identifier for the *project* you request to interact with.
+
+Each node that belongs to project A must send project A's *API Key* with every request to be able to interact with project A's ecosystem.
+
+### User
+
+A *user* is an entity that creates, develops and maintains one or more *[projects][project]* on **[Grandeur Cloud][Grandeur Cloud]**. It's the admin of the *project* and has the full authority to monitor and control all its *projects* from [Grandeur Dashboard][grandeur dashboard].
+
+A *user* can create any number of *projects* but a *project* can have at the most one admin aka *user*.
+
+### Consumer
+
+A *consumer* is the end user that uses the *user*'s product. It lives in the ecosystem aka project created by the *user*, and interacts with other nodes (devices and other consumers) of the *[project][project]*.
+
+### Device
+
+A *device* is the hardware product that a *consumer* can monitor and control. To be precise, there are some *device* variables that a *[consumer][consumer]* actually interacts with. These interactive variables are specified under *device*'s *[summary][summary]* and *[parms][parms]*.
+
+All the nodes in a *project* interact with each other through *[Apollo server][apollo server]*.
+
+### Apollo Server
+
+*Apollo server* is the central hub for all the communications happening among all the *[consumers][consumer]* and all the *[devices][device]* in all the *[projects][project]*. *Apollo server* is what isolates *projects* from each other, maintains *[duplex connection][duplex]* with all nodes, and routes messages among them.
+
+Each node communicate with the other through a realtime *duplex* channel.
+
+### Duplex Channel
+
+**Duplex** is the channel on which realtime communication is done between a node and *Apollo server*. An *interaction* between two nodes happens through two *duplex* channels, one between the source node and *Apollo server* and the other between *Apollo server* and destination node.
+
+A *project* can open as many *duplex* channels as it needs.
+
+### Auth Token
+
+*Auth Token* is an identification token that lets *Apollo server* identify who a node is in a *[project][project]*'s ecosystem.
+
+When a consumer logs in using its password, an *Auth token* is sent back to it. This *Auth token* along with the project's *[API key][apiKey]* is sent with every request made to *Apollo server* for the request to be considered valid.
+
+When a consumer *pairs* a device, a *device Auth token* is sent to the *[consumer][consumer]* who forwards it to the *[device][device]* to make the device live in the project.
+
+A *consumer* Auth token cannot be used in place of a device token or vice versa.
+
+### Device Summary
+
+Each device has some variables that a consumer might want to interact with (monitor or control).
+
+*Summary* includes those device variables which *are not directly controllable*. For example, in an air conditioner, the controllable variable is its state (ON/OFF) or the temperature dial you see on its display, while its voltage, current and power consumption would be non-controllable variables, thus opted to be under *summary*.
+
+### Device Parms
+
+*Parms* are *the directly controllable* variables. In the previous air conditioner example, its state and the temperature dial would be opted for *parms* category.
+
+### Subscription
+
+*Subscription* is the way by which a node in a consumer-device pair shows its interest in some device variables. Whenever an update occurs in those variables, the subscribing node is notified about it.
+
+### Topic
+
+*Topics* are the device *variables that can be [subscribed][subscription]*. For example, a *consumer* may want to be notified if air conditioner's power consumption changed or if a *device* turned off for some reason.
+
 
 [Grandeur Cloud]: https://cloud.grandeur.tech "Grandeur Cloud"
 [Apollo Device SDK]: https://gitlab.com/grandeurtech/apollo-device "Apollo Device"
