@@ -26,7 +26,7 @@
 #include <functional>
 #endif
 
-#define DEBUG_ESP_PORT Serial
+//#define DEBUG_ESP_PORT Serial
 
 #ifndef NODEBUG_DUPLEX
 #ifdef DEBUG_ESP_PORT

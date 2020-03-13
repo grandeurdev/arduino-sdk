@@ -13,13 +13,13 @@
 #define IP_SIZE 16
 #define FINGERPRINT_SIZE 256
 
-// Ping interval
-#define PING_INTERVAL 5
+// Ping interval in milliseconds
+#define PING_INTERVAL 25000
 
 // Defining macros for Apollo states
 #define WIFI_NOT_CONNECTED 0
 #define WIFI_CONNECTED 1
-#define DUPLEX_CONNECTED 2
+#define APOLLO_CONNECTED 2
 
 // Indexes for functions in eventQueue
 #define LOGOUT 0

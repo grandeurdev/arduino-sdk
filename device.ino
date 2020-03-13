@@ -1,5 +1,4 @@
 #include "Apollo.h"
-#include "Ticker.h"
 
 char* deviceID = "ck73ngond000338tkbzhlfx4r";
 char* apiKey = "ck412ssij0007xr239uos8jfk";
@@ -7,63 +6,69 @@ char* token = "eyJ0b2tlbiI6ImV5SmhiR2NpT2lKSVV6STFOaUlzSW5SNWNDSTZJa3BYVkNKOS5le
 char* ssid = "planx";
 char* passphrase = "PlanX@12345";
 
+ApolloDevice* device;
+
 void getSummary() {
     // Requesting for summary of the device
-    char* keys[] = {"voltage"};
-    char* values[1];
-    Payload* feedOut = new Payload(1, keys, values);
-    apollo.device.getSummary(feedOut, [](Payload* payload) {
-        for(int i = 0; i < payload->numberOfKeys; i++) {
-            Serial.printf("%s: %s\n", payload->keys[i], payload->values[i]);
-        }
+    char payload[128];
+    sprintf(payload, "{\"deviceID\": \"%s\"}", deviceID);
+    device->getSummary(payload, [](unsigned char* payload) {
+        Serial.printf("Response: %s\n", payload);
     });
-    delete feedOut;
 }
 
 void getParms() {
     // Requesting for parms of the device
-    char* keys[] = {"voltage"};
-    char* values[1];
-    Payload* feedOut = new Payload(1, keys, values);
-    apollo.device.getParms(feedOut, [](Payload* payload) {
-        for(int i = 0; i < payload->numberOfKeys; i++) {
-            Serial.printf("%s: %s\n", payload->keys[i], payload->values[i]);
-        }
+    char payload[128];
+    sprintf(payload, "{\"deviceID\": \"%s\"}", deviceID);
+    device->getParms(payload, [](unsigned char* payload) {
+        Serial.printf("Response: %s\n", payload);
     });
-    delete feedOut;
 }
 
 void setSummary() {
     // Setting summary of the device
-    char* keys[] = {"deviceID","voltage", "current"};
-    char* values[] = {deviceID, "100", "15"};
-    Payload* summary = new Payload(3, keys, values);
-    
-    char* keys[] = {"code"};
-    char* values[1];
-    Payload* feedOut = new Payload(1, keys, values);
-    // Requesting for parms of the device
-    apollo.device.setSummary(summary, feedOut, [](Payload* payload) {
-        for(int i = 0; i < payload->numberOfKeys; i++) {
-            Serial.printf("%s: %s\n", payload->keys[i], payload->values[i]);
-        }
+    char payload[128];
+    sprintf(payload, "{\"deviceID\": \"%s\", \"summary\": {\"voltage\": 10, \"current\": 20}}", deviceID);
+    device->setSummary(payload, [](unsigned char* payload) {
+        Serial.printf("Response: %s\n", payload);
     });
-    delete summary;
 }
+
+void setParms() {
+    // Setting parms of the device
+    char payload[128];
+    sprintf(payload, "{\"deviceID\": \"%s\", \"parms\": {\"state\": 50}}", deviceID);
+    device->setParms(payload, [](unsigned char* payload) {
+        Serial.printf("Response: %s\n", payload);
+    });
+}
+
+unsigned long current;
+int startSending = false;
 
 void setup() {
     // Begining serial communication
     Serial.begin(9600);
     // Begining apollo
-    apollo.init(deviceID, apiKey, token, ssid, passphrase);
-    //ticker.attach(5, setSummary);
+    device = apollo.init(deviceID, apiKey, token, ssid, passphrase);
+
+    device->onApolloConnected([](unsigned char* message) {
+        current = millis();
+    });
 }
 
 void loop() {
-    if(apollo.getState() == "WIFI_NOT_CONNECTED") {
-        // If WiFI is not connected
-        Serial.println("WIFI IS NOT CONNECTED");
+    if(device->getState() == APOLLO_CONNECTED) {
+        if(millis() - current >= 5000) {
+            getSummary();
+            getParms();
+            setSummary();
+            setParms();
+
+            current = millis();
+        }
     }
     // If WiFi is connected, listen for messages
-    apollo.update();
+    device->update();
 }
