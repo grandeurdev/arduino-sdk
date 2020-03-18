@@ -9,6 +9,7 @@ Callback ApolloDevice::_handlers[16] = {};
 EventTable ApolloDevice::_eventsTable;
 Config* config;
 ApolloDevice::PayloadHandler ApolloDevice::_format;
+char ApolloDevice::_deviceIP[IP_SIZE] = "";
 
 
 /* EVENT HANDLER FUNCTIONS */
@@ -104,7 +105,9 @@ char* ApolloDevice::getPassphrase(void) {
 }
 
 char* ApolloDevice::getDeviceIP(void) {
-    WiFi.localIP().toString().toCharArray(_deviceIP, IP_SIZE);
+    if(_state != WIFI_NOT_CONNECTED) {
+        WiFi.localIP().toString().toCharArray(_deviceIP, IP_SIZE);
+    }
     return _deviceIP;
 }
 
