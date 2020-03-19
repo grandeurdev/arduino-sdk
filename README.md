@@ -592,7 +592,7 @@ void loop() {
 
 > getApiKey ( ) : returns _char*_
 
- Gets the [API Key][apikey] currently in use by the device for connecting to *Apollo server*. This method is what receives and pushes messages to and from the duplex channel.
+ Gets the [API Key][apikey] currently in use by the device for connecting to Grandeur Cloud. This method is what receives and pushes messages to and from the duplex channel.
 
 #### Example
 
