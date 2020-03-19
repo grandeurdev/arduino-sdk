@@ -376,7 +376,8 @@ More on Callback [here][callback].
 void setup() {
   ApolloDevice apolloDevice = apollo.init(YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
 
-  /* Passing the callback as lambda function. You can pass any function here as long as it accepts a "char*" string as parameter and returns "void", e.g., a function of the form:
+  /* Passing the callback as lambda function. You can pass any function here as long as it
+    accepts a "char*" string as parameter and returns "void", e.g., a function of the form:
 
     void callbackFunction(char* string) {}
 
