@@ -297,9 +297,9 @@ You can access methods of these subclasses using dot notation on the global obje
 
 ## Documentation
 
-### Init
+### Apollo Init
 
-> init() : returns *void*
+> init ( ) : returns _void_
 
 Method to initialize device's WiFi (SSID and Passphrase) and duplex configurations (API Key and Auth Token) in one go.
 
@@ -334,9 +334,9 @@ void loop() {
 
 > update ( ) : returns _char*_
 
-Updates device's TCP buffer. This must be called in `loop()` and without being suspected to any kind of *delay*. This method is what pulls and pushes messages to and from the duplex channel. Any kind of *delay* in `loop()` would cause delay in pushing the request and pulling the response to and from the server.
+Updates device's TCP buffer. This must be called in `loop()` and without being suspected to any kind of *delay*. This method is what pulls and pushes messages to and from the TCP channel. Any kind of *delay* in `loop()` would cause delay in pushing the request and pulling the response to and from the server.
 
-[Here][Using Millis Instead of Delay] is how you can use `millis()` instead of `delay()` if you want a function to run after every few moments.
+> [Here][Using Millis Instead of Delay] is how you can use `millis()` instead of `delay()` if you want a function to run after every few moments.
 
 #### Example
 
