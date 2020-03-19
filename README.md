@@ -385,14 +385,15 @@ void setup() {
   apolloDevice.onApolloConnected([]() {
     std::cout<<"Device Connected!\n";
   });
-  /***RESULT**
-    Prints "Device Connected" on the stdout when device makes a successful connection to Grandeur Cloud
-  */
 }
 
 void loop() {
   apolloDevice.update();
 }
+
+/***RESULT**
+  Prints "Device Connected" on the stdout when device makes a successful connection to Grandeur Cloud
+*/
 ```
 
 ### On Apollo Disconnected
@@ -424,14 +425,15 @@ void setup() {
   apolloDevice.onApolloDisconnected([]() {
     std::cout<<"Device Disconnected!\n";
   });
-  /***RESULT**
-    Prints "Device Disconnected" on the stdout when device disconnects from Grandeur Cloud
-  */
 }
 
 void loop() {
   apolloDevice.update();
 }
+
+/***RESULT**
+  Prints "Device Disconnected" on the stdout when device disconnects from Grandeur Cloud
+*/
 ```
 
 ### Get State
@@ -471,8 +473,8 @@ void loop() {
 
 /***RESULT**
   In the beginning, getState() returns 0. When WiFi is connected, getState() returns 1.
-    When the device is connected to the server, getState() returns 2.
-    For readability, you can use the above macros. They respectively expand to these integer values.  
+  When the device is connected to the server, getState() returns 2.
+  For readability, you can use the above macros. They respectively expand to these integer values.  
 */
 ```
 
@@ -506,7 +508,8 @@ void loop() {
 
 /***RESULT**
   In the beginning, "WIFI_NOT_CONNECTED" is printed to the stdout. When the WiFi is
-    connected, "WIFI_CONNECTED" begins appearing on the screen. And it quickly changes to "APOLLO_CONNECTED" when the device makes a successful connection to Grandeur Cloud.
+  connected, "WIFI_CONNECTED" begins appearing on the screen. And it quickly changes to
+  "APOLLO_CONNECTED" when the device makes a successful connection to Grandeur Cloud.
 */
 ```
 
@@ -645,9 +648,16 @@ void loop() {
 
 ### Get Summary
 
-> getSummary ( ) returns _char*_
+> getSummary (deviceID: _char*_, callback: _Callback_) returns _char*_
 
 Getter method for device's [summary][summary].
+
+#### Parameters
+
+| Name        | Type       | Description                                                              |
+|-------------|------------|--------------------------------------------------------------------------|
+| deviceID    | _char*_    | A string containing a stringified object containing the device ID        |
+| callback    | _Callback_ | A function to be called when device disconnects to Grandeur Cloud        |
 
 #### Example
 
@@ -678,9 +688,16 @@ void loop() {
 
 ### Get Parms  
 
-> getParms ( ) returns _char*_
+> getParms (deviceID: _char*_, callback: _Callback_) returns _char*_
 
 Getter method for device's [parms][parms].
+
+#### Parameters
+
+| Name        | Type       | Description                                                              |
+|-------------|------------|--------------------------------------------------------------------------|
+| deviceID    | _char*_    | A string containing a stringified object containing the device ID        |
+| callback    | _Callback_ | A function to be called when device disconnects to Grandeur Cloud        |
 
 #### Example
 
@@ -712,9 +729,16 @@ void loop() {
 
 ### Set Summary
 
-> setSummary (summary : _char*_) : returns _void_
+> setSummary (summary : _char*_, callback: _Callback_) : returns _void_
 
 Setter method for device's [summary][summary].
+
+#### Parameters
+
+| Name        | Type       | Description                                                                                |
+|-------------|------------|--------------------------------------------------------------------------------------------|
+| summary     | _char*_    | A string containing a stringified object containing the device ID and the new summary data |
+| callback    | _Callback_ | A function to be called when device disconnects to Grandeur Cloud                          |
 
 #### Example
 
@@ -743,23 +767,18 @@ void loop() {
 */
 ```
 
-#### Parameters
-
-| Name        | Type       | Description                                                              |
-|-------------|------------|--------------------------------------------------------------------------|
-| summary     | _char*_    | A string containing a stringified object containing the new summary data |
-
 ### Set Parms
 
-> setParms (parms : _char*_) : returns _void_  
+> setParms (parms : _char*_, callback: _Callback_) : returns _void_  
 
 Setter method for device's [parms][parms].
 
 #### Parameters
 
-| Name        | Type       | Description                                                              |
-|-------------|------------|--------------------------------------------------------------------------|
-| parms       | _char*_    | A string containing a stringified object containing the new parms data   |
+| Name        | Type       | Description                                                                                |
+|-------------|------------|--------------------------------------------------------------------------------------------|
+| parms       | _char*_    | A string containing a stringified object containing the device ID and the new parms data   |
+| callback    | _Callback_ | A function to be called when device disconnects to Grandeur Cloud                          |
 
 #### Example
 
