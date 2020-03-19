@@ -327,7 +327,7 @@ void loop() {
 }
 
 /***RESULT**
-Device begins connecting to WiFi and then Grandeur Cloud right away.
+  Device begins connecting to WiFi and then Grandeur Cloud right away.
 */
 ```
 
@@ -350,7 +350,8 @@ void loop() {
   /* Calling the update() function in loop()
   */
   apolloDevice.update();  
-  /* Updates the TCP buffer every time loop() gets executed
+  /***RESULT**
+    Updates the TCP buffer every time loop() gets executed
   */
 }
 ```
@@ -383,7 +384,8 @@ void setup() {
   apolloDevice.onApolloConnected([]() {
     std::cout<<"Device Connected!\n";
   });
-  /* Prints "Device Connected" on the stdout when device makes a successful connection to Grandeur Cloud
+  /***RESULT**
+    Prints "Device Connected" on the stdout when device makes a successful connection to Grandeur Cloud
   */
 }
 
@@ -420,7 +422,8 @@ void setup() {
   apolloDevice.onApolloDisconnected([]() {
     std::cout<<"Device Disconnected!\n";
   });
-  /* Prints "Device Disconnected" on the stdout when device disconnects from Grandeur Cloud
+  /***RESULT**
+    Prints "Device Disconnected" on the stdout when device disconnects from Grandeur Cloud
   */
 }
 
@@ -464,8 +467,9 @@ void loop() {
   apolloDevice.update();
 }
 
-/* In the beginning, getState() returns 0. When WiFi is connected, getState() returns 1. When the device is connected to the server, getState() returns 2.
-For readability, you can use the above macros. They respectively expand to these integer values.  
+/***RESULT**
+  In the beginning, getState() returns 0. When WiFi is connected, getState() returns 1. When the device is connected to the server, getState() returns 2.
+  For readability, you can use the above macros. They respectively expand to these integer values.  
 */
 ```
 
@@ -496,7 +500,8 @@ void loop() {
   apolloDevice.update();
 }
 
-/* In the beginning, "WIFI_NOT_CONNECTED" is printed to the stdout. When the WiFi is connected, "WIFI_CONNECTED" begins appearing on the screen. And it quickly changes to "APOLLO_CONNECTED" when the device makes a successful connection to Grandeur Cloud.
+/***RESULT**
+  In the beginning, "WIFI_NOT_CONNECTED" is printed to the stdout. When the WiFi is connected, "WIFI_CONNECTED" begins appearing on the screen. And it quickly changes to "APOLLO_CONNECTED" when the device makes a successful connection to Grandeur Cloud.
 */
 ```
 
@@ -521,7 +526,8 @@ void loop() {
   apolloDevice.update();
 }
 
-/* Keeps printing the WiFi SSID in loop.
+/***RESULT**
+  Keeps printing the WiFi SSID in loop.
 */
 ```
 
@@ -546,7 +552,8 @@ void loop() {
   apolloDevice.update();
 }
 
-/* Keeps printing the WiFi Passphrase in loop.
+/***RESULT**
+  Keeps printing the WiFi Passphrase in loop.
 */
 ```
 
@@ -571,7 +578,8 @@ void loop() {
   apolloDevice.update();
 }
 
-/* Starts printing the IP address of the device after the device connects to WiFi.
+/***RESULT**
+  Starts printing the IP address of the device after the device connects to WiFi.
 */
 ```
 
@@ -596,7 +604,8 @@ void loop() {
   apolloDevice.update();
 }
 
-/* Keeps printing the API Key in loop.
+/***RESULT**
+  Keeps printing the API Key in loop.
 */
 ```
 
@@ -621,7 +630,8 @@ void loop() {
   apolloDevice.update();
 }
 
-/* Keeps printing the Access Token in loop.
+/***RESULT**
+  Keeps printing the Access Token in loop.
 */
 ```
 
@@ -651,7 +661,8 @@ void loop() {
   apolloDevice.update();
 }
 
-/* Prints the outputPacket containing the summary (Or just an error code and message in case) of the device as soon as it gets getSummary response from the server
+/***RESULT**
+  Prints the outputPacket containing the summary (Or just an error code and message in case) of the device as soon as it gets getSummary response from the server
 */
 ```
 
@@ -681,7 +692,8 @@ void loop() {
   apolloDevice.update();
 }
 
-/* Prints the outputPacket containing the parms (Or just an error code and message in case) of the device as soon as it gets getParms response from the server
+/***RESULT**
+  Prints the outputPacket containing the parms (Or just an error code and message in case) of the device as soon as it gets getParms response from the server
 */
 ```
 
@@ -711,7 +723,8 @@ void loop() {
   apolloDevice.update();
 }
 
-/* Prints the outputPacket containing the SUMMARY-UPDATED code in response (Or an error code and message in case) as soon as it gets it from the server
+/***RESULT**
+  Prints the outputPacket containing the SUMMARY-UPDATED code in response (Or an error code and message in case) as soon as it gets it from the server
 */
 ```
 
@@ -754,7 +767,8 @@ void loop() {
   apolloDevice.update();
 }
 
-/* Prints the outputPacket containing the PARMS-UPDATED code in response (Or an error code and message in case) as soon as it gets it from the server
+/***RESULT**
+  Prints the outputPacket containing the PARMS-UPDATED code in response (Or an error code and message in case) as soon as it gets it from the server
 */
 ```
 
