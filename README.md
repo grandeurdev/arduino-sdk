@@ -239,69 +239,17 @@ void loop() {}
 
 ### Subclasses
 
-*Apollo* is the main class that wraps the whole functionality of **Apollo Device** SDK. It classifies and exposes these functionalities through objects of these *three* subclasses:
+`ApolloDevice` is the class that wraps the whole functionality of **Apollo Device** SDK. You get the object of this class when you initialize apollo configurations using `apollo.init()`.
 
-1. *WiFi class*: Provides methods to initialize WiFi connectivity and an interface to interact with WiFi configurations of the device.
-
-2. *Duplex class*: Provides methods to initialize Duplex connectivity, set listeners to events related to duplex connectivity or triggered by *Apollo server*.
-
-3. *Device class*: Provides methods to interact with device's own parameters.
-
-You can access methods of these subclasses using dot notation on the global object `apollo`. For example, doing `apollo.wifi.METHOD`, you can access any method of WiFi class. Similarly, you can do `apollo.duplex.METHOD` and `apollo.device.METHOD` to access methods of duplex and device subclass respectively.
-
-<!-- A list of all the methods under these classes can be found [here][Methods].
-
-### Methods
-
-#### Apollo Class
-
-*Apollo*, the global class, only provides one method:
-
-* [`init()`][apollo.init]: Method to initialize device's WiFi (SSID and Passphrase) and duplex configurations ( API Key and Auth Token ) in one go.
-
-* [`getSSID()`][apollo.wifi.getSSID]: Gets WiFi SSID currently in use by the device.
-
-* [`getPassphrase()`][apollo.wifi.getPassphrase]: Gets WiFi Passphrase currently in use by the device.
-
-* [`getDeviceIP()`][apollo.wifi.getDeviceIP]: Gets the dynamic IP allocated to the device after it's connected to WiFi.
-
-#### Duplex Class
-
-`Apollo Duplex` subclass provides interface to manage realtime connection to *Apollo server*:
-
-* [`update()`][apollo.duplex.update]: Updates device's duplex buffer. This must be called in `loop()` and without being suspected to any kind of *delay*.
-
-* [`getApiKey()`][apollo.duplex.getApiKey]: Gets the API Key currently in use by the device for connecting to *Apollo server*. This method is what receives and pushes messages to and from the duplex channel.
-
-* [`getToken()`][apollo.duplex.getToken]: Gets the Auth Token currently in use by the device for connecting to *Apollo server*.
-
-* [`onConnected()`][apollo.duplex.onConnected]: Receives a function to call when the device successfully connects to *Apollo server*.
-
-* [`onDisconnected()`][apollo.duplex.onDisconnected]: Receives a function to call when the device disconnects from *Apollo server*.
-
-#### Device Class
-
-`Apollo Device` subclass provides methods to interact with device's data on *Apollo server*:
-
-* [`getSummary()`][apollo.device.getSummary]: Getter method for device's [summary][summary].
-
-* [`getParms()`][apollo.device.getParms]: Getter method for device's [parms][parms].
-
-* [`setSummary()`][apollo.device.setSummary]: Setter method for device's [summary][summary].
-
-* [`setParms()`][apollo.device.setParms]: Setter method for device's [parms][parms].
-
-* [`subscribe()`][apollo.device.subscribe]: Method to subscribe a device [topic][topic].
-
-* [`unsubscribe()`][apollo.device.unsubscribe]: Method to unsubscribe a device [topic][topic]. -->
+You can access all the __Apollo Device__ functions using the object of `ApolloDevice` class.
 
 ## Documentation
 
 ### Apollo Init
 
-> init ( ) : returns _void_
+> apollo.init (apiKey: _char*_, token: _char*_, ssid: _char*_, passphrase: _char*_) : returns _void_
 
-Method to initialize device's WiFi (SSID and Passphrase) and duplex configurations (API Key and Auth Token) in one go.
+Method to initialize apollo configurations (SSID, Passphrase, API Key and Auth Token) in one go.
 
 #### Parameters
 
@@ -438,7 +386,7 @@ void loop() {
 
 ### Get State
 
-> getState ( ) returns _int_
+> getState ( ) : returns _int_
 
 Gets the current state of the device. State of the device can be one of the following:
 
@@ -480,7 +428,7 @@ void loop() {
 
 ### Get Stringified State
 
-> getStringifiedState ( ) returns _char*_
+> getStringifiedState ( ) : returns _char*_
 
 Gets the current state of the device as a string.
 
@@ -515,7 +463,7 @@ void loop() {
 
 ### Get SSID
 
-> getSSID ( ) returns _char*_
+> getSSID ( ) : returns _char*_
 
 Gets WiFi SSID currently in use by the device.
 
@@ -541,7 +489,7 @@ void loop() {
 
 ### Get Passphrase
 
-> getPassphrase ( ) returns _char*_
+> getPassphrase ( ) : returns _char*_
 
 Gets WiFi Passphrase currently in use by the device.
 
@@ -648,7 +596,7 @@ void loop() {
 
 ### Get Summary
 
-> getSummary (deviceID: _char*_, callback: _Callback_) returns _char*_
+> getSummary (deviceID: _char*_, callback: _Callback_) : returns _char*_
 
 Getter method for device's [summary][summary].
 
@@ -688,7 +636,7 @@ void loop() {
 
 ### Get Parms  
 
-> getParms (deviceID: _char*_, callback: _Callback_) returns _char*_
+> getParms (deviceID: _char*_, callback: _Callback_) : returns _char*_
 
 Getter method for device's [parms][parms].
 
