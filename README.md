@@ -592,7 +592,7 @@ void loop() {
 
 > getApiKey ( ) : returns _char*_
 
- Gets the [API Key][apikey] currently in use by the device for connecting to Grandeur Cloud. This method is what receives and pushes messages to and from the duplex channel.
+ Gets the [API Key][apikey] currently in use by the device for connecting to Grandeur Cloud.
 
 #### Example
 
@@ -619,7 +619,7 @@ void loop() {
 
 > getToken ( ) : returns _char*_
 
-Gets the [access token][token] currently in use by the device for connecting to Grandeur Cloud.
+Gets the [access token][auth token] currently in use by the device for connecting to Grandeur Cloud.
 
 #### Example
 
@@ -867,6 +867,9 @@ Each device has some variables that a consumer might want to interact with (moni
 [Grandeur Cloud Sign Up]: https://cloud.grandeur.tech/register "Sign up on Grandeur Cloud"
 [Get Started With Grandeur Cloud]: https://github.com/grandeurtech/grandeurcloud-js-sdk#get-started "Get Started With Grandeur Cloud"
 [Grandeur Cloud Pricing]: https://grandeur.tech/pricing "Pricing"
+
+[Documentation]: #documentation "Documentation"
+[Ecosystem]: #grandeur-ecosystem "Grandeur Ecosystem"
 
 [SolDrive]: https://sol-drive.com/ "SolDrive"
 
