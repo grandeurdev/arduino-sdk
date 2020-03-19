@@ -10,38 +10,29 @@ EventTable ApolloDevice::_eventsTable;
 Config* config;
 ApolloDevice::PayloadHandler ApolloDevice::_format;
 char ApolloDevice::_deviceIP[IP_SIZE] = "";
+ApolloDevice apolloDevice;
 
+void initializeWiFi(void);
+void initializeDuplex(void);
 
 /* EVENT HANDLER FUNCTIONS */
 WiFiEventHandler onWiFiConnectedHandler;
 WiFiEventHandler onWiFiDisconnectedHandler;
 
-ApolloDevice* Apollo::init(char* deviceID, char* apiKey, char* token, char* ssid, char* passphrase) {
+ApolloDevice Apollo::init(char* deviceID, char* apiKey, char* token, char* ssid, char* passphrase) {
     // Setting Apollo config
     config = new Config(deviceID, apiKey, token, ssid, passphrase);
-    return new ApolloDevice();
-}
 
-ApolloDevice::ApolloDevice() {
     // Initializing wifi
     initializeWiFi();
     
-    // Initializing duplex connection
-    duplexClient.begin(APOLLO_URL, APOLLO_PORT, "/?type=device&apiKey=" + String(config->apiKey) + "&token=" + String(config->token), "node");
-    //client.beginSSL(APOLLO_URL, APOLLO_PORT, "/?type=device&apiKey=" + String(config->apiKey) + "&token=" + String(config->token), APOLLO_FINGERPRINT, "node");
-    // Setting up event handler
-    duplexClient.onEvent(&apolloEventHandler);
-    // Scheduling reconnect every 5 seconds if it disconnects
-    duplexClient.setReconnectInterval(5000);
+    // Initializing Duplex connection
+    initializeDuplex();
 
-    // Setting up device connection event handlers
-    onApolloConnected([](uint8_t* message) {
-        Serial.println("\n*** APOLLO CONNECTED ***\n");
-    });
-    onApolloDisconnected([](uint8_t* message) {
-        Serial.println("\n*** APOLLO DISCONNECTED ***\n");
-    });
+    return apolloDevice;
 }
+
+ApolloDevice::ApolloDevice() {}
 
 
 void ApolloDevice::getSummary(char* payload, Callback callback) {
@@ -194,7 +185,7 @@ void ApolloDevice::onApolloDisconnected(Callback receiver) {
     _handlers[ONDISCONNECTED] = receiver;
 }
 
-void ApolloDevice::initializeWiFi(void) {
+void initializeWiFi(void) {
     // Disconnect WiFi if it"s already connected
     WiFi.disconnect();
     // Set WiFi mode to Station
@@ -203,8 +194,25 @@ void ApolloDevice::initializeWiFi(void) {
     Serial.printf("\n*** Connecting to WiFi %s using passphrase %s ***\n", config->ssid, config->passphrase);
     WiFi.begin(config->ssid, config->passphrase);
     // Setting WiFi event handlers
-    onWiFiConnectedHandler = WiFi.onStationModeConnected(&onWiFiConnected);
-    onWiFiDisconnectedHandler = WiFi.onStationModeDisconnected(&onWiFiDisconnected);
+    onWiFiConnectedHandler = WiFi.onStationModeConnected(&apolloDevice.onWiFiConnected);
+    onWiFiDisconnectedHandler = WiFi.onStationModeDisconnected(&apolloDevice.onWiFiDisconnected);
+}
+
+void initializeDuplex(void) {
+    duplexClient.begin(APOLLO_URL, APOLLO_PORT, "/?type=device&apiKey=" + String(config->apiKey) + "&token=" + String(config->token), "node");
+    //client.beginSSL(APOLLO_URL, APOLLO_PORT, "/?type=device&apiKey=" + String(config->apiKey) + "&token=" + String(config->token), APOLLO_FINGERPRINT, "node");
+    // Setting up event handler
+    duplexClient.onEvent(&apolloDevice.apolloEventHandler);
+    // Scheduling reconnect every 5 seconds if it disconnects
+    duplexClient.setReconnectInterval(5000);
+
+    // Setting up device connection event handlers
+    apolloDevice.onApolloConnected([](uint8_t* message) {
+        Serial.println("\n*** APOLLO CONNECTED ***\n");
+    });
+    apolloDevice.onApolloDisconnected([](uint8_t* message) {
+        Serial.println("\n*** APOLLO DISCONNECTED ***\n");
+    });
 }
 
 void ApolloDevice::update(void) {

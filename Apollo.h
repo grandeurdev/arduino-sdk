@@ -22,13 +22,6 @@ class ApolloDevice {
                 int getValue(uint8_t* packet, char* key, char* value);
         };
 
-        
-        // WiFi initializer
-        static void initializeWiFi(void);
-        // Event handlers
-        static void onWiFiConnected(const WiFiEventStationModeConnected& event);
-        static void onWiFiDisconnected(const WiFiEventStationModeDisconnected& event);
-
         // Device IP Address
         static char _deviceIP[IP_SIZE];
         
@@ -68,6 +61,8 @@ class ApolloDevice {
         static void update(void);
 
         // Event handlers
+        static void onWiFiConnected(const WiFiEventStationModeConnected& event);
+        static void onWiFiDisconnected(const WiFiEventStationModeDisconnected& event);
         static void onApolloConnected(Callback receiver);
         static void onApolloDisconnected(Callback receiver);
 
@@ -77,7 +72,7 @@ class Apollo {
     private:
     public:
         // Apollo init Method
-        ApolloDevice* init(char* deviceID, char* apiKey, char* token, char* ssid, char* passphrase);
+        ApolloDevice init(char* deviceID, char* apiKey, char* token, char* ssid, char* passphrase);
 };
 
 Apollo apollo;

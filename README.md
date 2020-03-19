@@ -1,8 +1,8 @@
 # Grandeur Cloud [![Version](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://cloud.grandeur.tech)
 
-Building a smart (IoT) product is an art, because it is about unifying the physical world with the digital one. When you connect a hardware to the web, magic happens. But it involves development across a huge technology stack (you need to develop your hardware, your apps to monitor/control your hardware and a server backend manage both) in order to make such products work over production. Then if you are (somehow) done with the development operations, there comes the hardest part; you are going to have to scale it all as your user base grows.
+Building a smart (IoT) product is an art because it is about unifying the physical world with the digital one. When you connect a hardware device to the web, magic happens. But it involves development across a huge technology stack (you need to develop your hardware, your apps to monitor/control your hardware and a server backend manage both) to make such products work in production. Then if you are (somehow) done with the development operations, there comes the hardest part; you are going to have to scale it all as your user base grows.
 
-We understand this, because we have been there.
+We understand this because we have been there.
 
 Introducing Grandeur Cloud; a backend as a service platform for IoT. We have designed this platform so you do not have to worry about the backend of your next big thing, and can focus on what matters the most: your hardware and your apps. It is designed specifically to accelerate your IoT product development, and push your product to market in weeks rather than months or years.
 
@@ -10,7 +10,7 @@ Introducing Grandeur Cloud; a backend as a service platform for IoT. We have des
 
 Grandeur Cloud is designed keeping in mind all the challenges a hardware engineer can face in developing and commercializing a smart (IoT) product. You can use out-of-the-box APIs to integrate in your devices and apps.
 
-Like you can do authentication of users who use your products, to make sure each user gets his own data and no one other than the device admin himself should be able to access it. You can save huge amount of data in cloud database, in order to extract intelligent information and display it in useful graphs. You can also host your static website on Grandeur Cloud. Along with all that, you can subscribe your hardware device to events from your app and your app to events from hardware device to communicate in realtime with each other.
+Like you can do authentication of users who use your products, to make sure each user gets his own data and no one other than the device admin himself should be able to access it. You can save a huge amount of data in cloud database, in order to extract intelligent information and display it in useful graphs. You can also host your static website on Grandeur Cloud. Along with all that, you can subscribe your hardware device to events from your app and your app to events from hardware device to communicate in realtime with each other.
 
 By this time you would be like, okay, we got it why Grandeur is building this platform and yeah it is super great and super useful. But how can we integrate it in our product? So here you go. We have built these amazing SDKs for your apps and hardware to make the integration process of Grandeur Cloud in your product simple.
 
@@ -85,13 +85,13 @@ void setup() {
 
     /* Setting up callback function for connection of the device to the cloud
     */
-    apolloDevice.onApolloConnected([](char* message) {
+    apolloDevice.onApolloConnected([](unsigned char* message) {
       puts("Device is now connected to the cloud.");
     });
 
     /* Setting up callback function for disconnection of the device to the cloud
     */
-    apolloDevice.onApolloDisconnected([](char* message) {
+    apolloDevice.onApolloDisconnected([](unsigned char* message) {
       puts("Device is now disconnected from the cloud.");
     });
 }
@@ -211,10 +211,10 @@ So in order to establish communication from a website using the web SDK, you wil
 
 `Callback` is a special function type defined in **Apollo Device** that can be passed to another function for the purpose of being called when the running function exists or when some type of event occurs.
 
-**Apollo Device** functions only accept a function as callback which *receives* a `char*` as *input parameter* and *returns* `void`.
+**Apollo Device** functions only accept a function as callback which *receives* a `unsigned char*` as *input parameter* and *returns* `void`.
 
 ```cpp
-void callThisWhenDeviceConnectsToGrandeurCloud(char* string) {
+void callThisWhenDeviceConnectsToGrandeurCloud(unsigned char* string) {
   /* Prints this when device makes a successful connection to Grandeur Cloud */
   puts("Device is connected to the cloud.");
 }
@@ -325,9 +325,9 @@ void setup() {
   ApolloDevice apolloDevice = apollo.init(YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
 
   /* Passing the callback as lambda function. You can pass any function here as long as it
-    accepts a "char*" string as parameter and returns "void", e.g., a function of the form:
+    accepts a "unsigned char*" string as parameter and returns "void", e.g., a function of the form:
 
-    void callbackFunction(char* string) {}
+    void callbackFunction(unsigned char* string) {}
 
   */
   apolloDevice.onApolloConnected([]() {
@@ -365,9 +365,9 @@ void setup() {
   ApolloDevice apolloDevice = apollo.init(YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
 
   /* Passing the callback as lambda function. You can pass any function here as long as it
-    accepts a "char*" string as parameter and returns "void", e.g., a function of the form:
+    accepts a "unsigned char*" string as parameter and returns "void", e.g., a function of the form:
 
-    void callbackFunction(char* string) {}
+    void callbackFunction(unsigned char* string) {}
 
   */
   apolloDevice.onApolloDisconnected([]() {

@@ -1,5 +1,5 @@
 // Connection macros
-#define APOLLO_URL "10.50.202.122"
+#define APOLLO_URL "192.168.10.3"
 #define APOLLO_PORT 3000
 #define APOLLO_FINGERPRINT ""
 
