@@ -336,9 +336,7 @@ void loop() {
 
 Updates device's TCP buffer. This must be called in `loop()` and without being suspected to any kind of *delay*. This method is what pulls and pushes messages to and from the TCP channel. Any kind of *delay* in `loop()` would cause delay in pushing the request and pulling the response to and from the server.
 
-___
 [Here][Using Millis Instead of Delay] is how you can use `millis()` instead of `delay()` if you want a function to run after every few moments.
-___
 
 #### Example
 
