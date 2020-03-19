@@ -125,17 +125,17 @@ The purpose behind writing is to tell you what is the thought process and psycho
 
 ## A Brief Case Study
 
-Suppose you are a clean tech startup and want to radicalize the home appliances market to make the appliances more eco and user friendly. You analyzed the market, did user interviews and realized that there is one really big problem in the air conditioner market. Every year millions of new air conditioners are produced but the problem is there are so many old and inefficient ACs already in the market installed in people's homes and offices. These old air conditioners consume a huge chunk of power and a major cause of CFCs emissions. Something has to be done because these devices are impacting both the users and the ecosystem but upgrading each single one of them is just not feasible at all economically.
+Suppose you are a clean tech startup and want to radicalize the home appliances market to make the appliances more eco and user friendly. You analyzed the market, did user interviews and realized that there is one really big problem in the air conditioner market. Every year millions of new air conditioners are produced but the problem is there are so many old and inefficient ACs already in the market installed in people's homes and offices. These old air conditioners consume a huge chunk of power and a major cause of CFCs emissions. Something has to be done because these devices are impacting both the users and the ecosystem. But upgrading each single one of them is just not feasible at all economically.
 
-In order to resolve the energy efficiency issue of these old ACs, you decided to build an electronic solution which could be used as an extension with these old ACs already installed in our homes. So that, we could control the power consumption without actually upgrading them. Then you realized that you can provide your users an interface to interact with their appliances. You wanted your users to see how much has this new extension been saving them in expenses by cutting down the power consumption. You also wanted to give your users control over how much they wanted to save through this app. In short, you decided to make your product smart (on IoT). All this could be achieved by IoT. You decided to build a companion app for your device.
+In order to resolve the energy efficiency issue of these old ACs, you decided to build an electronic solution which could be used as an extension with these old ACs already installed in people's homes. So that, we could control the power consumption of the ACs without actually upgrading them. Then you realized that you can provide your users an interface to interact with their appliances. You wanted your users to see how much has this new extension been saving them in expenses by cutting down the power consumption. You also wanted to give your users control over how much they wanted to save through this app. In short, you decided to make your product smart (on IoT). You decided to build a companion app for your device.
 
-That's where the problem arose. You are a hardware startup after all experted in building amazing electronics technology. But here you got to deal with few more things as well. You have to build your app and figure out how to establish communication between your hardware product and app. You may decide to hire more engineers. But do you know how much of them will you have to hire? To give you a perspective, you need 8+ engineers just to do the server-end, like one to figure out your networking, one to design and manage your database, one to develop your API (the interface layer between your users and devices), about four for building your SDKs (one for each platform android, ios, web and hardware) and then when you start scaling up a bit, one for your DevOps. Which makes it a package of $8000+ just to figure out the backend of your system and you haven't even validated your product yet. That is exhausting for your business. You have hit a concrete wall with no idea what to do about it.
+That's where the problem arose. You are a hardware startup after all, experted in building amazing electronics technology. But here you got to deal with a few more things as well. You have to build your app and figure out how to establish communication between your hardware product and app. You may decide to hire more engineers. But do you know how much of them will you have to hire? To give you a perspective, you need 8+ engineers just to do the server-end, like one to figure out your networking, one to design and manage your database, one to develop your API (the interface layer between your users and devices), about four for building your SDKs (one for each platform android, ios, web and hardware) and then when you start scaling up a bit, one for your DevOps. Which makes it a package of $8000+ just to figure out the backend of your system and you haven't even validated your product yet. That is exhausting for your business. You have hit a concrete wall with no idea what to do about it.
 
-Then one day the sun of fate shown. You came across a platform that goes by the name of Grandeur Cloud. You go through its [website][Grandeur Technologies] and discover a perfectly fitting solution for all your headaches. You wanted a solution for authentication of your users, it has the AUTH feature in it. You needed an online file storage to store maybe the profile pictures of your users and other stuff, it comes with a storage builtin. You were in dire need of a scalable out-of-the-box database to store power consumption logs of your device to show your users graphs on their monthly/yearly savings, it provides a cloud datastore service. And the most important of these all, you needed a realtime communication bridge between your hardware and your apps, THANK GOD, its SDKs are available for all the stacks including arduino, web and mobile (both android and ios).
+Then one day the sun of fate shown. You came across a platform that goes by the name of Grandeur Cloud. You went through its [website][Grandeur Technologies] and discovered a perfectly fitting solution for all your headaches. You wanted a solution for authentication of your users, it has the Auth feature in it. You needed an online file storage to store maybe the profile pictures of your users and other stuff, it comes with a storage builtin. You were in dire need of a scalable out-of-the-box database to store power consumption logs of your device to show your users graphs on their monthly/yearly savings, it provides a cloud datastore service. And the most important of these all, you needed a realtime communication bridge between your hardware and your apps, THANK GOD, its SDKs are available for all the stacks including arduino, web and mobile (both android and ios).
 
-So you decided to give a shot. You simply [registered for the platform][Grandeur Cloud], created your first project, downloaded their SDKs and started connecting your devices and apps together through Grandeur Cloud. You didn't even have to worry about the security of your users and devices, because the data on Grandeur Cloud is protected under so many standard security protocols. Each user and device in a project has its own limited scope. All you had to worry about was designing your product core and develop your business logics. And in matter of weeks, your product was out in people hands, your apps live on app stores. People loved what you built and you were getting live feedback on it. You made an early entry into the market and now adding a dent to the universe.
+So here you are giving it a shot. You simply [registered for the platform][Grandeur Cloud], created your first project, downloaded their SDKs and started connecting your devices and apps together through Grandeur Cloud. You didn't even have to worry about the security of your users and devices, because the data on Grandeur Cloud is protected under standard security protocols. Each user and device in a project has its own limited scope. All you had to worry about was designing your product core and develop your business logics. And in matter of weeks, your product was out in people's hands, your apps live on app stores. People loved what you built and you were getting live feedback on it. You made an early entry into the market and now adding a dent to the universe.
 
-By the way, that is the story of team SolDrive. Checkout their [website][Soldrive] right now and explore how they are transforming the world with Grandeur Cloud.
+By the way, that is the story of team SolDrive. Checkout their [website][SolDrive] right now and explore how they are transforming the world with Grandeur Cloud.
 
 ## Concepts
 
@@ -299,34 +299,34 @@ You can access methods of these subclasses using dot notation on the global obje
 
 ### Init
 
-> init ( ) : returns *void*
+> init() : returns *void*
 
 Method to initialize device's WiFi (SSID and Passphrase) and duplex configurations (API Key and Auth Token) in one go.
 
 #### Parameters
 
-| Name        | Type    | Description           |
-|-------------|---------|-----------------------|
-| apiKey      | _char*_ | your valid API key    |
-| token       | _char*_ | your access token     |
-| ssid        | _char*_ | your WiFi SSID        |
-| passphrase  | _char*_ | your WiFi passphrase  |
+| Name        | Type    | Description               |
+|-------------|---------|---------------------------|
+| apiKey      | _char*_ | your project API key      |
+| token       | _char*_ | your device access token  |
+| ssid        | _char*_ | your WiFi SSID            |
+| passphrase  | _char*_ | your WiFi passphrase      |
 
 #### Example
 
 ```cpp
-/* Initializing apollo configurations with your project's API Key, device's Access Token, WiFi SSID and WiFi Passphrase
+/* Initialize apollo configurations with your project's API Key, device's Access Token, WiFi SSID and WiFi Passphrase
 */
 void setup() {
   ApolloDevice apolloDevice = apollo.init(YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
 }
 
 void loop() {
-  // Updates TCP buffer. It sends connection request to Grandeur Cloud as soon as the WiFi gets connected
+  // Updates TCP buffer. It sends connection request to Grandeur Cloud as soon as the WiFi gets connected.
   apolloDevice.update();
 }
 
-/* Device begins connecting to WiFi and then Grandeur Cloud right away
+/* Device begins connecting to WiFi and then Grandeur Cloud right away.
 */
 ```
 
@@ -836,6 +836,8 @@ Each device has some variables that a consumer might want to interact with (moni
 [Grandeur Cloud Sign Up]: https://cloud.grandeur.tech/register "Sign up on Grandeur Cloud"
 [Get Started With Grandeur Cloud]: https://github.com/grandeurtech/grandeurcloud-js-sdk#get-started "Get Started With Grandeur Cloud"
 [Grandeur Cloud Pricing]: https://grandeur.tech/pricing "Pricing"
+
+[SolDrive]: https://sol-drive.com/ "SolDrive"
 
 [Authentication and Access]: #authentication-and-access "Authentication and Access"
 [Allowed Origins]: #allowed-origins "Allowed Origins"
