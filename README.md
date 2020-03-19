@@ -350,10 +350,10 @@ void loop() {
   /* Calling the update() function in loop()
   */
   apolloDevice.update();  
-  /***RESULT**
-    Updates the TCP buffer every time loop() gets executed
-  */
 }
+/***RESULT**
+  Updates the TCP buffer every time loop() gets executed
+*/
 ```
 
 ### On Apollo Connected
