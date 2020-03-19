@@ -582,9 +582,9 @@ void setup() {
 void loop() {
   /* getDeviceIP() returns the IP Address assigned to your device.
   */
-  std::cout<<apolloDevice.getPassphrase()<<"\n";
+  std::cout<<apolloDevice->getPassphrase()<<"\n";
 
-  apolloDevice.update();
+  apolloDevice->update();
 }
 
 /***RESULT**
@@ -609,9 +609,9 @@ void loop() {
   /* getApiKey() returns the API Key the device is configured to use to connect to Grandeur
     Cloud.
   */
-  std::cout<<apolloDevice.getApiKey()<<"\n";
+  std::cout<<apolloDevice->getApiKey()<<"\n";
 
-  apolloDevice.update();
+  apolloDevice->update();
 }
 
 /***RESULT**
@@ -636,9 +636,9 @@ void loop() {
   /* getToken() returns the Access Token the device is configured to use to connect to
     Grandeur Cloud.
   */
-  std::cout<<apolloDevice.getToken()<<"\n";
+  std::cout<<apolloDevice->getToken()<<"\n";
 
-  apolloDevice.update();
+  apolloDevice->update();
 }
 
 /***RESULT**
@@ -657,7 +657,7 @@ Getter method for device's [summary][summary].
 | Name        | Type       | Description                                                              |
 |-------------|------------|--------------------------------------------------------------------------|
 | deviceID    | _char*_    | A string containing a stringified object containing the device ID        |
-| callback    | _Callback_ | A function to be called when device disconnects to Grandeur Cloud        |
+| callback    | _Callback_ | A function to be called when getSummary response is received             |
 
 #### Example
 
@@ -677,7 +677,7 @@ void loop() {
       std::cout<<outputPacket<<"\n";
   });
 
-  apolloDevice.update();
+  apolloDevice->update();
 }
 
 /***RESULT**
@@ -697,7 +697,7 @@ Getter method for device's [parms][parms].
 | Name        | Type       | Description                                                              |
 |-------------|------------|--------------------------------------------------------------------------|
 | deviceID    | _char*_    | A string containing a stringified object containing the device ID        |
-| callback    | _Callback_ | A function to be called when device disconnects to Grandeur Cloud        |
+| callback    | _Callback_ | A function to be called when getParms response is received               |
 
 #### Example
 
@@ -718,7 +718,7 @@ void loop() {
       std::cout<<outputPacket<<"\n";
   });
 
-  apolloDevice.update();
+  apolloDevice->update();
 }
 
 /***RESULT**
@@ -738,7 +738,7 @@ Setter method for device's [summary][summary].
 | Name        | Type       | Description                                                                                |
 |-------------|------------|--------------------------------------------------------------------------------------------|
 | summary     | _char*_    | A string containing a stringified object containing the device ID and the new summary data |
-| callback    | _Callback_ | A function to be called when device disconnects to Grandeur Cloud                          |
+| callback    | _Callback_ | A function to be called when setSummary response is received                               |
 
 #### Example
 
@@ -758,7 +758,7 @@ void loop() {
       std::cout<<outputPacket<<"\n";
   });
 
-  apolloDevice.update();
+  apolloDevice->update();
 }
 
 /***RESULT**
@@ -778,7 +778,7 @@ Setter method for device's [parms][parms].
 | Name        | Type       | Description                                                                                |
 |-------------|------------|--------------------------------------------------------------------------------------------|
 | parms       | _char*_    | A string containing a stringified object containing the device ID and the new parms data   |
-| callback    | _Callback_ | A function to be called when device disconnects to Grandeur Cloud                          |
+| callback    | _Callback_ | A function to be called when setParms response is received                                 |
 
 #### Example
 
@@ -799,7 +799,7 @@ void loop() {
       std::cout<<outputPacket<<"\n";
   });
 
-  apolloDevice.update();
+  apolloDevice->update();
 }
 
 /***RESULT**
