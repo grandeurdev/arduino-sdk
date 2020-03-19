@@ -360,7 +360,7 @@ void loop() {
 
 > onApolloConnected (callback : _Callback_) : returns _void_
 
-Receives a function to call when the device successfully connects to Grandeur Cloud.
+Receives a function which is called when the device successfully connects to Grandeur Cloud.
 
 #### Parameters
 
@@ -398,7 +398,7 @@ void loop() {
 
 > onApolloDisconnected (callback : _Callback_) : returns _void_
 
-Receives a function to call when the device disconnects from Grandeur Cloud.
+Receives a function which is called when the device disconnects from Grandeur Cloud.
 
 #### Parameters
 
@@ -414,7 +414,8 @@ More on Callback [here][callback].
 void setup() {
   ApolloDevice apolloDevice = apollo.init(YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
 
-  /* Passing the callback as lambda function. You can pass any function here as long as it accepts a "char*" string as parameter and returns "void", e.g., a function of the form:
+  /* Passing the callback as lambda function. You can pass any function here as long as it
+    accepts a "char*" string as parameter and returns "void", e.g., a function of the form:
 
     void callbackFunction(char* string) {}
 
@@ -468,8 +469,9 @@ void loop() {
 }
 
 /***RESULT**
-  In the beginning, getState() returns 0. When WiFi is connected, getState() returns 1. When the device is connected to the server, getState() returns 2.
-  For readability, you can use the above macros. They respectively expand to these integer values.  
+  In the beginning, getState() returns 0. When WiFi is connected, getState() returns 1.
+    When the device is connected to the server, getState() returns 2.
+    For readability, you can use the above macros. They respectively expand to these integer values.  
 */
 ```
 
@@ -493,7 +495,8 @@ void setup() {
 }
 
 void loop() {
-  /* getStringifiedState() returns the state of the device as string. This is particularly useful while you want to directly print the state of the device
+  /* getStringifiedState() returns the state of the device as string. This is particularly
+    useful while you want to directly print the state of the device
   */
   std::cout<<apolloDevice.getStringifiedState()<<"\n";
 
@@ -501,7 +504,8 @@ void loop() {
 }
 
 /***RESULT**
-  In the beginning, "WIFI_NOT_CONNECTED" is printed to the stdout. When the WiFi is connected, "WIFI_CONNECTED" begins appearing on the screen. And it quickly changes to "APOLLO_CONNECTED" when the device makes a successful connection to Grandeur Cloud.
+  In the beginning, "WIFI_NOT_CONNECTED" is printed to the stdout. When the WiFi is
+    connected, "WIFI_CONNECTED" begins appearing on the screen. And it quickly changes to "APOLLO_CONNECTED" when the device makes a successful connection to Grandeur Cloud.
 */
 ```
 
@@ -545,7 +549,8 @@ void setup() {
 }
 
 void loop() {
-  /* getPassphrase() returns the Passphrase of the WiFi it is currently configured to connect to.
+  /* getPassphrase() returns the Passphrase of the WiFi it is currently configured to
+    connect to.
   */
   std::cout<<apolloDevice.getPassphrase()<<"\n";
 
@@ -597,7 +602,8 @@ void setup() {
 }
 
 void loop() {
-  /* getApiKey() returns the API Key the device is configured to use to connect to Grandeur Cloud.
+  /* getApiKey() returns the API Key the device is configured to use to connect to Grandeur
+    Cloud.
   */
   std::cout<<apolloDevice.getApiKey()<<"\n";
 
@@ -623,7 +629,8 @@ void setup() {
 }
 
 void loop() {
-  /* getToken() returns the Access Token the device is configured to use to connect to Grandeur Cloud.
+  /* getToken() returns the Access Token the device is configured to use to connect to
+    Grandeur Cloud.
   */
   std::cout<<apolloDevice.getToken()<<"\n";
 
@@ -649,7 +656,8 @@ void setup() {
 }
 
 void loop() {
-  /* getSummary() sends the getSummary request to the server using the data specified in inputPacket. It calls the Callback function specified in the second parameter when it receives the response.
+  /* getSummary() sends the getSummary request to the server using the data specified in
+    inputPacket. It calls the Callback function specified in the second parameter when it receives the response.
   */
   char inputPacket[128];
   // Forming a JSON packet
@@ -662,7 +670,8 @@ void loop() {
 }
 
 /***RESULT**
-  Prints the outputPacket containing the summary (Or just an error code and message in case) of the device as soon as it gets getSummary response from the server
+  Prints the outputPacket containing the summary (Or just an error code and message in
+  case) of the device as soon as it gets getSummary response from the server
 */
 ```
 
@@ -680,7 +689,9 @@ void setup() {
 }
 
 void loop() {
-  /* getParms() sends the getParms request to the server using the data specified in inputPacket. It calls the Callback function specified in the second parameter when it receives the response.
+  /* getParms() sends the getParms request to the server using the data specified in
+    inputPacket. It calls the Callback function specified in the second parameter when it
+    receives the response.
   */
   char inputPacket[128];
   // Forming a JSON packet
@@ -693,7 +704,8 @@ void loop() {
 }
 
 /***RESULT**
-  Prints the outputPacket containing the parms (Or just an error code and message in case) of the device as soon as it gets getParms response from the server
+  Prints the outputPacket containing the parms (Or just an error code and message in case
+  of the device as soon as it gets getParms response from the server
 */
 ```
 
@@ -711,7 +723,8 @@ void setup() {
 }
 
 void loop() {
-  /* setSummary() sends the setSummary request to the server using the data specified in inputPacket. It calls the Callback function specified in the second parameter when it receives the response.
+  /* setSummary() sends the setSummary request to the server using the data specified in
+    inputPacket. It calls the Callback function specified in the second parameter when it receives the response.
   */
   char inputPacket[128];
   // Forming a JSON packet
@@ -724,7 +737,8 @@ void loop() {
 }
 
 /***RESULT**
-  Prints the outputPacket containing the SUMMARY-UPDATED code in response (Or an error code and message in case) as soon as it gets it from the server
+  Prints the outputPacket containing the SUMMARY-UPDATED code in response (Or an error code
+  and message in case) as soon as it gets it from the server
 */
 ```
 
@@ -754,7 +768,8 @@ void setup() {
 }
 
 void loop() {
-  /* setParms() sends the setParms request to the server using the data specified in inputPacket. It calls the Callback function specified in the second parameter when it receives the response.
+  /* setParms() sends the setParms request to the server using the data specified in
+    inputPacket. It calls the Callback function specified in the second parameter when it receives the response.
   */
   char inputPacket[128];
   // Forming a JSON packet
@@ -768,7 +783,8 @@ void loop() {
 }
 
 /***RESULT**
-  Prints the outputPacket containing the PARMS-UPDATED code in response (Or an error code and message in case) as soon as it gets it from the server
+  Prints the outputPacket containing the PARMS-UPDATED code in response (Or an error code
+  and message in case) as soon as it gets it from the server
 */
 ```
 
