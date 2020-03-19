@@ -326,7 +326,8 @@ void loop() {
   apolloDevice.update();
 }
 
-/* Device begins connecting to WiFi and then Grandeur Cloud right away.
+/* **RESULT**
+Device begins connecting to WiFi and then Grandeur Cloud right away.
 */
 ```
 
