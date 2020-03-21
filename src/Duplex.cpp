@@ -8,7 +8,7 @@
  *
  */
 
-#include "Duplex.h"
+#include <Duplex.h>
 
 #ifdef ESP8266
 #include <core_esp8266_features.h>
@@ -18,7 +18,7 @@ extern "C" {
 #ifdef CORE_HAS_LIBB64
 #include <libb64/cencode.h>
 #else
-#include "libb64/cencode_inc.h"
+#include <libb64/cencode_inc.h>
 #endif
 }
 
@@ -29,7 +29,7 @@ extern "C" {
 #else
 
 extern "C" {
-#include "libsha1/libsha1.h"
+#include <libsha1/libsha1.h>
 }
 
 #endif

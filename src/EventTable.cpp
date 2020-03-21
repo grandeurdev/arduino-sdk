@@ -1,4 +1,4 @@
-#include "EventTable.h"
+#include <EventTable.h>
 #include <iostream>
 
 EventTableEntry::EventTableEntry(EventTableKey k, EventTableData v) {

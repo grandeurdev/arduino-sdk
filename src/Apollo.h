@@ -1,9 +1,20 @@
+/**
+ * @file Apollo.h
+ * @date 20.03.2020
+ * @author Muhammad Abdullah
+ *
+ * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
+ * This file is part of the Hardware SDK for ESP8266 module.
+ *
+ */
+
 // Including headers
 #include <ESP8266WiFi.h>
-#include "DuplexClient.h"
-#include "EventTable.h"
-#include "apollotypes.h"
-#include "apollomacros.h"
+#include <DuplexClient.h>
+#include <Duplex.h>
+#include <EventTable.h>
+#include <apollotypes.h>
+#include <apollomacros.h>
 
 #ifndef APOLLO_H_
 #define APOLLO_H_

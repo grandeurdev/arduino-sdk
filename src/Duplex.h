@@ -110,8 +110,8 @@
 #error "network type ESP8266 ASYNC only possible on the ESP mcu!"
 #endif
 
-#include <ESPAsyncTCP.h>
-#include <ESPAsyncTCPbuffer.h>
+#include "ESPAsyncTCP.h"
+#include "ESPAsyncTCPbuffer.h"
 #define DUPLEX_NETWORK_CLASS AsyncTCPbuffer
 #define DUPLEX_NETWORK_SERVER_CLASS AsyncServer
 

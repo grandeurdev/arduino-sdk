@@ -8,8 +8,8 @@
  *
  */
 
-#include "Duplex.h"
-#include "DuplexClient.h"
+#include <Duplex.h>
+#include <DuplexClient.h>
 
 DuplexClient::DuplexClient() {
     _cbEvent             = NULL;
