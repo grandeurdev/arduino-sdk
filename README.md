@@ -12,13 +12,13 @@ Grandeur Cloud is designed keeping in mind all the challenges a hardware enginee
 
 Like you can do authentication of users who use your products, to make sure each user has access to his own data and no one other than the device admin himself should be able to interact with a device. You can save a huge amount of data in a cloud database to extract intelligent information and display it in useful graphs. You can also host your product's static website on Grandeur Cloud. Also, your hardware device can subscribe to events from your app and your app can subscribe to events from your hardware device and communicate data with each other in realtime.
 
-Here are some points that make Grandeur Cloud stand out from the rest of the IoT solutions ou there.
+Here are some points that make Grandeur Cloud stand out from the rest of the IoT solutions out there.
 
 * Grandeur Cloud is product-centered. It is much more than just a medium of communication between your app and your hardware. Focusing on expediting IoT product development, it offers an ecosystem of the most necessary tools integrated to make the most head-cracking development problems seamless.
 
-* It is extremely simple to [get started][Get Started with Grandeur Cloud] with your IoT product development. Just create a project at [cloud dashboard][Grandeur Cloud Dashboard], put in your project's API key into the SDK and start developing.
+* With Grandeur Cloud, it is extremely simple to [get started][Get Started with Grandeur Cloud] with your IoT product development. Just create a project from the [cloud dashboard][Grandeur Cloud Dashboard], plug your project's API key into the SDK and start developing.
 
-* No need to mix and match various services. Grandeur Cloud is a single spot solution for all of your needs. It has built-in authentication of your users and devices, an integrated database, an out-of-the-box file storage system and a registry of data for all of your devices. You can manage everything from a dashboard and integrate it into your product through our SDKs.
+* No need to mix and match various services. Grandeur Cloud is a single spot solution for all of your needs. It has built-in authentication of your users and devices, an integrated database, an out-of-the-box file storage system and a registry of data for all of your devices. You can manage everything from a dashboard and integrate them into your product using our SDKs.
 
 * Simple pricing. [Start free][Grandeur Cloud Sign Up] and then pay as you go based on your resource consumption. Checkout [pricing][Grandeur Cloud Pricing] for more details.
 
@@ -36,7 +36,7 @@ From here onwards, we'll look at how you can use the Hardware SDK to put your de
 
 * esp32
 
-Follow the [get started][Get Started with Hardware SDK] guidelines to quickly get a broad context on integrating your devices to Grandeur Cloud or jump straight to an [Arduino example][Example] and make your hands dirty.
+Follow the [get started][Get Started with Hardware SDK] guidelines to quickly get into the context of integrating your devices to Grandeur Cloud or jump straight to an [Arduino example][Example] to make your hands dirty.
 
 To get deeper insights and a developer reference for the hardware SDK, you can have a look at the [documentation][Documentation].
 
@@ -48,6 +48,7 @@ To understand the core concepts Grandeur Cloud is built upon, simply dive into t
   * [Device State](#device-state)
   * [Updating Device TCP Buffer](#updating-device-tcp-buffer)
   * [Event Listening](#event-listening)
+  * [Getting and Updating Device Data](#getting-and-updating-device-data)
 * [Example](#example)
 * [Documentation](#documentation)
   * [init](#init)
@@ -279,17 +280,17 @@ void loop() {
 
 # Grandeur Ecosystem
 
-The purpose of writing this is to give you a glimpse into the thought process and psychologies behind designing the Grandeur Cloud Platform the way it feels now. We believe that the first very important step toward choosing a platform for your product and company is to understand the design language of developers of the platform. So we thought of writing about it in detail. We wanted to document how you can use this platform effectively to make your life as a developer or founder a bit simpler.
+The purpose of writing this is to give you a glimpse into the thought process and psychologies behind designing the Grandeur Cloud Platform the way it feels now. We believe that the first very important step towards choosing a platform for your product and company is to understand the design language of developers of the platform. So we thought of writing about it in detail. We wanted to document how you can use this platform effectively to make your life as a developer or founder a bit simpler.
 
-Here we present a case study to help you understand exactly where, how and what Grandeur Cloud can help you with. Then we explain some of the terms and keywords we use to identify and classify things that make abstraction seamless. Here we go.
+Here we present a case study to help you understand exactly where, how and what Grandeur Cloud can help you with. Then we explain some of the terms and keywords we use to identify and classify things that make abstraction seamless. So here we go.
 
 ## A Brief Case Study
 
-Suppose you are a cleantech startup and want to radicalize the home appliances market to make the appliances more eco and user friendly. You analyzed the market, did user interviews and realized that there is a really big problem in the air conditioner market. Even though millions of new air conditioners are produced every year but there are so many old and inefficient ACs already in the market installed in people's homes and offices. These old air conditioners consume a huge chunk of power and are a major cause of CFCs emissions. Something has to be done because these devices are impacting both the users and the ecosystem. Upgrading each single one of them is just not feasible at all economically.
+Suppose you are a cleantech startup and want to radicalize the home appliances market to make the appliances more eco and user friendly. You analyzed the market, did user interviews and realized that there is a really big problem in the air conditioner market. Even though millions of new air conditioners are produced every year but there are so many old and inefficient ACs already in the market installed in people's homes and offices. These old air conditioners consume a huge chunk of power and are a major cause of CFCs emissions. Something has to be done because these devices are impacting both the users and the environment. Upgrading each single one of them is just not feasible at all economically.
 
-To resolve the energy efficiency issue of these old ACs, you decided to build an electronic solution that could be used as an extension with these old ACs. So we could control their power consumption without actually upgrading them. And you thought of providing your users with an interface to interact with their appliances. You wanted your users to see how much has this new extension been saving them in expenses by cutting down the power consumption. You also wanted to give your users control over how much they wanted to save through this app. In short, you decided to make your product smart (on IoT). And you decided to build a companion app for your device.
+To resolve the energy efficiency issue of these old ACs, you decided to build an electronic solution that could be used as an extension with these old ACs. So people could control their power consumption without actually upgrading their devices. And you thought of providing your users with an interface to interact with their appliances. You wanted your users to see how much has this new extension been saving them in expenses by cutting down the power consumption. You also wanted to give your users control over how much they wanted to save through this app. In short, you decided to make your product smart (on IoT). And you decided to build a companion app for your device.
 
-That's where the problem arose. You are a hardware startup, after all, that builds amazing electronics technology. But here you got to deal with a few more things as well. You have to build your app and figure out how to establish its communication with your hardware product. You may decide to hire more engineers. But do you know how much of them will you have to hire? To give you a perspective, you generally need 8+ engineers just to do the server-end, like one to figure out your networking, one to design and manage your database, one to develop your API (the interface layer between your users and devices), about four for building your SDKs (one for each platform android, ios, web, and hardware) and then when you start scaling up a bit, one DevOps engineer. This makes it a package of $8000+ just to figure out the backend of your system and you haven't even validated your product yet. This is exhausting for your business. You have hit a concrete wall with no idea what to do about it.
+That's where the problem arose. You are a hardware startup, after all, that builds amazing electronics technology. But here you got to deal with a few more things as well. You have to build your app and figure out how to establish its communication with your hardware. You may decide to hire more engineers. But do you know how much of them will you have to hire? To give you a perspective, you generally need 8+ engineers just to do the server-end, like one to figure out your networking, one to design and manage your database, one to develop your API (the interface layer between your users and devices), about four for building your SDKs (one for each platform android, ios, web, and hardware) and then when you start scaling up a bit, one DevOps engineer. This makes it a package of $8000+ just to figure out the backend of your system and you haven't even validated your product yet. This turns out exhausting for your business. You have hit a concrete wall with no idea what to do about it.
 
 Then one day the sun of fate shown. You came across a platform that goes by the name of Grandeur Cloud. You went through its [website][Grandeur Technologies] and discovered a perfectly fitting solution for all your headaches. You wanted a solution for authentication of your users, it has the Auth feature in it. You needed online file storage to store maybe the profile pictures of your users and other stuff, it comes with a storage builtin. You were in dire need of a scalable out-of-the-box database to store power consumption logs of your device to show your users graphs on their monthly/yearly savings, it provides a cloud datastore service. And the most important of these all, you needed a realtime communication bridge between your hardware and your apps, THANK GOD, its SDKs are available for all the stacks including Arduino, web, and mobile (both android and ios).
 
@@ -299,11 +300,11 @@ By the way, that is the story of team SolDrive. Check out their [website][SolDri
 
 ## Concepts
 
-In this subsection, we will explore the Grandeur Cloud Platform in detail. We will see how it all works in depth. So let's get started.
+In this subsection, we will explore the Grandeur Cloud platform in detail and see how it pulls it all off. So let's get started.
 
-### Projects
+### Project
 
-A project is the first thing you need to create to start working with Grandeur Cloud. A project is like a namespace, a completely isolated network of users and devices. Each project also has separate file storage and a separate datastore. While you can create an unlimited number of projects, but no two projects can interact or share anything with one other.
+A project is the first thing you need to create to start working with Grandeur Cloud. A project is like a namespace, a completely isolated network of users and devices, along with separate file storage and a separate datastore. While you can create an unlimited number of projects, but no two projects can interact or share anything with one other.
 
 Each project is identified by a digital signature that we call the API key, just as your identification card or social security number identifies you as a citizen. To connect your apps or hardware to your project's network, this is what you need to provide to the SDKs. The API key is sent with every request to Grandeur Cloud and this is what defines the scope or namespace of the request. Check out the [SDK][SDK] section to read more about it.
 
@@ -311,37 +312,71 @@ Each project is identified by a digital signature that we call the API key, just
 
 ### SDK
 
-Apollo is the API that exposes Grandeur Cloud to the outside world. Our SDKs utilize this API and provide each functionality through a function. We have tried our best to make the integration of our SDKs into your codebase simple. For example, while developing your web app, you simply drop in the link of JS SDK CDN in your codebase and you are done. We have developed our SDKs for each platform in coherence with each other so you could work and collaborate everywhere seamlessly.
+Apollo is the API that exposes Grandeur Cloud to the outside world. Our SDKs utilize this API and map each functionality to a function. We have tried our best to make the integration of our SDKs into your codebase simple. For example, while developing your web app, you simply need to drop in the link of JS SDK CDN in your codebase and you are done. We have developed our SDKs for each platform in coherence with each other so you could work and collaborate everywhere seamlessly.
 
-This is how it works. In each SDK, there is a global object `apollo`. You can initialize your configurations (API Key and a couple of more stuff in case of hardware SDK) by calling `apollo.init()`. This returns you a reference to your whole project (in case of your app) or just to your device (in case of hardware because hardware scope is limited to the hardware itself). In **JS SDK**, you can interact with the authentication API, the device API, the file storage and the datastore API. In the case of **Hardware SDK** your scope is limited to just the device's data. Check out the [Authentication and Access][Authentication and Access] section to get more insight into how scope affects your development across the different platforms.
+This is how they work: In every SDK, there is a global object `apollo`. You can initialize your configurations (API Key and a couple of more stuff in case of hardware SDK) by calling `apollo.init()`. This returns you a reference to your whole project (in case of your app) or just to your device (in case of hardware because hardware scope is limited to the device itself). In **JS SDK**, you can interact with the authentication API, the device API, the file storage and the datastore API. In the case of **Hardware SDK** your scope is limited to just the device's data. Check out the [Authentication and Access][Authentication and Access] section to get more insight into how scope affects your development across the different platforms.
 
-### Users and Administrator
+### User and Administrator
 
-This topic is about the relationship between you as an administrator and your users. We describe here the scope of access of you and your users.
+This topic is about the relationship between you as an administrator and your users and the scope of access of both.
 
-You create a project and add some resources (users and devices) to it. You are the one who owns the project as its administrator and only you can manage it through the dashboard application after signing in. But in real world settings, you want your apps to handle a part of your responsibilities. Like obviously you would like your users to automatically sign up. Then you would want your users to automatically access their devices and some data upon authentication. Means you will have to delegate some of your authorities to our SDK, because in the end your apps are gonna communicate to our platform with SDK. You can do this by just giving our SDK your API key and configuring [allowed origins][Allowed Origins] setting through dashboard.
+You aka. **the administrator** is an entity that creates, develops and maintains one or more [projects][Project] on Grandeur Cloud. The administrator has full authority over a project's resources (users, devices, files, and data) and can monitor and control all its projects from the [dashboard][Grandeur Cloud Dashboard].
 
-But who are users? Users are just entities that you can either create through the dashboard or SDK. To be more precise, a user entity defines the scope of access of a person who is using your app. By default, a user is limited to access devices paired to his own account, but can access all of your files and datastore (at the moment - you cannot define fine grain control of your files and data stored in storage and datastore respectively. While we are actively working on adding this support to our platform but currently it is very important to develop data model in a way that privacy of users could be protected.). This way a user can request the device logs or his profile picture from our platform upon authentication but cannot access devices paired to another user accounts. But we mean by accessing devices? To read more about it, checkout [device registry][Device Registry] topic.
+A **user** is an entity that uses your product. While you have full control over your project, a user of your product has access to his profile and delegated access limited to its device scope only.
+
+In the real world, you would not want to add a new user or pair a device with that user manually every time someone buys your product. Therefore you delegate a part of your project authorities to the SDK when you plug your project's API Key in. And so a new user gets to sign up, pair, monitor and control your device through your product's companion app.
+
+Using just your project's API Key for full delegation is not enough. A stolen API Key can give the hacker, at the minimum, user-level access to your project. Hence the concept of CORS comes to play. Read more on CORS in [allowed origins][Allowed Origins] section.
+
+### Device
+
+Devices are the *things* in **Internet of Things** (IoT) around which the IoT product development revolves. Like a user, a device entity has a limited scope of access. But unlike users, you can register new devices only from the dashboard. Read the [device registry][Device Registry] section for more about it.
+
+On Grandeur Cloud, a device falls under the ownership of the project's administrator. The project's API Key delegates the device pairing authority to the SDK which the user uses to pair with the device. Pairing a device makes it live on Grandeur Cloud and the user gets delegated access to the device's data. But a user cannot delete or modify a device's inherent data.
+
+A user can pair as many devices with itself but a device can be paired with at the most one user.
+
+The device entity, in the end, defines two things:
+
+* What kind of data a hardware device can access in your namespace and
+* Which hardware devices a user can control.
+
+This matters a lot because you would never want your neighbor to control your air conditioner (that would be a horrible situation). That's what this entity has been designed for. A user can only interact with devices that are paired with it.
+
+When you pair a device with a user account, an access token is generated for the device. This token is what the device uses to connect to Grandeur Cloud. This token also delegates access of the device namespace to the Hardware SDK. The Hardware SDK takes this access token along with the project's API Key while doing `apollo.init()`. To read about device namespace and how the device's data is stored on Grandeur Cloud, have a look at the [device registry][Device Registry] section.
 
 ### Device Registry
 
-Just like users, devices are entities which essentially defines the scope of access. But unlike users, you can only register new devices through dashboard only. This is one of the key features of Grandeur Cloud. We wanted to resolve this issue. There are two types of solutions out there i) those are dealing with users part only e.g. firebase and ii) those are just dealing with devices registry part e.g. Google IoT Core. We wanted to combine best of both worlds. This is why at Grandeur Cloud, where on one hand we have added the authentication feature, then on the other hand we also maintain a devices registry for you. Where you can seamlessly register new entities and pair those entities to users.
+The device registry constitutes one of the key elements of Grandeur Cloud. There are two types of solutions out there:
 
-Now how this entity defines the scope? Devices are global entities. Unlike user account entity, no body owns a device except an administrator. So a user can pair a device to his account or in order words say a user can claim a device and access data specific to it. But a user cannot delete or inherently modify a device. We designed this considering the real world relation that we develop with our things. So the devices entity in the end defines two things i) what a hardware can access in your namespace and ii) which hardware devices a user can control. Now this really matters a lot because that's the key. You obviously do not want your neighbors to control your air conditioner (that would be so horrible situation). That's what this entity has been designed for. So as mentioned earlier, this entity also limits what a hardware product can access in your namespace. So when you pair a device to an account, we generate an access token for you. Then you can provide this token to our hardware SDK in init in order to access the data (unlike app SDK, hardware SDK can access scope limited to a device only and you delegate a device access to hardware SDK by providing access token at the init. That is how you authenticate your products)
+* Those which deal with user's authentication only e.g. firebase and
+* Those which employ a device's registry e.g. Google IoT Core to make sure no unauthorized devices get into your network.
 
-What do we mean by saying that a user can access data of devices paired to his own account only? We have made it simple for you. You won't have to handle data specific to your device yourself using datastore. We do this for you with devices registry. When you register a device to your registry, we create a new namespace for you where we save data in two objects i) Parms and ii) Summary specific to the device you just created. In other words, we maintain a special storage space where you can save data specific to device. It is like a secure contained spot and only accounts to which the device is paired can access it through the SDK, similarly, only the devices with access token of the namespace can access it through hardware SDK.
+We wanted to combine the best of both worlds. This is why at Grandeur Cloud, not do we just authenticate a device on connection, we also maintain a device's registry for you. See [Authentication and Access][Authentication and Access] section for detail on how a device is authenticated on Grandeur Cloud.
 
-In the end, let's define what you can store in the two object i) Parms and ii) Summary. To be honest, we are very flexible in it. We just created two objects instead of a single one to help you develop understanding. Our approach is, Parms are like controllable state of a device and Summary is something that device wanted to log or display to apps. In other words, Parms are like the inputs and Summary is like the output of a device. So for example, consider an example where you have a smart light bulb. The parms can be utilized to control the bulb state, while in summary you can log that how much voltage is being consumed by the bulb or any other sensor data. We defined this because we wanted to go a step forward. We wanted to help you in building a logic. But again, we are very flexible. So you can define what should be the initial schema of these two objects but we never monitor that either the schema is being followed or not.
+When you register a device, you make it available in your project's network. Not just that, a new namespace is created for your device in the device registry. All of your device's data is stored in this namespace in the form of i) Summary, ii) Parms.
+
+Now let's define what you can store in **Parms** and **Summary**. To be honest, there is no hard and fast rule about it. We just created two objects instead of a single one to help you develop understanding. However, we generally take the parms as the directly controllable device variables and the summary as those device variables which are not directly controllable or are just needed to be logged or displayed to apps. In another way, the parms sometimes refer to the inputs from the user and the summary refers to the outputs of the device resulting from the inputs. Consider an example where you have a smart light bulb. The parms can store the bulb ON/OFF state, while in summary, you can log the voltage consumption of the bulb.
+
+We defined these two objects to give you a basic framework to work on and build your logic fast. But we are very flexible in what and how you store data in the device directory. So you can define an initial schema of these objects using [templates][Templates] and go on from there.
+
+### Templates
 
 ### Authentication and Access
 
-In the last two sections, we have discussed in depth about who can access what. This section will revisit the topic and gives you a big picture of auth and access scopes. Let's start by outlining the relationships. There are three kinds of entities i) projects ii) users and iii) devices. You create a project and therefore have a global access of everything. You can access and manage it by using the dashboard application. End goal is to provide access of the data and devices (that you are building) to your users. You can do this by using our SDK in your apps and hardware. But for this purpose, our SDK should also have access to your namespace. So technically, you can also delegate your access.
+In the last two sections, we have discussed in depth who can access what. This section revisits the topic and gives you a broader picture of authentication and access scopes. Let's start by outlining the relationships. There are three major scopes:
 
-This is where the other two entities comes. We designed these two entities to give you fine grain control over what you are delegating and how are you granting access. Users got wider scope of access. A user entity can access devices data (paired to his account), can access the files you stored in storage and can also access the data you maintained in datastore. In other words, this entity allows you to delegate access of your project to your apps through our SDK in a controlled fashion. Or in another way, we can say that the piece of code that you have written in your apps can only make a request to our platform once a user authenticate. Now I believe that you can see the big picture here! You delegate actually delegate some authorities to your users. Now your users can request to authenticate (via our SDK). As a result we will generate an auth token that your hardware can then utilize to communicate to our platform.
+* Project's global scope
+* User scope
+* Device scope
 
-Now comes the devices entity. We designed this entity as a global resource. Your users can claim access to a device but cannot actually own it. Whenever a user claims a device, we first verify that an other user hasn't claimed the same device earlier and then generate an access token. The hardware SDK can use this access token to communicate to our platform and access data specific to the device only.
+You (as an administrator) create a project and therefore have global access to everything. You can access and manage your projects and their resources using the dashboard application. You want your users and devices to have limited access to your project's resources based on their scopes which you achieve by using our SDKs in your apps and hardware. Your project's API Key delegates your project's access to the SDKs and access tokens allow and limit, at the same time, this access to user and device scopes.
 
-That is the whole picture. That is how we make sure that everyone is getting what they are allowed to access. That is how we grant you authority over your data and resources and keep in check that everything is working just the way you want them to work.
+The user scope is wider than the device scope. A user can access its profile, the registry of the devices it's paired to, the files in the project's storage and the data in the project's datastore. When a user logs in, an Auth token is returned. This token along with the API Key, being sent with every request, is what validates the authority of the request.
+
+The device scope is limited to the device's namespace in the device registry. When a user pairs with a device, an access token is returned for the device. This access token along with the API Key is what authenticates the device's connection to Grandeur Cloud. A user cannot pair with a device that is already paired.
+
+This is how the global project scope is distributed among the smaller entities and we make sure that everyone gets what they are allowed to access.
 
 ### Networking
 
@@ -363,22 +398,22 @@ So to allow a web app to interact with your project using the Web SDK, you first
 
 What makes the hardware SDK so simple and dextrous is its way of making your code look very well structured. It takes the burden of so many things off your shoulders and makes asynchronous tasks easy to handle. For example,
 
-* **Hardware SDK** takes care of the device's WiFi connectivity by itself. It starts trying to connect to the WiFi as soon as you do `apollo.init()`.
+* **Hardware SDK** takes care of your device's WiFi connectivity by itself. It starts trying to connect to WiFi as soon as you do `apollo.init()`.
 
-* **Hardware SDK** also takes care of the device's connection to [Grandeur Cloud][Grandeur Cloud]. As soon as the WiFi gets connected, **Hardware SDK** begins trying to connect to *[Grandeur Cloud][Grandeur Cloud]* using the *API Key* and the *Access Token* you provide during `apollo.init()`. When it connects, only then can it request the *[cloud][Grandeur Cloud]* to fetch or update any data of the device.
+* **Hardware SDK** also takes care of your device's connection to [Grandeur Cloud][Grandeur Cloud]. As soon as the WiFi gets connected, **Hardware SDK** begins trying to connect to *[Grandeur Cloud][Grandeur Cloud]* using the *API Key* and the *Access Token* you provide during `apollo.init()`. When it connects, only then can it request the *[cloud][Grandeur Cloud]* to fetch or update any data of your device.
 
-* And as the device quickly flies through these states, i.e.,
+* And as your device quickly flies through these states, i.e.,
   * Device is not connected to WiFi.
   * Device is connected to WiFi, but not connected to Grandeur Cloud yet.
   * Device is finally connected to Grandeur Cloud.
 
-  **Hardware SDK** exposes the state of the device through [`getState()`][getState] function to let you make your decisions based on that.
+  **Hardware SDK** exposes the state of your device through [`getState()`][getState] function to let you make your decisions based on that.
 
 * Not just that, you can even set event handlers on device's connection and disconnection to Grandeur Cloud using [`onApolloConnected()`][onApolloConnected] and [`onApolloDisconnected()`][onApolloDisconnected].
 
 * There is a special type of function defined in **Hardware SDK** as [`Callback`][callback] that can be passed to some functions of `ApolloDevice` class as a parameter. This callback function is called when the running function exists or when some type of event occurs.
 
-To see the **Hardware SDK** in action, jump to the [Get Started][Get Started with Hardware SDK] section.
+To see the **Hardware SDK** in action, jump to [Example][Example].
 
 ```cpp
 ApolloDevice apolloDevice;
@@ -1009,11 +1044,15 @@ Each device has some variables that a consumer might want to interact with (moni
 [Grandeur Technologies]: https://grandeur.tech "Grandeur Technologies"
 [Grandeur Cloud]: https://cloud.grandeur.tech "Grandeur Cloud"
 [Grandeur Cloud Sign Up]: https://cloud.grandeur.tech/register "Sign up on Grandeur Cloud"
+[Grandeur Cloud Dashboard]: https://cloud.grandeur.tech/dashboard "Grandeur Cloud Dashboard"
 [Get Started With Grandeur Cloud]: https://github.com/grandeurtech/grandeurcloud-js-sdk#get-started "Get Started With Grandeur Cloud"
 [Grandeur Cloud Pricing]: https://grandeur.tech/pricing "Pricing"
 
+[Example]: #example "Hardware SDK Example"
 [Documentation]: #documentation "Documentation"
 [Ecosystem]: #grandeur-ecosystem "Grandeur Ecosystem"
+
+[Project]: #project "Project"
 
 [SolDrive]: https://sol-drive.com/ "SolDrive"
 
