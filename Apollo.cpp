@@ -11,6 +11,7 @@ Config* config;
 ApolloDevice::PayloadHandler ApolloDevice::_format;
 char ApolloDevice::_deviceIP[IP_SIZE] = "";
 ApolloDevice apolloDevice;
+Apollo apollo;
 
 void initializeWiFi(void);
 void initializeDuplex(void);

@@ -51,31 +51,31 @@ class ApolloDevice {
         // Device constructor
         ApolloDevice();
         // Getter for Apollo state
-        static short getState(void);
-        static char* getStringifiedState(void);
+        short getState(void);
+        char* getStringifiedState(void);
         
         static void apolloEventHandler(WStype_t eventType, uint8_t* packet, size_t length);
 
         // Getter Methods
-        static char* getSSID(void);
-        static char* getPassphrase(void);
-        static char* getDeviceIP(void);
-        static char* getApiKey(void);
-        static char* getToken(void);
-        static void getSummary(char* payload, Callback callback);
-        static void getParms(char* payload, Callback callback);
+        char* getSSID(void);
+        char* getPassphrase(void);
+        char* getDeviceIP(void);
+        char* getApiKey(void);
+        char* getToken(void);
+        void getSummary(char* payload, Callback callback);
+        void getParms(char* payload, Callback callback);
         // Setter Methods
-        static void setSummary(char* payload, Callback callback);
-        static void setParms(char* payload, Callback callback);
+        void setSummary(char* payload, Callback callback);
+        void setParms(char* payload, Callback callback);
 
         // Method to read/write data from client buffer
-        static void update(void);
+        void update(void);
 
         // Event handlers
         static void onWiFiConnected(const WiFiEventStationModeConnected& event);
         static void onWiFiDisconnected(const WiFiEventStationModeDisconnected& event);
-        static void onApolloConnected(Callback receiver);
-        static void onApolloDisconnected(Callback receiver);
+        void onApolloConnected(Callback receiver);
+        void onApolloDisconnected(Callback receiver);
 
 };
 
@@ -86,6 +86,6 @@ class Apollo {
         ApolloDevice init(char* deviceID, char* apiKey, char* token, char* ssid, char* passphrase);
 };
 
-Apollo apollo;
+extern Apollo apollo;
 
 #endif
