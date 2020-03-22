@@ -163,9 +163,11 @@ The device does not automatically push messages to the network or pulls new mess
 
 ### Event Listening
 
-You can also attach connection-related event listeners to it. For example, to run a piece of code when the device makes a successful connection to Grandeur Cloud, just wrap that piece of code in a function and pass the function to `apolloDevice.onApolloConnected()`.
+You can also attach connection-related event listeners to it. For example, to run a piece of code when the device makes a successful connection to Grandeur Cloud, just wrap that piece of code in a Callback function and pass the function to `apolloDevice.onApolloConnected()`.
 
-Similarly, you can pass a function as a parameter to `apolloDevice.onApolloDisconnected()` and it will be called when the device disconnects from the cloud.
+Similarly, you can pass the Callback function as a parameter to `apolloDevice.onApolloDisconnected()` and it will be called when the device disconnects from the cloud.
+
+The Callback function is a special type of function that accepts an `unsigned char*` as a parameter and returns `void`.
 
 ```cpp
 ApolloDevice apolloDevice;
@@ -995,7 +997,7 @@ void loop() {
 [parms]: #device-parms "Parms"
 [topic]: #topic "Topic"
 [subscription]: #subscription "Subscription"
-[callback]: #callback "Callback"
+[callback]: #event-listening "Callback"
 [payload]: #payload "Payload"
 
 [getState]: #get-state
