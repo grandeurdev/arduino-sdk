@@ -973,11 +973,10 @@ void loop() {
 [Documentation]: #documentation "Documentation"
 [Ecosystem]: #grandeur-ecosystem "Grandeur Ecosystem"
 
-[Project]: #project "Project"
-[SDK]: #sdk "SDK"
-
 [SolDrive]: https://sol-drive.com/ "SolDrive"
 
+[Project]: #project "Project"
+[SDK]: #sdk "SDK"
 [Authentication and Access]: #authentication-and-access "Authentication and Access"
 [Allowed Origins]: #allowed-origins "Allowed Origins"
 [Device Registry]: #device-registry "Device Registry"
@@ -985,20 +984,9 @@ void loop() {
 [Get Started with Hardware SDK]: #get-started "Get Started with Hardware SDK"
 [Hardware SDK]: https://github.com/grandeurtech/grandeurcloud-hardware-sdk "Hardware SDK"
 [project]: #project "Project"
-[api key]: #api-key "API Key"
-[user]: #user "User"
-[consumer]: #consumer "Consumer"
-[device]: #device "Device"
-[apollo server]: #apollo-server "Apollo Server"
-[duplex]: #duplex-channel "Duplex Channel"
-[auth token]: #auth-token "Auth Token"
-[Methods]: #methods "Methods"
-[summary]: #device-summary "Summary"
-[parms]: #device-parms "Parms"
-[topic]: #topic "Topic"
-[subscription]: #subscription "Subscription"
+[summary]: #device-registry "Summary"
+[parms]: #device-registry "Parms"
 [callback]: #event-listening "Callback"
-[payload]: #payload "Payload"
 
 [getState]: #get-state
 [onApolloConnected]: #on-apollo-connected
