@@ -278,6 +278,27 @@ void loop() {
 }
 ```
 
+## The Dexterity of Hardware SDK
+
+What makes the hardware SDK so simple and dextrous is its way of making your code look very well structured. It takes the burden of so many things off your shoulders and makes asynchronous tasks easy to handle. For example,
+
+* **Hardware SDK** takes care of your device's WiFi connectivity by itself. It starts trying to connect to WiFi as soon as you do `apollo.init()`.
+
+* **Hardware SDK** also takes care of your device's connection to [Grandeur Cloud][Grandeur Cloud]. As soon as the WiFi gets connected, **Hardware SDK** begins trying to connect to *[Grandeur Cloud][Grandeur Cloud]* using the *API Key* and the *Access Token* you provide during `apollo.init()`. When it connects, only then can it request the *[cloud][Grandeur Cloud]* to fetch or update any data of your device.
+
+* And as your device quickly flies through these states, i.e.,
+  * Device is not connected to WiFi.
+  * Device is connected to WiFi, but not connected to Grandeur Cloud yet.
+  * Device is finally connected to Grandeur Cloud.
+
+  **Hardware SDK** exposes the state of your device through [`getState()`][getState] function to let you make your decisions based on that.
+
+* Not just that, you can even set event handlers on device's connection and disconnection to Grandeur Cloud using [`onApolloConnected()`][onApolloConnected] and [`onApolloDisconnected()`][onApolloDisconnected].
+
+* There is a special type of function defined in **Hardware SDK** as [`Callback`][callback] that can be passed to some functions of `ApolloDevice` class as a parameter. This callback function is called when the running function exists or when some type of event occurs.
+
+To see the **Hardware SDK** in action, jump to [Example][Example].
+
 # Grandeur Ecosystem
 
 The purpose of writing this is to give you a glimpse into the thought process and psychologies behind designing the Grandeur Cloud Platform the way it feels now. We believe that the first very important step towards choosing a platform for your product and company is to understand the design language of developers of the platform. So we thought of writing about it in detail. We wanted to document how you can use this platform effectively to make your life as a developer or founder a bit simpler.
@@ -306,7 +327,7 @@ In this subsection, we will explore the Grandeur Cloud platform in detail and se
 
 A project is the first thing you need to create to start working with Grandeur Cloud. A project is like a namespace, a completely isolated network of users and devices, along with separate file storage and a separate datastore. While you can create an unlimited number of projects, but no two projects can interact or share anything with one other.
 
-Each project is identified by a digital signature that we call the API key, just as your identification card or social security number identifies you as a citizen. To connect your apps or hardware to your project's network, this is what you need to provide to the SDKs. The API key is sent with every request to Grandeur Cloud and this is what defines the scope or namespace of the request. Check out the [SDK][SDK] section to read more about it.
+Each project is identified by a digital signature that we call the API key, just as your identification card or social security number identifies you as a citizen. To connect your apps or hardware to your project's network, this is what you need to provide to the SDKs. The API key is sent with every request to Grandeur Cloud and this is what defines the project of the request. Check out the [SDK][SDK] section to read more about it.
 
 *NOTE*: Our pricing applies separately to each project. So you get a free tier on every project and pay for each separately for what you consume when you cross your resources limit.
 
@@ -314,11 +335,11 @@ Each project is identified by a digital signature that we call the API key, just
 
 Apollo is the API that exposes Grandeur Cloud to the outside world. Our SDKs utilize this API and map each functionality to a function. We have tried our best to make the integration of our SDKs into your codebase simple. For example, while developing your web app, you simply need to drop in the link of JS SDK CDN in your codebase and you are done. We have developed our SDKs for each platform in coherence with each other so you could work and collaborate everywhere seamlessly.
 
-This is how they work: In every SDK, there is a global object `apollo`. You can initialize your configurations (API Key and a couple of more stuff in case of hardware SDK) by calling `apollo.init()`. This returns you a reference to your whole project (in case of your app) or just to your device (in case of hardware because hardware scope is limited to the device itself). In **JS SDK**, you can interact with the authentication API, the device API, the file storage and the datastore API. In the case of **Hardware SDK** your scope is limited to just the device's data. Check out the [Authentication and Access][Authentication and Access] section to get more insight into how scope affects your development across the different platforms.
+This is how they work: In every SDK, there is a global object aka. `apollo`. You can initialize your configurations (API Key and a couple of more stuff in case of hardware SDK) by calling `apollo.init()`. This returns you a reference to your whole project (in case of your app) or just to your device (in case of hardware because hardware scope is limited to the device itself). In **JS SDK**, you can interact with the authentication API, the device API, the file storage and the datastore API. In the case of **Hardware SDK** your scope is limited to just the device's namespace. Check out the [Authentication and Access][Authentication and Access] section to get more insight into how scope varies across the different platforms (app and hardware).
 
 ### User and Administrator
 
-This topic is about the relationship between you as an administrator and your users and the scope of access of both.
+This topic is about the relationship between you as an administrator and your users and the access scope of both.
 
 You aka. **the administrator** is an entity that creates, develops and maintains one or more [projects][Project] on Grandeur Cloud. The administrator has full authority over a project's resources (users, devices, files, and data) and can monitor and control all its projects from the [dashboard][Grandeur Cloud Dashboard].
 
@@ -326,15 +347,15 @@ A **user** is an entity that uses your product. While you have full control over
 
 In the real world, you would not want to add a new user or pair a device with that user manually every time someone buys your product. Therefore you delegate a part of your project authorities to the SDK when you plug your project's API Key in. And so a new user gets to sign up, pair, monitor and control your device through your product's companion app.
 
-Using just your project's API Key for full delegation is not enough. A stolen API Key can give the hacker, at the minimum, user-level access to your project. Hence the concept of CORS comes to play. Read more on CORS in [allowed origins][Allowed Origins] section.
+Using just your project's API Key for full delegation is like putting all of your eggs in one basket. A stolen API Key can give the hacker, at the minimum, user-level access to your project. He can register any number of bogus users and do whatnot. Hence the concept of CORS comes to play. Read more on CORS in [Allowed Origins][Allowed Origins] section.
 
 ### Device
 
-Devices are the *things* in **Internet of Things** (IoT) around which the IoT product development revolves. Like a user, a device entity has a limited scope of access. But unlike users, you can register new devices only from the dashboard. Read the [device registry][Device Registry] section for more about it.
+Devices are the *things* in **Internet of Things** (IoT) around which the IoT product development revolves. Like a user, a device entity has a limited scope of access. But unlike users, you can register new devices only from the dashboard. Read the [Device Registry][Device Registry] section for more on what happens when you register a new device to your project.
 
-On Grandeur Cloud, a device falls under the ownership of the project's administrator. The project's API Key delegates the device pairing authority to the SDK which the user uses to pair with the device. Pairing a device makes it live on Grandeur Cloud and the user gets delegated access to the device's data. But a user cannot delete or modify a device's inherent data.
+On Grandeur Cloud, a device falls under the ownership of the project's administrator. The project's API Key delegates the device pairing authority to the SDK which the user uses to pair with the device. Pairing a device makes it live on Grandeur Cloud and the user gets delegated access to the device's data. But a user cannot delete or modify a device's inherent data because it's not within its scope.
 
-A user can pair as many devices with itself but a device can be paired with at the most one user.
+A user can pair with any number of devices but a device can be paired with at the most one user.
 
 The device entity, in the end, defines two things:
 
@@ -343,30 +364,32 @@ The device entity, in the end, defines two things:
 
 This matters a lot because you would never want your neighbor to control your air conditioner (that would be a horrible situation). That's what this entity has been designed for. A user can only interact with devices that are paired with it.
 
-When you pair a device with a user account, an access token is generated for the device. This token is what the device uses to connect to Grandeur Cloud. This token also delegates access of the device namespace to the Hardware SDK. The Hardware SDK takes this access token along with the project's API Key while doing `apollo.init()`. To read about device namespace and how the device's data is stored on Grandeur Cloud, have a look at the [device registry][Device Registry] section.
+When you pair a device with a user account, an access token is generated for the device. This token is what the device uses to connect to Grandeur Cloud. This token also delegates access of the device namespace to the Hardware SDK. The Hardware SDK takes this access token along with the project's API Key while doing `apollo.init()`. To read about the device's namespace and how the device's data is stored on Grandeur Cloud, have a look at the [Device Registry][Device Registry] section.
+
+_*NOTE*_: A user cannot pair with a device that is already paired.
 
 ### Device Registry
 
-The device registry constitutes one of the key elements of Grandeur Cloud. There are two types of solutions out there:
+The device registry constitutes one of the key elements of Grandeur Cloud. There are two types of approaches you see out there:
 
 * Those which deal with user's authentication only e.g. firebase and
-* Those which employ a device's registry e.g. Google IoT Core to make sure no unauthorized devices get into your network.
+* Those which employ a device's registry e.g. Google IoT Core, to make sure no unauthorized devices get into your network.
 
 We wanted to combine the best of both worlds. This is why at Grandeur Cloud, not do we just authenticate a device on connection, we also maintain a device's registry for you. See [Authentication and Access][Authentication and Access] section for detail on how a device is authenticated on Grandeur Cloud.
 
-When you register a device, you make it available in your project's network. Not just that, a new namespace is created for your device in the device registry. All of your device's data is stored in this namespace in the form of i) Summary, ii) Parms.
+When you register a device, you make it available in your project's network. Not just that, a new namespace is created for your device in the device registry. When your device comes online, this is where all of its data is stored, in the form of i) Summary and ii) Parms.
 
-Now let's define what you can store in **Parms** and **Summary**. To be honest, there is no hard and fast rule about it. We just created two objects instead of a single one to help you develop understanding. However, we generally take the parms as the directly controllable device variables and the summary as those device variables which are not directly controllable or are just needed to be logged or displayed to apps. In another way, the parms sometimes refer to the inputs from the user and the summary refers to the outputs of the device resulting from the inputs. Consider an example where you have a smart light bulb. The parms can store the bulb ON/OFF state, while in summary, you can log the voltage consumption of the bulb.
+Now let's define what you can store in **Parms** and **Summary**. To be honest, there is no hard and fast rule about it. We just created two objects instead of a single one to help you develop understanding. However, we generally take the parms as the directly controllable device variables and the summary as those device variables which are not directly controllable or are just needed to be logged or displayed to apps. In another way, the parms sometimes refer to the inputs from the user and the summary refers to the outputs of the device resulting from the inputs. Consider an example where you have a smart light bulb. The parms can store the bulb ON/OFF state which the user can control, while in summary, you can log the voltage consumption of the bulb.
 
-We defined these two objects to give you a basic framework to work on and build your logic fast. But we are very flexible in what and how you store data in the device directory. So you can define an initial schema of these objects using [templates][Templates] and go on from there.
+We defined these two objects just to give you a basic framework to work on and build your logic fast. But we are very flexible in what and how you store data in the device registry. You can define an initial schema of these objects using [templates][Templates] and go on from there.
 
 ### Templates
 
 ### Authentication and Access
 
-In the last two sections, we have discussed in depth who can access what. This section revisits the topic and gives you a broader picture of authentication and access scopes. Let's start by outlining the relationships. There are three major scopes:
+Previously, we have discussed in depth which entity (administrator, user, device) can access what. This section revisits the topic and gives you a broader picture of authentication and access scopes. Let's start by outlining the relationships. There are three major scopes:
 
-* Project's global scope
+* The global scope or project's scope
 * User scope
 * Device scope
 
@@ -374,7 +397,7 @@ You (as an administrator) create a project and therefore have global access to e
 
 The user scope is wider than the device scope. A user can access its profile, the registry of the devices it's paired to, the files in the project's storage and the data in the project's datastore. When a user logs in, an Auth token is returned. This token along with the API Key, being sent with every request, is what validates the authority of the request.
 
-The device scope is limited to the device's namespace in the device registry. When a user pairs with a device, an access token is returned for the device. This access token along with the API Key is what authenticates the device's connection to Grandeur Cloud. A user cannot pair with a device that is already paired.
+The device scope is limited to the device's namespace in the device registry. When a user pairs with a device, an access token is returned for the device. This access token along with the API Key is what authenticates the device's connection to Grandeur Cloud.
 
 This is how the global project scope is distributed among the smaller entities and we make sure that everyone gets what they are allowed to access.
 
@@ -382,66 +405,17 @@ This is how the global project scope is distributed among the smaller entities a
 
 Here we write about how the networking works on Grandeur Cloud.
 
-We work with two communication channels in **Web SDK** i) HTTP based REST API channel and ii) Duplex based realtime API channel. We use the first to do some basic or heavy stuff like authentication or file uploading, while the latter, as its name suggests, for realtime communication like fetching or updating the device's data. The realtime channel is as fast as 200ms RTT. It is based on our custom protocol aka. Duplex. We do not allow any unauthenticated communication over this channel and therefore authenticate a connection over the REST channel first.
+We work with two communication channels in **Web SDK** i) HTTP based REST API channel and ii) Duplex based realtime API channel. We use the first to do some basic things like authentication or handle big requests like file uploading, while the latter, as its name suggests, for realtime communication like fetching or updating the device's data. The realtime channel is as fast as 200ms RTT. It is based on our custom protocol aka. Duplex. We do not allow any unauthenticated communication over this channel and therefore authenticate a connection over the REST channel first.
 
 In the **Hardware SDK**, we only use the realtime channel. A device cannot establish a connection over this channel unless and until its access token is validated. A device access token is provided while initializing the apollo configurations through `apollo.init()`.
 
 ### Allowed Origins
 
-This is another amazing topic and somehow related to access delegation in the end. As mentioned in the sections above that you can interact with your project's namespace through the JS SDK by initializing apollo with your API key. This returns an object referring to your project and can be used to access its namespace including its devices, datastore, and files storage. Putting this much responsibility on just the API key poses a security threat particularly in case of web apps as API Key can easily be stolen. Even though a user needs to log in first before making any request to the cloud, a hacker with having your API key can still cause some serious damage. For example, Registering bogus users to your project or creating a copycat site on your name for phishing to name a few. That's where cross-origin request sharing (CORS) policies come to play.
+This is another amazing topic and somehow related to access delegation in the end. As mentioned in the sections above that you can interact with your project's namespace through the JS SDK by initializing apollo with your API key. This returns an object referring to your project which can be used to interact with its resources including its devices, datastore, and files storage. Putting this much responsibility on just the API key poses a security threat particularly in case of web apps as API Key can easily be stolen. Even though a user needs to log in first before making any request to the cloud, a hacker with having your API key can still cause some serious damage. For example, Registering bogus users to your project or creating a copycat site on your name for phishing to name a few. That's where cross-origin request sharing (CORS) policies come to play.
 
-So to allow a web app to interact with your project using the Web SDK, you first need to whitelist the domain name your web app uses via the settings page in your dashboard. You cannot even send a request from your localhost without first whitelisting it.
+So to allow a web app to interact with your project using the Web SDK, you first need to whitelist the domain name your web app uses via the settings page in the dashboard. You cannot even send a request from your localhost without first whitelisting it.
 
-*NOTE*: Keeping localhost whitelisted even in a production application is a very serious vulnerability. You should avoid that at all costs.
-
-## The Dexterity of Hardware SDK
-
-What makes the hardware SDK so simple and dextrous is its way of making your code look very well structured. It takes the burden of so many things off your shoulders and makes asynchronous tasks easy to handle. For example,
-
-* **Hardware SDK** takes care of your device's WiFi connectivity by itself. It starts trying to connect to WiFi as soon as you do `apollo.init()`.
-
-* **Hardware SDK** also takes care of your device's connection to [Grandeur Cloud][Grandeur Cloud]. As soon as the WiFi gets connected, **Hardware SDK** begins trying to connect to *[Grandeur Cloud][Grandeur Cloud]* using the *API Key* and the *Access Token* you provide during `apollo.init()`. When it connects, only then can it request the *[cloud][Grandeur Cloud]* to fetch or update any data of your device.
-
-* And as your device quickly flies through these states, i.e.,
-  * Device is not connected to WiFi.
-  * Device is connected to WiFi, but not connected to Grandeur Cloud yet.
-  * Device is finally connected to Grandeur Cloud.
-
-  **Hardware SDK** exposes the state of your device through [`getState()`][getState] function to let you make your decisions based on that.
-
-* Not just that, you can even set event handlers on device's connection and disconnection to Grandeur Cloud using [`onApolloConnected()`][onApolloConnected] and [`onApolloDisconnected()`][onApolloDisconnected].
-
-* There is a special type of function defined in **Hardware SDK** as [`Callback`][callback] that can be passed to some functions of `ApolloDevice` class as a parameter. This callback function is called when the running function exists or when some type of event occurs.
-
-To see the **Hardware SDK** in action, jump to [Example][Example].
-
-```cpp
-ApolloDevice apolloDevice;
-void callThisWhenDeviceConnectsToGrandeurCloud(unsigned char* string) {
-  /* Prints this when device makes a successful connection to Grandeur Cloud */
-  puts("Device is connected to the cloud.");
-}
-
-void setup() {
-  /* Initializing apollo configurations
-  */
-  apolloDevice = apollo.init(YourApiKey, YourAccessToken, YourWiFiSSID, YourWiFiPassphrase);
-  /* Setting up onApolloConnected callback
-  */
-  apolloDevice.onApolloConnected(callThisWhenDeviceConnectsToGrandeurCloud);
-}
-
-void loop() {
-  /* Updating the device's TCP buffer
-  */
-  apolloDevice.update()
-}
-
-/***RESULT**
- * Prints "Device is connected to the cloud." to the stdout when the device makes
- * a successful connection to Grandeur Cloud.
-*/
-```
+_*NOTE*_: Keeping localhost whitelisted even in a production application is a very serious vulnerability that can make you pay as you go (pun intended).
 
 ## Documentation
 
@@ -975,72 +949,6 @@ void loop() {
 */
 ```
 
-## A Peek into Grandeur's Ecosystem
-
-### Project
-
-A *project* is the most top-level entity in **[Grandeur Cloud][Grandeur Cloud]**. It defines an isolated ecosystem for all your nodes (Users and devices), which means no node in one project can be related to or interact with any node of some other project.
-
-Each project is identified by a unique string of characters. We call it the [API Key][api key].
-
-A project is created by a *[user][user]*.
-
-A project can have any number of consumers and devices, interconnected in any number of ways.
-
-### API key
-
-*API Key* is a unique string of characters, generated when you create a new *[project][project]* on **[Grandeur Cloud][Grandeur cloud]**. It is an identifier for the *project* you request to interact with.
-
-Each node that belongs to project A must send project A's *API Key* with every request to be able to interact with project A's ecosystem.
-
-### User
-
-A *user* is an entity that creates, develops and maintains one or more *[projects][project]* on **[Grandeur Cloud][Grandeur Cloud]**. It's the admin of the *project* and has the full authority to monitor and control all its *projects* from [Grandeur Dashboard][grandeur dashboard].
-
-A *user* can create any number of *projects* but a *project* can have at the most one admin aka *user*.
-
-### Consumer
-
-A *consumer* is the end user that uses the *user*'s product. It lives in the ecosystem aka project created by the *user* and interacts with other nodes (devices and other consumers) of the *[project][project]*.
-
-### Device
-
-A *device* is the hardware product that a *consumer* can monitor and control. To be precise, there are some *device* variables that a *[consumer][consumer]* actually interacts with. These interactive variables are specified under *device*'s *[summary][summary]* and *[parms][parms]*.
-
-All the nodes in a *project* interact with each other through *[Apollo server][apollo server]*.
-
-### Apollo Server
-
-*Apollo server* is the central hub for all the communications happening among all the *[consumers][consumer]* and all the *[devices][device]* in all the *[projects][project]*. *Apollo server* is what isolates *projects* from each other, maintains *[duplex connection][duplex]* with all nodes, and routes messages among them.
-
-Each node communicates with the other through a realtime *duplex* channel.
-
-### Duplex Channel
-
-**Duplex** is the channel on which realtime communication is done between a node and *Apollo server*. An *interaction* between two nodes happens through two *duplex* channels, one between the source node and *Apollo server* and the other between *Apollo server* and destination node.
-
-A *project* can open as many *duplex* channels as it needs.
-
-### Auth Token
-
-*Auth Token* is an identification token that lets *Apollo server* identify who a node is in a *[project][project]*'s ecosystem.
-
-When a consumer logs in using its password, an *Auth token* is sent back to it. This *Auth token* along with the project's *[API key][apiKey]* is sent with every request made to *Apollo server* for the request to be considered valid.
-
-When a consumer *pairs* a device, a *device Auth token* is sent to the *[consumer][consumer]* who forwards it to the *[device][device]* to make the device live in the project.
-
-A *consumer* Auth token cannot be used in place of a device token or vice versa.
-
-### Device Summary
-
-Each device has some variables that a consumer might want to interact with (monitor or control).
-
-*Summary* includes those device variables which *are not directly controllable*. For example, in an air conditioner, the controllable variable is its state (ON/OFF) or the temperature dial you see on its display, while its voltage, current, and power consumption would be non-controllable variables, thus opted to be under *summary*.
-
-### Device Parms
-
-*Parms* are *the directly controllable* variables. In the previous air conditioner example, its state and the temperature dial would opt for *parms* category.
-
 [Grandeur Technologies]: https://grandeur.tech "Grandeur Technologies"
 [Grandeur Cloud]: https://cloud.grandeur.tech "Grandeur Cloud"
 [Grandeur Cloud Sign Up]: https://cloud.grandeur.tech/register "Sign up on Grandeur Cloud"
@@ -1053,6 +961,7 @@ Each device has some variables that a consumer might want to interact with (moni
 [Ecosystem]: #grandeur-ecosystem "Grandeur Ecosystem"
 
 [Project]: #project "Project"
+[SDK]: #sdk "SDK"
 
 [SolDrive]: https://sol-drive.com/ "SolDrive"
 
