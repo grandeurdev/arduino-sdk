@@ -50,6 +50,19 @@ To understand the core concepts Grandeur Cloud is built upon, simply dive into t
   * [Event Listening](#event-listening)
   * [Getting and Updating Device Data](#getting-and-updating-device-data)
 * [Example](#example)
+* [The Dexterity of Hardware SDK](#the-dexterity-of-hardware-sdk)
+* [Grandeur Ecosystem](#grandeur-ecosystem)
+  * [A Brief Case Study](#a-brief-case-study)
+  * [Concepts](#concepts)
+    * [Project](#project)
+    * [SDK](#SDK)
+    * [User and Administrator](#user-and-administrator)
+    * [Device](#device)
+    * [Device Registry](#device-registry)
+    * [Templates](#templates)
+    * [Authentication and Access](#authentication-and-access)
+    * [Networking](#networking)
+    * [Allowed Origins](#allowed-origins)
 * [Documentation](#documentation)
   * [init](#init)
   * [update](#update)
@@ -66,8 +79,6 @@ To understand the core concepts Grandeur Cloud is built upon, simply dive into t
   * [getParms](#get-parms)
   * [setSummary](#set-summary)
   * [setParms](#set-parms)
-
-* [A peek into Grandeur Ecosystem](#A-Peek-into-Grandeur's-Ecosystem)
 
 ## Get Started
 
@@ -970,8 +981,7 @@ void loop() {
 [Device Registry]: #device-registry "Device Registry"
 
 [Get Started with Hardware SDK]: #get-started "Get Started with Hardware SDK"
-[Apollo Device SDK]: https://gitlab.com/grandeurtech/apollo-device "Apollo Device"
-[WiFi Smart Configuration]: #wifi-smart-configuration "WiFi Smart Configuration"
+[Hardware SDK]: https://github.com/grandeurtech/grandeurcloud-hardware-sdk "Hardware SDK"
 [project]: #project "Project"
 [api key]: #api-key "API Key"
 [user]: #user "User"
@@ -980,7 +990,6 @@ void loop() {
 [apollo server]: #apollo-server "Apollo Server"
 [duplex]: #duplex-channel "Duplex Channel"
 [auth token]: #auth-token "Auth Token"
-[grandeur dashboard]: https://cloud.grandeur.tech/dashboard "Grandeur Dashboard"
 [Methods]: #methods "Methods"
 [summary]: #device-summary "Summary"
 [parms]: #device-parms "Parms"
