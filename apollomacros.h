@@ -1,5 +1,15 @@
+/**
+ * @file apollomacros.h
+ * @date 24.03.2020
+ * @author Grandeur Technologies
+ *
+ * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
+ * This file is part of the Hardware SDK for Grandeur Cloud.
+ *
+ */
+
 // Connection macros
-#define APOLLO_URL "192.168.1.5"
+#define APOLLO_URL "192.168.1.14"
 #define APOLLO_PORT 3000
 #define APOLLO_FINGERPRINT ""
 
@@ -12,6 +22,7 @@
 #define TOKEN_SIZE 512
 #define IP_SIZE 16
 #define FINGERPRINT_SIZE 256
+#define PACKET_SIZE 512
 
 // Ping interval in milliseconds
 #define PING_INTERVAL 25000

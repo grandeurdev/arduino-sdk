@@ -255,41 +255,7 @@ void loop() {
 
 ## Example
 
-```cpp
-void setup() {
-    /* You can initialize device configurations using global object "apollo"
-    */
-    ApolloDevice apolloDevice = apollo.init(
-      YourApiKey, YourDeviceToken, YourWiFiSSID, YourWiFiPassphrase
-    );
-
-    /* Setting up callback function for connection of the device to the cloud
-    */
-    apolloDevice.onApolloConnected([](unsigned char* message) {
-      puts("Device is now connected to the cloud.");
-    });
-
-    /* Setting up callback function for disconnection of the device to the cloud
-    */
-    apolloDevice.onApolloDisconnected([](unsigned char* message) {
-      puts("Device is now disconnected from the cloud.");
-    });
-}
-
-void loop() {
-    /* Getting the state of this device
-    ** State can exclusively be one of these: {WIFI_NOT_CONNECTED, WIFI_CONNECTED, DUPLEX_CONNECTED}
-    */
-    int state = apolloDevice.getState();
-    if(state == APOLLO_CONNECTED) {
-        /*
-        ** Your logic here
-        */
-    }
-    // Updating device's connection buffer
-    apolloDevice.update();
-}
-```
+To see the **Hardware SDK** in full-on action, go through these examples [here][Examples].
 
 ## The Dexterity of Hardware SDK
 
@@ -966,8 +932,9 @@ void loop() {
 [Grandeur Cloud]: https://cloud.grandeur.tech "Grandeur Cloud"
 [Grandeur Cloud Sign Up]: https://cloud.grandeur.tech/register "Sign up on Grandeur Cloud"
 [Grandeur Cloud Dashboard]: https://cloud.grandeur.tech/dashboard "Grandeur Cloud Dashboard"
-[Get Started With Grandeur Cloud]: https://github.com/grandeurtech/grandeurcloud-js-sdk#get-started "Get Started With Grandeur Cloud"
 [Grandeur Cloud Pricing]: https://grandeur.tech/pricing "Pricing"
+[Get Started With Grandeur Cloud]: https://github.com/grandeurtech/grandeurcloud-js-sdk#get-started "Get Started With Grandeur Cloud"
+[Examples]:  https://github.com/grandeurtech/grandeurcloud-hardware-sdk/tree/development/examples
 
 [Example]: #example "Hardware SDK Example"
 [Documentation]: #documentation "Documentation"

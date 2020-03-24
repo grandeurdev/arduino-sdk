@@ -1,3 +1,13 @@
+/**
+ * @file Apollo.cpp
+ * @date 24.03.2020
+ * @author Grandeur Technologies
+ *
+ * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
+ * This file is part of the Hardware SDK for Grandeur Cloud.
+ *
+ */
+
 #include <Apollo.h>
 #include <iostream>
 
@@ -35,57 +45,58 @@ ApolloDevice Apollo::init(char* deviceID, char* apiKey, char* token, char* ssid,
 
 ApolloDevice::ApolloDevice() {}
 
-
-void ApolloDevice::getSummary(char* payload, Callback callback) {
+void ApolloDevice::_send(const char* task, const char* payload, Callback callback) {
     if(_state == APOLLO_CONNECTED) {
-        char* packet= "";
+        char packet[PACKET_SIZE];
         unsigned long packetID = millis();
         // Saving callback to eventsTable
-        _eventsTable.insert("getDeviceSummary", packetID, callback);
+        _eventsTable.insert(task, packetID, callback);
         // Formatting the packet
-        sprintf(packet, "{\"header\": {\"id\": %lu, \"task\": \"getDeviceSummary\"}, \"payload\": %s}", packetID, payload);
+        snprintf(packet, PACKET_SIZE, "{\"header\": {\"id\": %lu, \"task\": \"%s\"}, \"payload\": %s}", packetID, task, payload);
+        Serial.printf("Packet is: %s\n", packet);
         // Sending to server
         duplexClient.sendTXT(packet);
     }
 }
 
-void ApolloDevice::getParms(char* payload, Callback callback) {
-    if(_state == APOLLO_CONNECTED) {
-        char* packet= "";
-        unsigned long packetID = millis();
-        // Saving callback to eventsTable
-        _eventsTable.insert("getDeviceParms", packetID, callback);
-        // Formatting the packet
-        sprintf(packet, "{\"header\": {\"id\": %lu, \"task\": \"getDeviceParms\"}, \"payload\": %s}", packetID, payload);
-        // Sending to server
-        duplexClient.sendTXT(packet);
-    }
+void ApolloDevice::getSummary(const char* payload, Callback callback) {
+    _send("getDeviceSummary", payload, callback);
 }
 
-void ApolloDevice::setSummary(char* payload, Callback callback) {
-    if(_state == APOLLO_CONNECTED) {
-        char* packet= "";
-        unsigned long packetID = millis();
-        // Saving callback to eventsTable
-        _eventsTable.insert("setDeviceSummary", packetID, callback);
-        // Formatting the packet // TODO: How to add variable number of summary keys
-        sprintf(packet, "{\"header\": {\"id\": %lu, \"task\": \"setDeviceSummary\"}, \"payload\": %s}", packetID, payload);
-        // Sending to server
-        duplexClient.sendTXT(packet);
-    }
+void ApolloDevice::getSummary(String payload, Callback callback) {
+    char payloadArray[PACKET_SIZE];
+    payload.toCharArray(payloadArray, PACKET_SIZE);
+    _send("getDeviceSummary", payloadArray, callback);
 }
 
-void ApolloDevice::setParms(char* payload, Callback callback) {
-    if(_state == APOLLO_CONNECTED) {
-        char* packet= "";
-        unsigned long packetID = millis();
-        // Saving callback to eventsTable
-        _eventsTable.insert("setDeviceParms", packetID, callback);
-        // Formatting the packet // TODO: How to add variable number of summary keys
-        sprintf(packet, "{\"header\": {\"id\": %lu, \"task\": \"setDeviceParms\"}, \"payload\": %s}", packetID, payload);
-        // Sending to server
-        duplexClient.sendTXT(packet);
-    }
+void ApolloDevice::getParms(const char* payload, Callback callback) {
+    _send("getDeviceParms", payload, callback);
+}
+
+void ApolloDevice::getParms(String payload, Callback callback) {
+    char payloadArray[PACKET_SIZE];
+    payload.toCharArray(payloadArray, PACKET_SIZE);
+    _send("getDeviceParms", payloadArray, callback);
+}
+
+void ApolloDevice::setSummary(const char* payload, Callback callback) {
+    _send("setDeviceSummary", payload, callback);
+}
+
+void ApolloDevice::setSummary(String payload, Callback callback) {
+    char payloadArray[PACKET_SIZE];
+    payload.toCharArray(payloadArray, PACKET_SIZE);
+    _send("setDeviceSummary", payloadArray, callback);
+}
+
+void ApolloDevice::setParms(const char* payload, Callback callback) {
+    _send("setDeviceParms", payload, callback);
+}
+
+void ApolloDevice::setParms(String payload, Callback callback) {
+    char payloadArray[PACKET_SIZE];
+    payload.toCharArray(payloadArray, PACKET_SIZE);
+    _send("setDeviceParms", payloadArray, callback);
 }
 
 char* ApolloDevice::getSSID(void) {

@@ -1,3 +1,13 @@
+/**
+ * @file EventTable.h
+ * @date 24.03.2020
+ * @author Grandeur Technologies
+ *
+ * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
+ * This file is part of the Hardware SDK for Grandeur Cloud.
+ *
+ */
+
 #include <cstdlib>
 #include <string>
 #include <apollotypes.h>

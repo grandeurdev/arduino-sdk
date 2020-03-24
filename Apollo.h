@@ -46,6 +46,8 @@ class ApolloDevice {
         
         static void ping();
         
+        void _send(const char* task, const char* payload, Callback callback);
+        
         static PayloadHandler _format;
     public:
         // Device constructor
@@ -62,11 +64,18 @@ class ApolloDevice {
         char* getDeviceIP(void);
         char* getApiKey(void);
         char* getToken(void);
-        void getSummary(char* payload, Callback callback);
-        void getParms(char* payload, Callback callback);
+
+        void getSummary(const char* payload, Callback callback);
+        void getSummary(String payload, Callback callback);
+
+        void getParms(const char* payload, Callback callback);
+        void getParms(String payload, Callback callback);
         // Setter Methods
-        void setSummary(char* payload, Callback callback);
-        void setParms(char* payload, Callback callback);
+        void setSummary(const char* payload, Callback callback);
+        void setSummary(String payload, Callback callback);
+        
+        void setParms(const char* payload, Callback callback);
+        void setParms(String payload, Callback callback);
 
         // Method to read/write data from client buffer
         void update(void);
