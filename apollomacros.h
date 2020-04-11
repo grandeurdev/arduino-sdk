@@ -32,9 +32,6 @@
 #define WIFI_CONNECTED 1
 #define APOLLO_CONNECTED 2
 
-// Indexes for functions in eventQueue
-#define LOGOUT 0
-
 // Indexes for handlers callbacks
 #define ONCONNECTED 0
 #define ONDISCONNECTED 1

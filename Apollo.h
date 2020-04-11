@@ -1,7 +1,7 @@
 /**
  * @file Apollo.h
  * @date 20.03.2020
- * @author Muhammad Abdullah
+ * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
  * This file is part of the Hardware SDK for ESP8266 module.
@@ -24,6 +24,7 @@ class ApolloDevice {
     private:
         class PayloadHandler {
             // Class for handling payload format to or from apollo server
+            // TODO: Use Arduino_JSON here.
             private:
                 
             public:
@@ -85,6 +86,8 @@ class ApolloDevice {
         static void onWiFiDisconnected(const WiFiEventStationModeDisconnected& event);
         void onApolloConnected(Callback receiver);
         void onApolloDisconnected(Callback receiver);
+        void onSummaryUpdated(const char* payload, Callback callback);
+        void onParmsUpdated(const char* payload, Callback callback);
 
 };
 
