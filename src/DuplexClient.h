@@ -128,4 +128,4 @@ class DuplexClient: protected Duplex {
     }
 };
 
-#endif /*DUPLEX_H_ */
+#endif

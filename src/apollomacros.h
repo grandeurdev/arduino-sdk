@@ -9,8 +9,8 @@
  */
 
 // Connection macros
-#define APOLLO_URL "192.168.1.14"
-#define APOLLO_PORT 3000
+#define APOLLO_URL "192.168.1.9"
+#define APOLLO_PORT 8000
 #define APOLLO_FINGERPRINT ""
 
 // Defining general macros
@@ -23,6 +23,7 @@
 #define IP_SIZE 16
 #define FINGERPRINT_SIZE 256
 #define PACKET_SIZE 512
+#define PING_PACKET_SIZE 64
 
 // Ping interval in milliseconds
 #define PING_INTERVAL 25000
@@ -36,3 +37,7 @@
 #define ONCONNECTED 0
 #define ONDISCONNECTED 1
 #define ONMESSAGE 2
+
+// Indexes for update handler callbacks in subscriptions array
+#define SUMMARYUPDATE 0
+#define PARMSUPDATE 1

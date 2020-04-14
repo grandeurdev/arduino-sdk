@@ -17,7 +17,7 @@
 
 /*TYPEDEFS*/
 // EventID
-typedef unsigned long EventID;
+typedef ApolloID EventID;
 //EventData
 typedef Callback EventData;
 // Event table data
@@ -30,6 +30,9 @@ typedef std::string EventTableKey;
 
 // Event table size
 const int T_S = 10;
+
+// Events Array
+extern const char* events[T_S];
 
 // Event table entry
 class EventTableEntry {

@@ -26,7 +26,7 @@
 #include <functional>
 #endif
 
-//#define DEBUG_ESP_PORT Serial
+// #define DEBUG_ESP_PORT Serial
 
 #ifndef NODEBUG_DUPLEX
 #ifdef DEBUG_ESP_PORT
@@ -316,4 +316,4 @@ class Duplex {
 #ifndef UNUSED
 #define UNUSED(var) (void)(var)
 #endif
-#endif /* DUPLEX_H_ */
+#endif

@@ -22,25 +22,16 @@
 class ApolloDevice {
     // Class for handling device related functions
     private:
-        class PayloadHandler {
-            // Class for handling payload format to or from apollo server
-            // TODO: Use Arduino_JSON here.
-            private:
-                
-            public:
-                int getPayloadKeys(uint8_t* packet, char** keys, size_t numberOfKeys, size_t sizeOfKey);
-                int getFeed(uint8_t* packet, Feed* feed, uint_fast16_t maxSizeOfValue);
-                int getValues(uint8_t* packet, char** keys, uint_fast16_t numberOfKeys, char** values, uint_fast16_t maxSizeOfValues);
-                int getValue(uint8_t* packet, char* key, char* value);
-        };
-
         // Device IP Address
         static char _deviceIP[IP_SIZE];
         
         // Handlers array for callback functions
-        static Callback _handlers[16];
+        static Callback _handlers[4];
         // Events Table
         static EventTable _eventsTable;
+
+        // Subscription Array for update handler functions
+        static Callback _subscriptions[8];
         
         // Apollo state variable
         static short _state;
@@ -48,8 +39,8 @@ class ApolloDevice {
         static void ping();
         
         void _send(const char* task, const char* payload, Callback callback);
+        void _subscribe(short event, const char* payload, Callback updateHandler);
         
-        static PayloadHandler _format;
     public:
         // Device constructor
         ApolloDevice();
@@ -59,43 +50,39 @@ class ApolloDevice {
         
         static void apolloEventHandler(WStype_t eventType, uint8_t* packet, size_t length);
 
-        // Getter Methods
+        // Getter methods for Apollo configurations
         char* getSSID(void);
         char* getPassphrase(void);
         char* getDeviceIP(void);
         char* getApiKey(void);
         char* getToken(void);
 
-        void getSummary(const char* payload, Callback callback);
-        void getSummary(String payload, Callback callback);
+        // Async methods
+        void getSummary(Callback callback);
+        void getParms(Callback callback);
+        void setSummary(JSONObject summary, Callback callback);
+        void setParms(JSONObject parms, Callback callback);
 
-        void getParms(const char* payload, Callback callback);
-        void getParms(String payload, Callback callback);
-        // Setter Methods
-        void setSummary(const char* payload, Callback callback);
-        void setSummary(String payload, Callback callback);
-        
-        void setParms(const char* payload, Callback callback);
-        void setParms(String payload, Callback callback);
-
-        // Method to read/write data from client buffer
+        // Method to update the device's TCP buffer
         void update(void);
 
         // Event handlers
         static void onWiFiConnected(const WiFiEventStationModeConnected& event);
         static void onWiFiDisconnected(const WiFiEventStationModeDisconnected& event);
+        // When device makes/breaks connection with the Cloud
         void onApolloConnected(Callback receiver);
         void onApolloDisconnected(Callback receiver);
-        void onSummaryUpdated(const char* payload, Callback callback);
-        void onParmsUpdated(const char* payload, Callback callback);
 
+        // Listeners for events from the Cloud
+        void onSummaryUpdated(Callback callback);
+        void onParmsUpdated(Callback callback);
 };
 
 class Apollo {
     private:
     public:
-        // Apollo init Method
-        ApolloDevice init(char* deviceID, char* apiKey, char* token, char* ssid, char* passphrase);
+        ApolloDevice init(const char* deviceID, const char* apiKey, const char* token, const char* ssid, const char* passphrase);
+        ApolloDevice init(String deviceID, String apiKey, String token, String ssid, String passphrase);
 };
 
 extern Apollo apollo;
