@@ -14,6 +14,7 @@
 /* GLOBAL VARIABLES */
 DuplexClient duplexClient;
 unsigned long pingSchedularVariable = 0;
+const char* subscriptionTopics[] = {"setDeviceSummary", "setDeviceParms"};
 short ApolloDevice::_state = 0;
 Callback ApolloDevice::_handlers[4] = {};
 Callback ApolloDevice::_subscriptions[8] = {};
@@ -64,7 +65,6 @@ void ApolloDevice::_send(const char* task, const char* payload, Callback callbac
         _eventsTable.insert(task, packetID, callback);
         // Formatting the packet
         snprintf(packet, PACKET_SIZE, "{\"header\": {\"id\": %lu, \"task\": \"%s\"}, \"payload\": %s}", packetID, task, payload);
-        Serial.printf("Packet printing: %s\n", packet);
         // Sending to server
         duplexClient.sendTXT(packet);
     }
@@ -100,7 +100,6 @@ void ApolloDevice::setSummary(JSONObject summary, Callback callback) {
     jsonObject["deviceID"] = config->deviceID;
     jsonObject["summary"] = summary;
     JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
-    Serial.printf("Summary printing: %s\n", jsonString);
     _send("setDeviceSummary", jsonString, callback);
 }
 
@@ -110,7 +109,6 @@ void ApolloDevice::setParms(JSONObject parms, Callback callback) {
     jsonObject["deviceID"] = config->deviceID;
     jsonObject["parms"] = parms;
     JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
-    Serial.printf("Summary printing: %s\n", jsonString);
     _send("setDeviceParms", jsonString, callback);
 }
 
@@ -255,19 +253,16 @@ void ApolloDevice::apolloEventHandler(WStype_t eventType, uint8_t* packet, size_
         case WStype_CONNECTED:
             // When duplex connection opens
             _state = APOLLO_CONNECTED;
-            _handlers[ONCONNECTED](packet);
-            break;
+            return _handlers[ONCONNECTED](packet);
 
         case WStype_DISCONNECTED:
             // When duplex connection closes
             _state = WIFI_CONNECTED;
-            _handlers[ONDISCONNECTED](packet);
-            break;
+            return _handlers[ONDISCONNECTED](packet);
 
         case WStype_TEXT:
-            Serial.printf("Packet: %s\n", packet);
-            //_subscriptions[0]((unsigned char*) "Hello Bye");
             // When a duplex message is received
+            Serial.printf("Packet: %s\n", packet);
             // Fetching task and id from the message packet
             JSONObject messageObject = JSON.parse((char*) packet);
             if (JSON.typeof(messageObject) == "undefined") {
@@ -275,6 +270,15 @@ void ApolloDevice::apolloEventHandler(WStype_t eventType, uint8_t* packet, size_
                 // if the parsing fails.
                 Serial.println("Parsing input failed!");
                 return;
+            }
+            if(messageObject["header"]["task"] == "update") {
+                for(int i = 0; i < NUMBER_OF_TOPICS; i++) {
+                    Serial.printf("%i ", i);
+                    if(messageObject["payload"]["event"] == subscriptionTopics[i]) {
+                        Serial.printf("\n%s\n", subscriptionTopics[i]);
+                        return _subscriptions[i](messageObject["payload"]["update"]);
+                    }
+                }
             }
             // Fetching event callback function from the events Table
             Callback callback = _eventsTable.findAndRemove(
@@ -284,7 +288,6 @@ void ApolloDevice::apolloEventHandler(WStype_t eventType, uint8_t* packet, size_
             if(!callback) {
                 return;
             }
-            callback(messageObject["payload"]);
-            break;
+            return callback(messageObject["payload"]);
     }
 }

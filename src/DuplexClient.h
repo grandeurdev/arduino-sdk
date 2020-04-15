@@ -11,7 +11,7 @@
 #ifndef DUPLEXCLIENT_H_
 #define DUPLEXCLIENT_H_
 
-#include <Duplex.h>
+#include "Duplex.h"
 
 class DuplexClient: protected Duplex {
   public:

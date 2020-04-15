@@ -8,9 +8,9 @@
  *
  */
 
-#include <apollomacros.h>
+#include "apollomacros.h"
 #include <cstring>
-#include <Arduino_JSON.h>
+#include "Arduino_JSON/Arduino_JSON.h"
 
 #ifndef APOLLOTYPES_H_
 #define APOLLOTYPES_H_

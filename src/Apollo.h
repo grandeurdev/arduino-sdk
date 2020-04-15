@@ -10,11 +10,11 @@
 
 // Including headers
 #include <ESP8266WiFi.h>
-#include <DuplexClient.h>
-#include <Duplex.h>
-#include <EventTable.h>
-#include <apollotypes.h>
-#include <apollomacros.h>
+#include "DuplexClient.h"
+#include "Duplex.h"
+#include "EventTable.h"
+#include "apollotypes.h"
+#include "apollomacros.h"
 
 #ifndef APOLLO_H_
 #define APOLLO_H_

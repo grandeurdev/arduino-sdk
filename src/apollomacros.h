@@ -9,12 +9,11 @@
  */
 
 // Connection macros
-#define APOLLO_URL "192.168.1.9"
-#define APOLLO_PORT 8000
+#define APOLLO_URL "api.grandeur.tech"
+#define APOLLO_PORT 443
 #define APOLLO_FINGERPRINT ""
 
 // Defining general macros
-#define MAX_CONFIG_TRIES 30
 #define SSID_SIZE 32
 #define PASSPHRASE_SIZE 32
 #define DEVICEID_SIZE 32
@@ -39,5 +38,6 @@
 #define ONMESSAGE 2
 
 // Indexes for update handler callbacks in subscriptions array
+#define NUMBER_OF_TOPICS 2
 #define SUMMARYUPDATE 0
 #define PARMSUPDATE 1
