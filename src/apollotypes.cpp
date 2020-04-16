@@ -29,3 +29,18 @@ Config::Config(
 Config::~Config() {
     
 }
+
+SendData::SendData(
+    const char* task,
+    const char* payload,
+    Callback callback
+) {
+    strcpy(this->task, task);
+    strcpy(this->payload, payload);
+    this->callback = callback;
+}
+
+
+SendData::~SendData() {
+    
+}

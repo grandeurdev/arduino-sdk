@@ -13,7 +13,7 @@
 #define APOLLO_PORT 443
 #define APOLLO_FINGERPRINT ""
 
-// Defining general macros
+// Strings sizes
 #define SSID_SIZE 32
 #define PASSPHRASE_SIZE 32
 #define DEVICEID_SIZE 32
@@ -23,6 +23,10 @@
 #define FINGERPRINT_SIZE 256
 #define PACKET_SIZE 512
 #define PING_PACKET_SIZE 64
+#define TASK_SIZE 32
+
+// Send Queue Size
+#define SENDQUEUE_SIZE 16
 
 // Ping interval in milliseconds
 #define PING_INTERVAL 25000

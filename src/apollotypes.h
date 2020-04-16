@@ -15,6 +15,11 @@
 #ifndef APOLLOTYPES_H_
 #define APOLLOTYPES_H_
 
+typedef JSONVar JSONObject;
+typedef void (*Callback)(JSONObject);
+typedef void (*Send)(const char* task, const char* payload, Callback callback);
+typedef long ApolloID;
+
 // Config class for apollo configurations
 class Config {
     public:
@@ -33,9 +38,18 @@ class Config {
         ~Config();
 };
 
-// Callback function
-typedef JSONVar JSONObject;
-typedef void (*Callback)(JSONObject);
-typedef long ApolloID;
+// Class for Send Queue Data
+class SendData {
+    public:
+        char task[TASK_SIZE];
+        char payload[PACKET_SIZE];
+        Callback callback;
+        SendData(
+            const char* task,
+            const char* payload,
+            Callback callback
+        );
+        ~SendData();
+};
 
 #endif

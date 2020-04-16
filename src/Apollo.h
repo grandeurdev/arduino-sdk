@@ -31,14 +31,14 @@ class ApolloDevice {
         static EventTable _eventsTable;
 
         // Subscription Array for update handler functions
-        static Callback _subscriptions[8];
+        static Callback _subscriptions[4];
         
         // Apollo state variable
         static short _state;
         
-        static void ping();
+        void ping();
         
-        void _send(const char* task, const char* payload, Callback callback);
+        static void _send(const char* task, const char* payload, Callback callback);
         void _subscribe(short event, const char* payload, Callback updateHandler);
         
     public:
