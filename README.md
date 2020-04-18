@@ -8,7 +8,7 @@ Introducing Grandeur Cloud: A backend as a service (Baas) platform for IoT. We h
 
 ## Why Grandeur Cloud
 
-Grandeur Cloud is designed keeping in mind all the challenges a hardware engineer can face in developing and commercializing a smart (IoT) product. We made available out-of-the-box APIs to integrate your devices and apps.
+Grandeur Cloud is designed keeping in mind all the challenges a hardware engineer can face in developing and commercializing a smart (IoT) product. We made available out-of-the-box APIs to help you integrate your devices and apps.
 
 Like you can put authentication for your product's users to make sure each user has access to its own data and no one other than the device admin itself should be able to interact with its device. You can store a humongous amount of data in cloud database to analyze and extract intelligent information from it and display useful graphs. You can also host your product's static website on Grandeur Cloud. Also, your hardware device can subscribe to events from your app and your app can subscribe to events from your hardware device and communicate data with each other in realtime.
 
@@ -22,7 +22,7 @@ Grandeur Cloud is not a regular IoT cloud. It's a complete IoT product developme
   * Your IoT product development itself
   * Scaling your system up to hundreds of thousands of devices as your business grows
 
-* No need to mix and match various services to come up with your own solution. Grandeur Cloud is a single spot solution for all of your needs. From built-in authentication of your users and devices to an integrated database to an out-of-the-box file storage system and a registry of data for all of your devices. And You can manage absolutely everything from a single dashboard page.
+* No need to mix and match various services to come up with your own solution. Grandeur Cloud is a single spot solution for all of your needs, from built-in authentication of your users and devices to an integrated database to an out-of-the-box file storage system and a registry of data for all of your devices. And You can manage absolutely everything from a single dashboard page.
 
 * Simple pricing. [Start free][Grandeur Cloud Sign Up] and then pay as you go based on your resources consumption. Checkout [pricing][Grandeur Cloud Pricing] for more details.
 
