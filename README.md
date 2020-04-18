@@ -396,7 +396,7 @@ A project is the first thing you need to create to start working with Grandeur C
 
 Each project is identified by a digital signature that we call the API key, just as your identification card or social security number identifies you as a citizen. To connect your apps or hardware to your project's network, this is what you need to provide to the SDKs. The API key is sent with every request to Grandeur Cloud and this is what defines the project of the request. Check out the [SDK][SDK] section to read more about it.
 
-*NOTE*: Our pricing applies separately to each project. So you get a free tier on every project and pay for each separately for what you consume when you cross your resources limit.
+> ***NOTE***: Our pricing applies separately to each project. So you get a free tier on every project and pay for each separately for what you consume when you cross your resources limit.
 
 ### SDK
 
@@ -433,7 +433,7 @@ This matters a lot because you would never want your neighbor to control your ai
 
 When you pair a device with a user account, an access token is generated for the device. This token is what the device uses to connect to Grandeur Cloud. This token also delegates access of the device namespace to the Hardware SDK. The Hardware SDK takes this access token along with the project's API Key while doing `apollo.init()`. To read about the device's namespace and how the device's data is stored on Grandeur Cloud, have a look at the [Device Registry][Device Registry] section.
 
-_*NOTE*_: A user cannot pair with a device that is already paired.
+> ***NOTE***: A user cannot pair with a device that is already paired.
 
 ### Device Registry
 
@@ -482,7 +482,7 @@ This is another amazing topic and somehow related to access delegation in the en
 
 So to allow a web app to interact with your project using the Web SDK, you first need to whitelist the domain name your web app uses via the settings page in the dashboard. You cannot even send a request from your localhost without first whitelisting it.
 
-_*NOTE*_: Keeping localhost whitelisted even in a production application is a very serious vulnerability that can make you pay as you go (pun intended).
+> ***NOTE***: Keeping localhost whitelisted in a production application is a very serious vulnerability that can make you pay as you go (pun intended).
 
 ## Documentation
 
@@ -766,7 +766,7 @@ void loop() {
 
 > getToken ( ) : returns _char*_
 
-Gets the [access token][auth token] currently in use by the device for connecting to Grandeur Cloud.
+Gets the [access token][access token] currently in use by the device for connecting to Grandeur Cloud.
 
 #### Example
 
@@ -1097,6 +1097,8 @@ void loop() {
 [jsonobject]: #the-dexterity-of-hardware-sdk "The Dexterity of Hardware SDK"
 [the dexterity of hardware sdk]: #the-dexterity-of-hardware-sdk "The Dexterity of Hardware SDK"
 [models]: #models "Models"
+[apikey]: #project "Project"
+[access token]: #authentication-and-access "Authentication and Access"
 
 [getState]: #get-state
 [onApolloConnected]: #apollo-connection-listener
