@@ -54,6 +54,7 @@ class ApolloDevice {
         char* getSSID(void);
         char* getPassphrase(void);
         char* getDeviceIP(void);
+        char* getDeviceID(void);
         char* getApiKey(void);
         char* getToken(void);
 

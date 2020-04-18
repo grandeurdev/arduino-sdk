@@ -66,8 +66,6 @@ To understand the core concepts Grandeur Cloud is built upon, simply dive into t
 * [Documentation](#documentation)
   * [init](#init)
   * [update](#update)
-  * [onApolloConnected](#on-apollo-connected)
-  * [onApolloDisconnected](#on-apollo-disconnected)
   * [getState](#get-state)
   * [getStringifiedState](#get-stringified-state)
   * [getSSID](#get-ssid)
@@ -79,6 +77,10 @@ To understand the core concepts Grandeur Cloud is built upon, simply dive into t
   * [getParms](#get-parms)
   * [setSummary](#set-summary)
   * [setParms](#set-parms)
+  * [onApolloConnected](#on-apollo-connected)
+  * [onApolloDisconnected](#on-apollo-disconnected)
+  * [onSummaryUpdated](#on-summary-updated)
+  * [onParmsUpdated](#on-parms-updated)
 
 ## Get Started
 
@@ -402,43 +404,48 @@ _*NOTE*_: Keeping localhost whitelisted even in a production application is a ve
 
 ### Apollo Init
 
-> apollo.init (apiKey: _char*_, token: _char*_, ssid: _char*_, passphrase: _char*_) : returns _ApolloDevice_
+> apollo.init (deviceID: _String_, apiKey: _String_, token: _String_, ssid: _String_, passphrase: _String_) : returns _ApolloDevice_
 
-Method to initialize apollo configurations (SSID, Passphrase, API Key and Auth Token) in one go. It returns an object of the ApolloDevice class. This object is what exposes all the functions of the Hardware SDK.
+> apollo.init (deviceID: _const char*_, apiKey: _const char*_, token: _const char*_, ssid: _const char*_, passphrase: _const char*_) : returns _ApolloDevice_
+
+
+Method to initialize apollo configurations (SSID, Passphrase, API Key and Auth Token) in one go. It returns an object of the `ApolloDevice` class. `ApolloDevice` class is what exposes all the functions of the Hardware SDK.
 
 #### Parameters
 
-| Name        | Type    | Description               |
-|-------------|---------|---------------------------|
-| apiKey      | _char*_ | your project API key      |
-| token       | _char*_ | your device access token  |
-| ssid        | _char*_ | your WiFi SSID            |
-| passphrase  | _char*_ | your WiFi passphrase      |
+| Name        | Type                     | Description               |
+|-------------|--------------------------|---------------------------|
+| deviceID    | _String_ / _const char*_ | Your device ID            |
+| apiKey      | _String_ / _const char*_ | Your project API key      |
+| token       | _String_ / _const char*_ | Your device access token  |
+| ssid        | _String_ / _const char*_ | Your WiFi SSID            |
+| passphrase  | _String_ / _const char*_ | Your WiFi passphrase      |
 
 #### Example
 
 ```cpp
-/* Initialize apollo configurations with your project's API Key, device's Access Token, WiFi SSID and WiFi Passphrase
-*/
-// Global object of ApolloDevice class
+// Initialize apollo configurations with your project's API Key, device's Access Token, WiFi SSID and WiFi Passphrase.
+
+// Global object of ApolloDevice class.
 ApolloDevice apolloDevice;
 void setup() {
-  apolloDevice = apollo.init(YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
+  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
 }
 
 void loop() {
-  // Updates TCP buffer. It sends a connection request to Grandeur Cloud as soon as the WiFi gets connected.
+  // Updates TCP buffer. It sends a connection request to Grandeur Cloud as soon as the WiFi connects.
   apolloDevice.update();
 }
 
-/***RESULT**
-  Device begins connecting to WiFi and then Grandeur Cloud right away.
-*/
+// **RESULT**
+// Device begins connecting to WiFi using the SSID and Passphrase and then
+// to Grandeur Cloud right away using the API Key and Access Token.
+
 ```
 
 ### Update
 
-> update ( ) : returns _char*_
+> update ( ) : returns _void_
 
 Updates the device's TCP buffer. This must be called in `loop()` and without being suspected to any kind of *delay*. This method is what pulls and pushes messages to and from the TCP channel. Any kind of *delay* in `loop()` would delay pushing the request and pulling the response to and from the server.
 
@@ -449,99 +456,16 @@ Updates the device's TCP buffer. This must be called in `loop()` and without bei
 ```cpp
 ApolloDevice apolloDevice;
 void setup() {
-  apolloDevice = apollo.init(YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
+  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
 }
 
 void loop() {
-  /* Calling the update() function in loop()
+  /* Calling the update() function in loop().
   */
   apolloDevice.update();  
 }
-/***RESULT**
-  Updates the TCP buffer every time loop() gets executed
-*/
-```
-
-### On Apollo Connected
-
-> onApolloConnected (callback : _Callback_) : returns _void_
-
-Receives a function that is called when the device successfully connects to Grandeur Cloud.
-
-#### Parameters
-
-| Name        | Type       | Description                                                        |
-|-------------|------------|--------------------------------------------------------------------|
-| callback    | _Callback_ | A function to be called when the device connects to Grandeur Cloud |
-
-More on Callback [here][callback].
-
-#### Example
-
-```cpp
-ApolloDevice apolloDevice;
-void setup() {
-  apolloDevice = apollo.init(YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
-
-  /* Passing the callback as lambda function. You can pass any function here as long as it
-    accepts a "unsigned char*" string as parameter and returns "void", e.g., a function of the form:
-
-    void callbackFunction(unsigned char* string) {}
-
-  */
-  apolloDevice.onApolloConnected([]() {
-    std::cout<<"Device Connected!\n";
-  });
-}
-
-void loop() {
-  apolloDevice.update();
-}
-
-/***RESULT**
-  Prints "Device Connected" on the stdout when device makes a successful connection to Grandeur Cloud
-*/
-```
-
-### On Apollo Disconnected
-
-> onApolloDisconnected (callback : _Callback_) : returns _void_
-
-Receives a function that is called when the device disconnects from Grandeur Cloud.
-
-#### Parameters
-
-| Name        | Type       | Description                                                           |
-|-------------|------------|-----------------------------------------------------------------------|
-| callback    | _Callback_ | A function to be called when the device disconnects to Grandeur Cloud |
-
-More on Callback [here][callback].
-
-#### Example
-
-```cpp
-ApolloDevice apolloDevice;
-void setup() {
-  apolloDevice = apollo.init(YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
-
-  /* Passing the callback as lambda function. You can pass any function here as long as it
-    accepts a "unsigned char*" string as parameter and returns "void", e.g., a function of the form:
-
-    void callbackFunction(unsigned char* string) {}
-
-  */
-  apolloDevice.onApolloDisconnected([]() {
-    std::cout<<"Device Disconnected!\n";
-  });
-}
-
-void loop() {
-  apolloDevice.update();
-}
-
-/***RESULT**
-  Prints "Device Disconnected" on the stdout when device disconnects from Grandeur Cloud
-*/
+// **RESULT**
+// Updates the TCP buffer every time loop() gets executed.
 ```
 
 ### Get State
@@ -561,12 +485,12 @@ Gets the current state of the device. State of the device can be one of the foll
 ```cpp
 ApolloDevice apolloDevice;
 void setup() {
-  apolloDevice = apollo.init(YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
+  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
 }
 
 void loop() {
-  /* getState() returns an integer state of the device
-  */
+  // getState() returns an integer state of the device
+
   if(apolloDevice.getState() == WIFI_NOT_CONNECTED) {
     std::cout<<"Device is not connected to WiFi!\n";
   }
@@ -580,11 +504,12 @@ void loop() {
   apolloDevice.update();
 }
 
-/***RESULT**
-  In the beginning, getState() returns 0. When WiFi is connected, getState() returns 1.
-  When the device is connected to the server, getState() returns 2.
-  For readability, you can use the above macros. They respectively expand to these integer values.  
-*/
+// **RESULT**
+// In the beginning, getState() returns 0. When WiFi is connected, getState()
+// returns 1.
+// When the device is connected to the server, getState() returns 2.
+// For readability, you can use the above macros. They respectively expand to
+// these integer values.
 ```
 
 ### Get Stringified State
@@ -604,23 +529,23 @@ Gets the current state of the device as a string.
 ```cpp
 ApolloDevice apolloDevice;
 void setup() {
-  apolloDevice = apollo.init(YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
+  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
 }
 
 void loop() {
-  /* getStringifiedState() returns the state of the device as string. This is particularly
-    useful while you want to directly print the state of the device
-  */
+  // getStringifiedState() returns the state of the device as string. This is
+  // particularly useful while you want to directly print the state of the device.
+
   std::cout<<apolloDevice.getStringifiedState()<<"\n";
 
   apolloDevice.update();
 }
 
-/***RESULT**
-  In the beginning, "WIFI_NOT_CONNECTED" is printed to the stdout. When the WiFi is
-  connected, "WIFI_CONNECTED" begins appearing on the screen. And it quickly changes to
-  "APOLLO_CONNECTED" when the device makes a successful connection to Grandeur Cloud.
-*/
+// **RESULT**
+// In the beginning, "WIFI_NOT_CONNECTED" is printed to the stdout. When the WiFi
+// is connected, "WIFI_CONNECTED" begins appearing on the screen. And it quickly
+// changes to "APOLLO_CONNECTED" when the device makes a successful connection to
+// Grandeur Cloud.
 ```
 
 ### Get SSID
@@ -634,20 +559,19 @@ Gets WiFi SSID currently in use by the device.
 ```cpp
 ApolloDevice apolloDevice;
 void setup() {
-  apolloDevice = apollo.init(YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
+  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
 }
 
 void loop() {
-  /* getSSID() returns the SSID of the WiFi it is currently configured to connect to.
-  */
+  // getSSID() returns the SSID of the WiFi it is currently configured to connect
+  // to.
   std::cout<<apolloDevice.getSSID()<<"\n";
 
   apolloDevice.update();
 }
 
-/***RESULT**
-  Keeps printing the WiFi SSID in loop.
-*/
+// **RESULT**
+// Keeps printing the WiFi SSID in loop.
 ```
 
 ### Get Passphrase
@@ -665,17 +589,15 @@ void setup() {
 }
 
 void loop() {
-  /* getPassphrase() returns the Passphrase of the WiFi it is currently configured to
-    connect to.
-  */
+  // getPassphrase() returns the Passphrase of the WiFi it is currently configured
+  // to connect to.
   std::cout<<apolloDevice.getPassphrase()<<"\n";
 
   apolloDevice.update();
 }
 
-/***RESULT**
-  Keeps printing the WiFi Passphrase in loop.
-*/
+// **RESULT**
+// Keeps printing the WiFi Passphrase in loop.
 ```
 
 ### getDeviceIP
@@ -689,7 +611,7 @@ Gets the dynamic IP allocated to the device after it's connected to WiFi.
 ```cpp
 ApolloDevice apolloDevice;
 void setup() {
-  apolloDevice = apollo.init(YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
+  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
 }
 
 void loop() {
@@ -700,9 +622,8 @@ void loop() {
   apolloDevice.update();
 }
 
-/***RESULT**
-  Starts printing the IP address of the device after the device connects to WiFi.
-*/
+// **RESULT**
+// Starts printing the IP address of the device after the device connects to WiFi.
 ```
 
 ### Get API Key
@@ -716,21 +637,19 @@ void loop() {
 ```cpp
 ApolloDevice apolloDevice;
 void setup() {
-  apolloDevice = apollo.init(YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
+  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
 }
 
 void loop() {
-  /* getApiKey() returns the API Key the device is configured to use to connect to Grandeur
-    Cloud.
-  */
+  // getApiKey() returns the API Key the device is configured to use to connect to
+  // Grandeur Cloud.
   std::cout<<apolloDevice.getApiKey()<<"\n";
 
   apolloDevice.update();
 }
 
-/***RESULT**
-  Keeps printing the API Key in a loop.
-*/
+// **RESULT**
+// Keeps printing the API Key in a loop.
 ```
 
 ### Get Token
@@ -744,119 +663,99 @@ Gets the [access token][auth token] currently in use by the device for connectin
 ```cpp
 ApolloDevice apolloDevice;
 void setup() {
-  apolloDevice = apollo.init(YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
+  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
 }
 
 void loop() {
-  /* getToken() returns the Access Token the device is configured to use to connect to
-    Grandeur Cloud.
-  */
+  // getToken() returns the Access Token the device is configured to use to
+  // connect to Grandeur Cloud.
   std::cout<<apolloDevice.getToken()<<"\n";
 
   apolloDevice.update();
 }
 
-/***RESULT**
-  Keeps printing the Access Token in a loop.
-*/
+// **RESULT**
+// Keeps printing the Access Token in a loop.
 ```
 
 ### Get Summary
 
-> getSummary (deviceID: _char*_, callback: _Callback_) : returns _char*_
+> getSummary (callback: _Callback_) : returns _void_
 
 Getter method for device's [summary][summary].
 
 #### Parameters
 
-| Name        | Type       | Description                                                              |
-|-------------|------------|--------------------------------------------------------------------------|
-| deviceID    | _char*_    | A string containing a stringified object containing the device ID        |
-| callback    | _Callback_ | A function to be called when getSummary response is received             |
+| Name        | Type       | Description                                                   |
+|-------------|------------|---------------------------------------------------------------|
+| callback    | _Callback_ | A function to be called when getSummary response is received  |
 
 #### Example
 
 ```cpp
 ApolloDevice apolloDevice;
 void setup() {
-  apolloDevice = apollo.init(YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
+  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
 }
 
 void loop() {
-  /* getSummary() sends the getSummary request to the server using the data specified in
-    inputPacket. It calls the callback function specified in the second parameter when it
-    receives the response.
-  */
-  char inputPacket[128];
-  // Forming a JSON packet
-  sprintf(inputPacket, "{\"deviceID\": \"%s\"}", YourDeviceID);
-  apolloDevice.getSummary(input, [](unsigned char* outputPacket) {
-      std::cout<<outputPacket<<"\n";
+  // This keeps getting the summary in loop.
+  apolloDevice.getSummary([](JSONObject result) {
+      std::cout<<result["summary"]["voltage"]<<"\n";
   });
 
   apolloDevice.update();
 }
 
-/***RESULT**
-  Prints the outputPacket containing the summary (Or just an error code and message in
-  case) of the device as soon as it gets getSummary response from the server
-*/
+// **RESULT**
+// Keeps printing the value of the voltage variable stored in the device's summary.
 ```
 
 ### Get Parms  
 
-> getParms (deviceID: _char*_, callback: _Callback_) : returns _char*_
+> getParms (callback: _Callback_) : returns _void_
 
 Getter method for device's [parms][parms].
 
 #### Parameters
 
-| Name        | Type       | Description                                                              |
-|-------------|------------|--------------------------------------------------------------------------|
-| deviceID    | _char*_    | A string containing a stringified object containing the device ID        |
-| callback    | _Callback_ | A function to be called when getParms response is received               |
+| Name        | Type       | Description                                                 |
+|-------------|------------|-------------------------------------------------------------|
+| callback    | _Callback_ | A function to be called when getParms response is received  |
 
 #### Example
 
 ```cpp
 ApolloDevice apolloDevice;
 void setup() {
-  apolloDevice = apollo.init(YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
+  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
 }
 
 void loop() {
-  /* getParms() sends the getParms request to the server using the data specified in
-    inputPacket. It calls the Callback function specified in the second parameter when it
-    receives the response.
-  */
-  char inputPacket[128];
-  // Forming a JSON packet
-  sprintf(inputPacket, "{\"deviceID\": \"%s\"}", YourDeviceID);
-  apolloDevice.getParms(input, [](unsigned char* outputPacket) {
-      std::cout<<outputPacket<<"\n";
+  // This keeps getting the parms in loop.
+  apolloDevice.getParms([](JSONObject result) {
+      std::cout<<result["parms"]["state"]<<"\n";
   });
 
   apolloDevice.update();
 }
 
-/***RESULT**
-  Prints the outputPacket containing the parms (Or just an error code and message in case
-  of the device as soon as it gets getParms response from the server
-*/
+// **RESULT**
+// Keeps printing the value of the state variable stored in the device's parms.
 ```
 
 ### Set Summary
 
-> setSummary (summary : _char*_, callback: _Callback_) : returns _void_
+> setSummary (summary : _JSONObject_, callback: _Callback_) : returns _void_
 
 Setter method for device's [summary][summary].
 
 #### Parameters
 
-| Name        | Type       | Description                                                                                |
-|-------------|------------|--------------------------------------------------------------------------------------------|
-| summary     | _char*_    | A string containing a stringified object containing the device ID and the new summary data |
-| callback    | _Callback_ | A function to be called when setSummary response is received                               |
+| Name        | Type          | Description                                                   |
+|-------------|---------------|---------------------------------------------------------------|
+| summary     | _JSONObject_  | A JSONObject containing the summary variables                 |
+| callback    | _Callback_    | A function to be called when setSummary response is received  |
 
 #### Example
 
@@ -867,37 +766,35 @@ void setup() {
 }
 
 void loop() {
-  /* setSummary() sends the setSummary request to the server using the data specified in
-    inputPacket. It calls the Callback function specified in the second parameter when it receives the response.
-  */
-  char inputPacket[128];
-  // Forming a JSON packet
-  sprintf(inputPacket, "{\"deviceID\": \"%s\", \"summary\": {\"alpha\": 10, \"beta\": true}}", YourDeviceID);
-  apolloDevice.setSummary(input, [](unsigned char* outputPacket) {
-      std::cout<<outputPacket<<"\n";
+  // A JSONObject to set summary variables in it
+  JSONObject summary;
+  summary["voltage"] = 3.3;
+  summary["current"] = 2
+  apolloDevice.setSummary(summary, [](JSONObject result) {
+      std::cout<<result["update"]["voltage"]<<"\n";
+      std::cout<<result["update"]["current"]<<"\n";
   });
 
   apolloDevice.update();
 }
 
-/***RESULT**
-  Prints the outputPacket containing the SUMMARY-UPDATED code in response (Or an error code
-  and message in case) as soon as it gets it from the server
-*/
+// **RESULT**
+// Keeps setting the summary and printing the updated values of the summary
+// variables (voltage and current in our case) in loop
 ```
 
 ### Set Parms
 
-> setParms (parms : _char*_, callback: _Callback_) : returns _void_  
+> setParms (parms : _JSONObject_, callback: _Callback_) : returns _void_  
 
 Setter method for device's [parms][parms].
 
 #### Parameters
 
-| Name        | Type       | Description                                                                                |
-|-------------|------------|--------------------------------------------------------------------------------------------|
-| parms       | _char*_    | A string containing a stringified object containing the device ID and the new parms data   |
-| callback    | _Callback_ | A function to be called when setParms response is received                                 |
+| Name        | Type         | Description                                                     |
+|-------------|--------------|-----------------------------------------------------------------|
+| parms       | _JSONObject_ | A JSONObject containing the summary variables                   |
+| callback    | _Callback_   | A function to be called when setParms response is received      |
 
 #### Example
 
@@ -908,24 +805,157 @@ void setup() {
 }
 
 void loop() {
-  /* setParms() sends the setParms request to the server using the data specified in
-    inputPacket. It calls the Callback function specified in the second parameter when it receives the response.
-  */
-  char inputPacket[128];
-  // Forming a JSON packet
-  sprintf(inputPacket, "{\"deviceID\": \"%s\", \"parms\": {\"charlie\": false}}", YourDeviceID);
+  // A JSONObject to set the parms variables in it
+  JSONObject parms;
+  parms["state"] = true;
 
-  apolloDevice.setParms(input, [](unsigned char* outputPacket) {
-      std::cout<<outputPacket<<"\n";
+  apolloDevice.setParms(parms, [](JSONObject result) {
+      std::cout<<result["parms"]["state"]<<"\n";
   });
 
   apolloDevice.update();
 }
 
-/***RESULT**
-  Prints the outputPacket containing the PARMS-UPDATED code in response (Or an error code
-  and message in case) as soon as it gets it from the server
-*/
+// **RESULT**
+// Keeps setting the parms and printing the updated values of the parms
+// variables (just state in our case) in loop
+```
+
+### Apollo Connection Listener
+
+> onApolloConnected (callback : _Callback_) : returns _void_
+
+Receives a function that is called when the device successfully connects to Grandeur Cloud.
+
+#### Parameters
+
+| Name        | Type       | Description                                                        |
+|-------------|------------|--------------------------------------------------------------------|
+| callback    | _Callback_ | A function to be called when the device connects to Grandeur Cloud |
+
+More on Callback [here][callback].
+
+#### Example
+
+```cpp
+ApolloDevice apolloDevice;
+void setup() {
+  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
+
+  apolloDevice.onApolloConnected([](JSONObject result) {
+    std::cout<<"Device Connected!\n";
+  });
+}
+
+void loop() {
+  apolloDevice.update();
+}
+
+// **RESULT**
+// Prints "Device Connected" on the stdout when device makes a successful connection to Grandeur Cloud.
+```
+
+### Apollo Disconnection Listener
+
+> onApolloDisconnected (callback : _Callback_) : returns _void_
+
+Receives a function that is called when the device disconnects from Grandeur Cloud.
+
+#### Parameters
+
+| Name        | Type       | Description                                                           |
+|-------------|------------|-----------------------------------------------------------------------|
+| callback    | _Callback_ | A function to be called when the device disconnects to Grandeur Cloud |
+
+More on Callback [here][callback].
+
+#### Example
+
+```cpp
+ApolloDevice apolloDevice;
+void setup() {
+  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
+
+  apolloDevice.onApolloDisconnected([](JSONObject result) {
+    std::cout<<"Device Disconnected!\n";
+  });
+}
+
+void loop() {
+  apolloDevice.update();
+}
+
+// **RESULT**
+// Prints "Device Disconnected" on the stdout when device disconnects from Grandeur Cloud.
+```
+
+### Summary Update Listener
+
+> onSummaryUpdated (callback : _Callback_) : returns _void_
+
+Receives a function that is called when the summary of the device is updated on Grandeur Cloud.
+
+#### Parameters
+
+| Name        | Type       | Description                                                                        |
+|-------------|------------|------------------------------------------------------------------------------------|
+| callback    | _Callback_ | A function to be called when the device's summary gets an update on Grandeur Cloud |
+
+More on Callback [here][callback].
+
+#### Example
+
+```cpp
+ApolloDevice apolloDevice;
+void setup() {
+  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
+
+  apolloDevice.onSummaryUpdated([](JSONObject updatedSummary) {
+    // When summary update occurs on the Cloud, this function extracts the updated values of
+    // voltage and current.
+    std::cout<<"Summary update occurred!\n";
+    int voltage = updatedSummary["voltage"];
+    int current = updatedSummary["current"];
+  });
+}
+
+void loop() {
+  apolloDevice.update();
+}
+```
+
+### Parms Update Listener
+
+> onParmsUpdated (callback : _Callback_) : returns _void_
+
+Receives a function that is called when the parms of the device are updated on Grandeur Cloud.
+
+#### Parameters
+
+| Name        | Type       | Description                                                                     |
+|-------------|------------|---------------------------------------------------------------------------------|
+| callback    | _Callback_ | A function to be called when the device's parms get an update on Grandeur Cloud |
+
+More on Callback [here][callback].
+
+#### Example
+
+```cpp
+ApolloDevice apolloDevice;
+void setup() {
+  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
+
+  apolloDevice.onParmsUpdated([](JSONObject updatedParms) {
+    // When parms update occurs on the Cloud, this function extracts the updated value of
+    // state.
+    std::cout<<"Parms update occurred!\n";
+    int state = updatedParms["state"];
+  });
+}
+
+void loop() {
+  apolloDevice.update();
+}
 ```
 
 [Grandeur Technologies]: https://grandeur.tech "Grandeur Technologies"
