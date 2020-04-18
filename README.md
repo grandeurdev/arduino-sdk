@@ -4,7 +4,7 @@ Building a smart (IoT) product is an art because it is about unifying the physic
 
 We understand this because we have been there.
 
-Introducing Grandeur Cloud: A backend as a service (Baas) platform for IoT. We have designed this platform so you do not have to worry about the backend of your next big thing, and can focus on what matters the most: your hardware and your apps. It is designed specifically to accelerate your IoT product development and push your product to market in weeks rather than in months or years. So you can then actually build **grandeur** ecosystems like the one above.
+Introducing Grandeur Cloud: A backend as a service (Baas) platform for IoT. We have designed this platform so you do not have to worry about the backend of your next big thing, and can focus on what matters the most: your hardware and your apps. It is designed specifically to accelerate your IoT product development and push your product to market in weeks rather than in months or years. So you can then actually build *grandeur* ecosystems like the one above.
 
 ## Why Grandeur Cloud
 
