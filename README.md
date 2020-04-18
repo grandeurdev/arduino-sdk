@@ -47,8 +47,9 @@ To understand the core concepts Grandeur Cloud is built upon, simply dive into t
   * [Initialization](#initialization)
   * [Device State](#device-state)
   * [Updating Device TCP Buffer](#updating-device-tcp-buffer)
-  * [Event Listening](#event-listening)
-  * [Getting and Updating Device Data](#getting-and-updating-device-data)
+  * [Events Listening](#events-listening)
+  * [Up to the Cloud: Fetching and Updating Device Data](#up-to-the-cloud:-fetching-and-updating-device-data)
+  * [Down from the Cloud: Updates Handling](#down-from-the-cloud:-updates-handling)
 * [Example](#example)
 * [The Dexterity of Hardware SDK](#the-dexterity-of-hardware-sdk)
 * [Grandeur Ecosystem](#grandeur-ecosystem)
@@ -87,109 +88,99 @@ To understand the core concepts Grandeur Cloud is built upon, simply dive into t
 
 ### Installation
 
-You can clone **Apollo Device SDK** from [here][Apollo Device SDK].
+You can clone **Hardware SDK** from [here][Hardware SDK].
 
 ### Initialization
 
-Initializing Apollo configurations is as simple as calling `apollo.init()` with your credentials (WiFi SSID, WiFi Passphrase, Project's API Key and Device's Access Token).
+Initializing Apollo configurations is as simple as calling `apollo.init()` with your credentials (Device ID, WiFi SSID, WiFi Passphrase, Project's API Key and Device's Access Token). As soon as you call `apollo.init()`, your device uses the SSID and Passphrase you provide to connect to WiFi. After that, it begins connecting to the cloud using the API key and the access token.
 
 ```cpp
 ApolloDevice apolloDevice;
 void setup() {
-    /* You can initialize device configurations using global object "apollo"
-    */
+    // You can initialize device configurations using global object "apollo"
     apolloDevice = apollo.init(
-      YourApiKey, YourDeviceToken, YourWiFiSSID, YourWiFiPassphrase
+      YourDeviceID, YourApiKey, YourDeviceToken, YourWiFiSSID, YourWiFiPassphrase
     );
 }
 
 void loop() {}
 
-/***RESULT**
- * Initializes Apollo configurations and tries to connect to WiFi right away.
-*/
+// **RESULT**
+// Initializes Apollo configurations and tries to connect to WiFi and then to the Cloud right away.
 ```
 
 ### Device State
 
-As your device is transitioning its state from WIFI_DISCONNECTED to WIFI_CONNECTED and then to APOLLO_CONNECTED, you can track these transitions and run code based on this. `apolloDevice.getState()` is your buddy here. It returns the state your device currently is in.
+As your device is transitioning its state from `WIFI_DISCONNECTED` to `WIFI_CONNECTED` and then to `APOLLO_CONNECTED`, you can track those transitions and run code based on that. `apolloDevice.getState()` is your buddy here. It returns the state your device currently is in.
 You can also get the stringified form of these states by calling `apolloDevice.getStringifiedState()`.
 
 ```cpp
 ApolloDevice apolloDevice;
 void setup() {
-    /* You can initialize device configurations using global object "apollo"
-    */
     apolloDevice = apollo.init(
-      YourApiKey, YourDeviceToken, YourWiFiSSID, YourWiFiPassphrase
+      YourDeviceID, YourApiKey, YourDeviceToken, YourWiFiSSID, YourWiFiPassphrase
     );
 }
 
 void loop() {
-    /* Getting the state of this device
-    ** State can exclusively be one of these:
-    ** {WIFI_NOT_CONNECTED, WIFI_CONNECTED, DUPLEX_CONNECTED}
-    */
+    // Getting the state of this device. State can exclusively be one of these:
+    // {WIFI_NOT_CONNECTED, WIFI_CONNECTED, DUPLEX_CONNECTED}
     int state = apolloDevice.getState();
+
     if(state == WIFI_NOT_CONNECTED) {
-      /* Runs initially when the device is not connected to the WiFi
-      */
+      // Initially when your device boots up, this code block is run.
     }
     else if(state == WIFI_CONNECTED) {
-      /* Runs after the device gets connected to the WiFi
-      */
+      // This block runs after the device gets connected to WiFi.
     }
     else if(state == APOLLO_CONNECTED) {
-      /* Runs after the device has made a successful connection
-      ** to Grandeur Cloud
-      */
+      // This runs after the device has made a successful connection
+      // to the cloud
     }
+
+    // Printing the device state in loop
     std::cout<<apolloDevice.getStringifiedState()<<"\n";
 
-    // Updating device's TCP buffer
+    // This updates device's TCP buffer
     apolloDevice.update();
 }
 
-/***RESULT**
- * Initially, the code inside the if(state == WIFI_NOT_CONNECTED) runs and
- * "WIFI_NOT_CONNECTED" is printed to stdout in a loop.
- * When device connects to WiFi, "WIFI_CONNECTED" starts
- * appearing on the screen and the code inside the if(state == WIFI_CONNECTED) runs.
- * Finally, When device gets connected to Grandeur Cloud, it changes to "APOLLO_CONNECTED"
- * on the stdout and the code inside the if(state == APOLLO_CONNECTED) starts executing.
-*/
+// **RESULT**
+// Initially, the code inside the if(state == WIFI_NOT_CONNECTED) runs and
+// "WIFI_NOT_CONNECTED" is printed to stdout in a loop.
+// When device connects to WiFi, "WIFI_CONNECTED" starts appearing on the screen
+// and the code inside the if(state == WIFI_CONNECTED) runs.
+// Finally, When device gets connected to the cloud, it changes to "APOLLO_CONNECTED"
+// on the stdout and the code inside the if(state == APOLLO_CONNECTED) starts
+// executing.
 ```
 
 ### Updating Device TCP Buffer
 
-The device does not automatically push messages to the network or pulls new messages from the network. You have to constantly do polling for that.
+For now, the device does not automatically push messages to the network or pulls new messages from the network. You have to constantly do polling for that. Calling `apolloDevice.update()` in the `loop()` does exactly that.
 
-### Event Listening
+### Events Listening
 
-You can also attach connection-related event listeners to it. For example, to run a piece of code when the device makes a successful connection to Grandeur Cloud, just wrap that piece of code in a Callback function and pass the function to `apolloDevice.onApolloConnected()`.
+You can also listen on connection-related events. For example, to run some code when the device makes a successful connection to the cloud, just wrap that piece of code in a `Callback` function and pass the function to `apolloDevice.onApolloConnected()`.
 
-Similarly, you can pass the Callback function as a parameter to `apolloDevice.onApolloDisconnected()` and it will be called when the device disconnects from the cloud.
+Similarly, you can pass the `Callback` function as a parameter to `apolloDevice.onApolloDisconnected()` and it will be called when the device disconnects from the cloud.
 
-The Callback function is a special type of function that accepts an `unsigned char*` as a parameter and returns `void`.
+The `Callback` function is a special type of function that accepts an `JSONObject` as a parameter and returns `void`. Read more about `Callback` and `JSONObject` [here][jsonobject].
 
 ```cpp
 ApolloDevice apolloDevice;
 void setup() {
-    /* You can initialize device configurations using global object "apollo"
-    */
     apolloDevice = apollo.init(
-      YourApiKey, YourDeviceToken, YourWiFiSSID, YourWiFiPassphrase
+      YourDeviceID, YourApiKey, YourDeviceToken, YourWiFiSSID, YourWiFiPassphrase
     );
 
-    /* Setting up callback function for connection of the device to the cloud
-    */
-    apolloDevice.onApolloConnected([](unsigned char* message) {
+    // Setting up listener for connection of the device to the cloud
+    apolloDevice.onApolloConnected([](JSONObject result) {
       puts("Device is now connected to the cloud.");
     });
 
-    /* Setting up callback function for disconnection of the device to the cloud
-    */
-    apolloDevice.onApolloDisconnected([](unsigned char* message) {
+    // Setting up listener for disconnection of the device from the cloud
+    apolloDevice.onApolloDisconnected([](JSONObject result) {
       puts("Device is now disconnected from the cloud.");
     });
 }
@@ -199,74 +190,128 @@ void loop() {
     apolloDevice.update();
 }
 
-/***RESULT**
- * Prints "Device is now connected to the cloud." when device gets connected to Grandeur Cloud. And
- * prints "Device is now disconnected from the cloud." when device's connection from Grandeur Cloud
- * breaks.
-*/
+// **RESULT**
+// Prints "Device is now connected to the cloud." when device gets connected to the cloud.
+// And prints "Device is now disconnected from the cloud." when device's connection from
+// the cloud breaks.
 ```
 
-### Getting and Updating Device Data
+### Up to the Cloud: Fetching and Updating Device Data
 
-In the Grandeur ecosystem, we generally classify the device data into two types: Summary for noncontrollable device variables and parms for controllable device variables. You can get and set both using the following functions:
+In the Grandeur ecosystem, we generally classify the device data into two types: **summary** for noncontrollable device variables and **parms** for controllable device variables. You can get and set both using the following functions:
 
 * `apolloDevice.getSummary()`
 * `apolloDevice.getParms()`
 * `apolloDevice.setSummary()`
 * `apolloDevice.setParms()`
 
-Getter functions accept a JSON packet specifying your `deviceID` while setter functions accept a JSON packet specifying your `deviceID` as well as your new summary or parms data.
+You pass a `Callback` to these functions which is called when response from the cloud arrives.
 
-All of these functions accept a `Callback` function as the second parameter. This function is called with a JSON packet as its parameter when the response message is received.
+In setter functions, you specify the new summary and parms as `JSONObject`.
+
+Read more about them [here][the dexterity of hardware sdk].
 
 ```cpp
 ApolloDevice apolloDevice;
 void setup() {
-    /* You can initialize device configurations using global object "apollo"
-    */
     apolloDevice = apollo.init(
-      YourApiKey, YourDeviceToken, YourWiFiSSID, YourWiFiPassphrase
+      YourDeviceID, YourApiKey, YourDeviceToken, YourWiFiSSID, YourWiFiPassphrase
     );
 }
 
 void loop() {
-    /* Getting the state of this device
-    ** State can exclusively be one of these: {WIFI_NOT_CONNECTED, WIFI_CONNECTED, DUPLEX_CONNECTED}
-    */
     int state = apolloDevice.getState();
+
     if(state == APOLLO_CONNECTED) {
-        /* Getting device's summary
-        */
-        char payload[128];
-        sprintf(payload, "{\"deviceID\": \"%s\"}", deviceID);
-        device.getSummary(payload, [](unsigned char* payload) {
-            Serial.printf("Response: %s\n", payload);
+        // Getting device's summary
+        apolloDevice.getSummary([](JSONObject result) {
+          // This function prints the variables stored in summary
+          Serial.printf("Voltage: %s\n", (int) result["deviceSummary"]["voltage"]);
+          Serial.printf("Current: %s\n", (int) result["deviceSummary"]["current"]);
         });
 
-        /* Updating device's parms
-        */
-        sprintf(payload, "{\"deviceID\": \"%s\", \"parms\": {\"state\": true}}", deviceID);
-        device.setParms(payload, [](unsigned char* payload) {
-            Serial.printf("Response: %s\n", payload);
+        // Getting device's parms
+        apolloDevice.getParms([](JSONObject result) {
+          // This function prints the variables stored in parms
+          Serial.printf("State: %s\n", (bool) result["deviceParms"]["state"]);
+        });
+
+        // Updating device's summary
+        JSONObject summary;
+        summary["voltage"] = 3.3;
+        summary["current"] = 2.1;
+        apolloDevice.setSummary(summary, [](JSONObject result) {
+          // This function prints the updated values of the variables stored in summary
+          Serial.printf("Updated Voltage: %s\n", (int) result["update"]["voltage"]);
+          Serial.printf("Updated Current: %s\n", (int) result["update"]["current"]);
+        });
+
+        // Updating device's parms
+        JSONObject parms;
+        parms["state"] = true;
+        apolloDevice.setParms(parms, [](JSONObject result) {
+          // This function prints the updated values of the variables stored in parms
+          Serial.printf("Updated State: %s\n", (bool) result["update"]["state"]);
         });
     }
 
     // Updating device's TCP buffer
     apolloDevice.update();
 }
+
+// **RESULT**
+// When the loop() starts, summary and parms are fetched. Then the summary and parms are
+// updated with the new values. When the summary and parms arrive from the cloud, their
+// corresponding callback is called. In our case, both callbacks print the variables stored
+// in summary and parms.
+// When the summary and parms updates complete, their callbacks are called with the
+// updated values of their variables and these updated values are printed on the screen.
+```
+
+### Down from the Cloud: Updates Handling
+
+Device data is stored on the cloud in the form of **summary** and **parms**. Passing a `Callback` to `onSummaryUpdated()` and `onParmsUpdated()` you can set **update handlers** for any update to the device's data.
+
+```cpp
+ApolloDevice apolloDevice;
+void setup() {
+    apolloDevice = apollo.init(
+      YourDeviceID, YourApiKey, YourDeviceToken, YourWiFiSSID, YourWiFiPassphrase
+    );
+
+    apolloDevice.onSummaryUpdated([](JSONObject updatedSummary) {
+      // This function prints the updated values of the variables stored in summary
+        Serial.printf("Updated Voltage: %s\n", (int) updatedSummary["voltage"]);
+        Serial.printf("Updated Current: %s\n", (int) updatedSummary["current"]);
+    });
+
+    apolloDevice.onParmsUpdated([](JSONObject updatedParms) {
+      // This function prints the updated values of the variables stored in parms
+        Serial.printf("Updated State: %s\n", (int) updatedParms["state"]);
+    });
+}
+
+void loop() {
+    // Updating device's TCP buffer
+    apolloDevice.update();
+}
+
+// **RESULT**
+// Whenever an update in the device's summary or parms occur, the updated values of the
+// variables is printed.
 ```
 
 ## Example
 
-To see the **Hardware SDK** in full-on action, go through these examples [here][Examples].
+Here we go through a general example to explain the **Hardware SDK** in action. For smaller and more detailed examples, have a look at [this][Examples].
 
 ## The Dexterity of Hardware SDK
 
-What makes the hardware SDK so simple and dextrous is its way of making your code look very well structured. It takes the burden of so many things off your shoulders and makes asynchronous tasks easy to handle. For example,
+The Hardware SDK is aimed at providing extremely to-the-point functions, being almost invisible in your hardware program, and hence making the integration of Grandeur Cloud seamless. Here is what it does under the hood without you paying attention to the most painful things:
 
 * **Hardware SDK** takes care of your device's WiFi connectivity by itself. It starts trying to connect to WiFi as soon as you do `apollo.init()`.
 
-* **Hardware SDK** also takes care of your device's connection to [Grandeur Cloud][Grandeur Cloud]. As soon as the WiFi gets connected, **Hardware SDK** begins trying to connect to *[Grandeur Cloud][Grandeur Cloud]* using the *API Key* and the *Access Token* you provide during `apollo.init()`. When it connects, only then can it request the *[cloud][Grandeur Cloud]* to fetch or update any data of your device.
+* **Hardware SDK** also takes care of your device's connection to [Grandeur Cloud][Grandeur Cloud]. As soon as the WiFi gets connected, **Hardware SDK** begins trying to connect to *[Grandeur Cloud][Grandeur Cloud]* using the *API Key* and the *Access Token* you provide during `apollo.init()`. When it connects, only then can it request the *[cloud][Grandeur Cloud]* to fetch or update any data or listen to any events of your device.
 
 * And as your device quickly flies through these states, i.e.,
   * Device is not connected to WiFi.
@@ -275,9 +320,46 @@ What makes the hardware SDK so simple and dextrous is its way of making your cod
 
   **Hardware SDK** exposes the state of your device through [`getState()`][getState] function to let you make your decisions based on that.
 
-* Not just that, you can even set event handlers on device's connection and disconnection to Grandeur Cloud using [`onApolloConnected()`][onApolloConnected] and [`onApolloDisconnected()`][onApolloDisconnected].
+* You can even set **event handlers** on device's connection and disconnection to Grandeur Cloud using [`onApolloConnected()`][onApolloConnected] and [`onApolloDisconnected()`][onApolloDisconnected].
 
-* There is a special type of function defined in **Hardware SDK** as [`Callback`][callback] that can be passed to some functions of `ApolloDevice` class as a parameter. This callback function is called when the running function exists or when some type of event occurs.
+* You can also set **update handlers** on device's summary and parms using [`onSummaryUpdated()`][onSummaryUpdated] and [`onParmsUpdated()`][onParmsUpdated].
+
+* **Async functions** do all the same things as regular functions plus one extra. They receive a function parameter which they schedule for later. For example, in the `ApolloDevice` class, all of the following are Async functions:
+  
+  * `onApolloConnected(Callback callback)`
+  * `onApolloDisconnected(Callback callback)`
+  * `onSummaryUpdated(Callback callback)`
+  * `onParmsUpdated(Callback callback)`
+  * `getSummary(Callback callback)`
+  * `getParms(Callback callback)`
+  * `setSummary(JSONObject summary, Callback callback)`
+  * `setParms(JSONObject parms, Callback callback)`
+
+  `getParms()` for example, requests the cloud for the device's parms and schedules the `callback` function for when the parms arrive, because obviously, they don't arrive instantaneously.
+
+* There is a special type of function defined in **Hardware SDK** as [`Callback`][callback]. It's nothing but a regular function of the form:
+  ```cpp
+  void callback(JSONObject result) {}
+  ```
+  For now, it is the only function type accepted by the Async functions of `ApolloDevice` class as a parameter.
+
+* [`JSONObject`][jsonobject] is a special variable type which acts like a container for other variables, just like a javascript object. You can store variables in it as key-value pairs. That's how summary and parms are represented, as `JSONObject`s.
+
+```cpp
+JSONObject summary;
+summary["foo"] = "This is foo";
+summary["bar"] = true;
+summary["foobar"]["foo"] = "This is foo inside foobar";
+
+// In JSON, summary would look like:
+//  {
+//    "foo": "This is foo",
+//    "bar": true,
+//    "foobar": {
+//      "foo": "This is foo inside foobar"
+//    }
+//  }
+```
 
 To see the **Hardware SDK** in action, jump to [Example][Example].
 
@@ -361,11 +443,11 @@ We wanted to combine the best of both worlds. This is why at Grandeur Cloud, not
 
 When you register a device, you make it available in your project's network. Not just that, a new namespace is created for your device in the device registry. When your device comes online, this is where all of its data is stored, in the form of i) Summary and ii) Parms.
 
-Now let's define what you can store in **Parms** and **Summary**. To be honest, there is no hard and fast rule about it. We just created two objects instead of a single one to help you develop understanding. However, we generally take the parms as the directly controllable device variables and the summary as those device variables which are not directly controllable or are just needed to be logged or displayed to apps. In another way, the parms sometimes refer to the inputs from the user and the summary refers to the outputs of the device resulting from the inputs. Consider an example where you have a smart light bulb. The parms can store the bulb ON/OFF state which the user can control, while in summary, you can log the voltage consumption of the bulb.
+Now let's define what you can store in **Parms** and **Summary**. To be honest, there is no hard and fast rule about it. We just created two objects instead of a single one to help you develop understanding. However, we generally take the *parms as the directly controllable device variables* and the *summary as those device variables which are not directly controllable* or are just needed to be logged or displayed to apps. In another way, the parms sometimes refer to the inputs from the user and the summary refers to the outputs of the device resulting from the inputs. Consider an example where you have a smart light bulb. The parms can store the bulb ON/OFF state which the user can control, while in summary, you can log the voltage consumption of the bulb.
 
-We defined these two objects just to give you a basic framework to work on and build your logic fast. But we are very flexible in what and how you store data in the device registry. You can define an initial schema of these objects using [templates][Templates] and go on from there.
+We defined these two objects just to give you a basic framework to work on and build your logic fast. But we are very flexible in what and how you store data in the device registry. You can define an initial schema of these objects using [models][models] and go on from there.
 
-### Templates
+### Models
 
 ### Authentication and Access
 
@@ -914,7 +996,7 @@ void loop() {
 // Prints "Device Disconnected" on the stdout when device disconnects from Grandeur Cloud.
 ```
 
-### Summary Update Listener
+### Summary Update Handler
 
 > onSummaryUpdated (callback : _Callback_) : returns _void_
 
@@ -949,7 +1031,7 @@ void loop() {
 }
 ```
 
-### Parms Update Listener
+### Parms Update Handler
 
 > onParmsUpdated (callback : _Callback_) : returns _void_
 
@@ -989,7 +1071,7 @@ void loop() {
 [Grandeur Cloud Dashboard]: https://cloud.grandeur.tech/dashboard "Grandeur Cloud Dashboard"
 [Grandeur Cloud Pricing]: https://grandeur.tech/pricing "Pricing"
 [Get Started With Grandeur Cloud]: https://github.com/grandeurtech/grandeurcloud-js-sdk#get-started "Get Started With Grandeur Cloud"
-[Examples]:  https://github.com/grandeurtech/grandeurcloud-hardware-sdk/tree/development/examples
+[Examples]:  https://github.com/grandeurtech/grandeurcloud-hardware-sdk/tree/master/examples/
 
 [Example]: #example "Hardware SDK Example"
 [Documentation]: #documentation "Documentation"
@@ -1008,10 +1090,15 @@ void loop() {
 [project]: #project "Project"
 [summary]: #device-registry "Summary"
 [parms]: #device-registry "Parms"
-[callback]: #event-listening "Callback"
+[callback]: #the-dexterity-of-hardware-sdk "The Dexterity of Hardware SDK"
+[jsonobject]: #the-dexterity-of-hardware-sdk "The Dexterity of Hardware SDK"
+[the dexterity of hardware sdk]: #the-dexterity-of-hardware-sdk "The Dexterity of Hardware SDK"
+[models]: #models "Models"
 
 [getState]: #get-state
-[onApolloConnected]: #on-apollo-connected
-[onApolloDisconnected]: #on-apollo-disconnected
+[onApolloConnected]: #apollo-connection-listener
+[onApolloDisconnected]: #apollo-disconnection-listener
+[onSummaryUpdated]: #summary-update-handler
+[onParmsUpdated]: #parms-update-handler
 
 [Using Millis Instead of Delay]: https://www.norwegiancreations.com/2017/09/arduino-tutorial-using-millis-instead-of-delay/ "Using millis() instead of delay()"
