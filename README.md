@@ -40,7 +40,7 @@ Follow the [get started][Get Started with Hardware SDK] guidelines to quickly ge
 
 To get deeper insights and a developer reference for the hardware SDK, you can have a look at the [documentation][Documentation].
 
-To understand the core concepts Grandeur Cloud is built upon, simply dive into the "[A Peek into Grandeur Ecosystem][Ecosystem]" section.
+To understand the core concepts Grandeur Cloud is built upon, simply dive into the [Grandeur Ecosystem][Ecosystem] section.
 
 * [Get Started](#get-started)
   * [Installation](#installation)
@@ -48,8 +48,8 @@ To understand the core concepts Grandeur Cloud is built upon, simply dive into t
   * [Device State](#device-state)
   * [Updating Device TCP Buffer](#updating-device-tcp-buffer)
   * [Events Listening](#events-listening)
-  * [Up to the Cloud: Fetching and Updating Device Data](#up-to-the-cloud:-fetching-and-updating-device-data)
-  * [Down from the Cloud: Updates Handling](#down-from-the-cloud:-updates-handling)
+  * [Up to the Cloud: Fetching and Updating Device Data](#up-to-the-cloud%3A-fetching-and-updating-device-data)
+  * [Down from the Cloud: Updates Handling](#down-from-the-cloud%3A-updates-handling)
 * [Example](#example)
 * [The Dexterity of Hardware SDK](#the-dexterity-of-hardware-sdk)
 * [Grandeur Ecosystem](#grandeur-ecosystem)
