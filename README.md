@@ -68,19 +68,20 @@ To understand the core concepts Grandeur Cloud is built upon, simply dive into t
   * [update](#update)
   * [getState](#get-state)
   * [getStringifiedState](#get-stringified-state)
-  * [getSSID](#get-ssid)
-  * [getPassphrase](#get-passphrase)
-  * [getDeviceIP](#get-deviceip)
+  * [getSSID](#get-wifi-ssid)
+  * [getPassphrase](#get-wifi-passphrase)
+  * [getDeviceIP](#get-device-ip-address)
+  * [getDeviceID](#get-device-id)
   * [getApiKey](#get-api-key)
-  * [getToken](#get-token)
+  * [getToken](#get-access-token)
   * [getSummary](#get-summary)
   * [getParms](#get-parms)
   * [setSummary](#set-summary)
   * [setParms](#set-parms)
-  * [onApolloConnected](#on-apollo-connected)
-  * [onApolloDisconnected](#on-apollo-disconnected)
-  * [onSummaryUpdated](#on-summary-updated)
-  * [onParmsUpdated](#on-parms-updated)
+  * [Apollo Connection Listener](#apollo-connection-listener)
+  * [Apollo Disconnection Listener](#apollo-disconnection-listener)
+  * [Summary Updated Listener](#summary-update-listener)
+  * [Parms Updated Listener](#parms-update-listener)
 
 ## Get Started
 
@@ -548,7 +549,7 @@ void loop() {
 // Grandeur Cloud.
 ```
 
-### Get SSID
+### Get WiFi SSID
 
 > getSSID ( ) : returns _char*_
 
@@ -574,7 +575,7 @@ void loop() {
 // Keeps printing the WiFi SSID in loop.
 ```
 
-### Get Passphrase
+### Get WiFi Passphrase
 
 > getPassphrase ( ) : returns _char*_
 
@@ -585,7 +586,7 @@ Gets WiFi Passphrase currently in use by the device.
 ```cpp
 ApolloDevice apolloDevice;
 void setup() {
-  apolloDevice = apollo.init(YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
+  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
 }
 
 void loop() {
@@ -600,7 +601,7 @@ void loop() {
 // Keeps printing the WiFi Passphrase in loop.
 ```
 
-### getDeviceIP
+### Get Device IP Address
 
 > getDeviceIP ( ) : returns _char*_
 
@@ -617,13 +618,37 @@ void setup() {
 void loop() {
   /* getDeviceIP() returns the IP Address assigned to your device.
   */
-  std::cout<<apolloDevice.getPassphrase()<<"\n";
+  std::cout<<apolloDevice.getDeviceIP()<<"\n";
 
   apolloDevice.update();
 }
 
 // **RESULT**
 // Starts printing the IP address of the device after the device connects to WiFi.
+```
+
+### Get Device ID
+
+> getDeviceID ( ) : returns _char*_
+
+Gets the current ID of the device.
+
+#### Example
+
+```cpp
+ApolloDevice apolloDevice;
+void setup() {
+  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
+}
+
+void loop() {
+  std::cout<<apolloDevice.getDeviceID()<<"\n";
+
+  apolloDevice.update();
+}
+
+// **RESULT**
+// Keeps printing the ID of the device on the stdout.
 ```
 
 ### Get API Key
@@ -652,7 +677,7 @@ void loop() {
 // Keeps printing the API Key in a loop.
 ```
 
-### Get Token
+### Get Access Token
 
 > getToken ( ) : returns _char*_
 
@@ -762,7 +787,7 @@ Setter method for device's [summary][summary].
 ```cpp
 ApolloDevice apolloDevice;
 void setup() {
-  apolloDevice = apollo.init(YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
+  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
 }
 
 void loop() {
@@ -801,7 +826,7 @@ Setter method for device's [parms][parms].
 ```cpp
 ApolloDevice apolloDevice;
 void setup() {
-  apolloDevice = apollo.init(YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
+  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
 }
 
 void loop() {
