@@ -48,8 +48,8 @@ To understand the core concepts Grandeur Cloud is built upon, simply dive into t
   * [Device State](#device-state)
   * [Updating Device TCP Buffer](#updating-device-tcp-buffer)
   * [Events Listening](#events-listening)
-  * [Up to the Cloud: Fetching and Updating Device Data](#up-to-the-cloud::-fetching-and-updating-device-data)
-  * [Down from the Cloud: Updates Handling](#down-from-the-cloud%3A-updates-handling)
+  * [Up to the Cloud - Fetching and Updating Device Data](#up-to-the-cloud-fetching-and-updating-device-data)
+  * [Down from the Cloud - Updates Handling](#down-from-the-cloud-updates-handling)
 * [Example](#example)
 * [The Dexterity of Hardware SDK](#the-dexterity-of-hardware-sdk)
 * [Grandeur Ecosystem](#grandeur-ecosystem)
@@ -196,7 +196,7 @@ void loop() {
 // the cloud breaks.
 ```
 
-### Up to the Cloud: Fetching and Updating Device Data
+### Up to the Cloud - Fetching and Updating Device Data
 
 In the Grandeur ecosystem, we generally classify the device data into two types: **summary** for noncontrollable device variables and **parms** for controllable device variables. You can get and set both using the following functions:
 
@@ -268,7 +268,7 @@ void loop() {
 // updated values of their variables and these updated values are printed on the screen.
 ```
 
-### Down from the Cloud: Updates Handling
+### Down from the Cloud - Updates Handling
 
 Device data is stored on the cloud in the form of **summary** and **parms**. Passing a `Callback` to `onSummaryUpdated()` and `onParmsUpdated()` you can set **update handlers** for any update to the device's data.
 
