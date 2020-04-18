@@ -64,7 +64,7 @@ To understand the core concepts Grandeur Cloud is built upon, simply dive into t
     * [Networking](#networking)
     * [Allowed Origins](#allowed-origins)
 * [Documentation](#documentation)
-  * [init](#init)
+  * [init](#apollo-init)
   * [update](#update)
   * [getState](#get-state)
   * [getStringifiedState](#get-stringified-state)
