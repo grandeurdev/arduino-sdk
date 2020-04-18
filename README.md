@@ -1,40 +1,43 @@
 # Grandeur Cloud [![Version](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://cloud.grandeur.tech)
 
-Building a smart (IoT) product is an art because it is about unifying the physical world with the digital one. When you connect a hardware device to the web, magic happens. But it involves development across a huge technology stack (you need to develop your hardware, your apps to monitor/control your hardware and a server backend to manage both) to make such products work in production. Then if you are (somehow) done with the development operations, there comes the hardest part; you are going to have to scale it all as your user base grows.
+Building a smart (IoT) product is an art because it is about unifying the physical world with the digital one. When you put a piece of hardware on the web, magic happens. But one device on the web is one thing. Think about tens of them, interconnected, forging an automated ecosystem of pure reverie. Now imagine tens of thousands of these ecosystems spread throughout the globe. Seems profound, no? But developing an IoT product and then managing it is just as profoundly difficult. It involves development across a huge technology stack (your IoT hardware itself, your apps to monitor/control your hardware and a server backend to manage them both) to make such products work in production. And then in production comes the hardest challenge; you are going to have to scale it up as your user base grows.
 
 We understand this because we have been there.
 
-Introducing Grandeur Cloud: A backend as a service (Baas) platform for IoT. We have designed this platform so you do not have to worry about the backend of your next big thing, and can focus on what matters the most: your hardware and your apps. It is designed specifically to accelerate your IoT product development and push your product to market in weeks rather than in months or years.
+Introducing Grandeur Cloud: A backend as a service (Baas) platform for IoT. We have designed this platform so you do not have to worry about the backend of your next big thing, and can focus on what matters the most: your hardware and your apps. It is designed specifically to accelerate your IoT product development and push your product to market in weeks rather than in months or years. So you can then actually build **grandeur** ecosystems like the one above.
 
 ## Why Grandeur Cloud
 
-Grandeur Cloud is designed keeping in mind all the challenges a hardware engineer can face in developing and commercializing a smart (IoT) product. You can use out-of-the-box APIs to integrate your devices and apps.
+Grandeur Cloud is designed keeping in mind all the challenges a hardware engineer can face in developing and commercializing a smart (IoT) product. We made available out-of-the-box APIs to integrate your devices and apps.
 
-Like you can do authentication of users who use your products, to make sure each user has access to his own data and no one other than the device admin himself should be able to interact with a device. You can save a huge amount of data in a cloud database to extract intelligent information and display it in useful graphs. You can also host your product's static website on Grandeur Cloud. Also, your hardware device can subscribe to events from your app and your app can subscribe to events from your hardware device and communicate data with each other in realtime.
+Like you can put authentication for your product's users to make sure each user has access to its own data and no one other than the device admin itself should be able to interact with its device. You can store a humongous amount of data in cloud database to analyze and extract intelligent information from it and display useful graphs. You can also host your product's static website on Grandeur Cloud. Also, your hardware device can subscribe to events from your app and your app can subscribe to events from your hardware device and communicate data with each other in realtime.
 
-Here are some points that make Grandeur Cloud stand out from the rest of the IoT solutions out there.
+Grandeur Cloud is not a regular IoT cloud. It's a complete IoT product development and management platform. Here's how:
 
-* Grandeur Cloud is product-centered. It is much more than just a medium of communication between your app and your hardware. Focusing on expediting IoT product development, it offers an ecosystem of the most necessary tools integrated to make the most head-cracking development problems seamless.
+* Grandeur Cloud is product-centered. It is much more than just a medium of communication between your app and your hardware device. Focusing on expediting IoT product development, it offers an ecosystem of the most necessary tools integrated to make the most head-cracking development problems seamless. What problems you may ask?
+  * Huge development stack (Your IoT product which is generally hardware, your webapp, your server API, and the communication between all of these)
+  * Your database design and management
+  * Setup and maintenance of your network through which your product communicates with the server and webapp
+  * Web development (Backend of your server, frontend of your webapp)
+  * Your IoT product development itself
+  * Scaling your system up to hundreds of thousands of devices as your business grows
 
-* With Grandeur Cloud, it is extremely simple to [get started][Get Started with Grandeur Cloud] with your IoT product development. Just create a project from the [cloud dashboard][Grandeur Cloud Dashboard], plug your project's API key into the SDK and start developing.
+* No need to mix and match various services to come up with your own solution. Grandeur Cloud is a single spot solution for all of your needs. From built-in authentication of your users and devices to an integrated database to an out-of-the-box file storage system and a registry of data for all of your devices. And You can manage absolutely everything from a single dashboard page.
 
-* No need to mix and match various services. Grandeur Cloud is a single spot solution for all of your needs. It has built-in authentication of your users and devices, an integrated database, an out-of-the-box file storage system and a registry of data for all of your devices. You can manage everything from a dashboard and integrate them into your product using our SDKs.
+* Simple pricing. [Start free][Grandeur Cloud Sign Up] and then pay as you go based on your resources consumption. Checkout [pricing][Grandeur Cloud Pricing] for more details.
 
-* Simple pricing. [Start free][Grandeur Cloud Sign Up] and then pay as you go based on your resource consumption. Checkout [pricing][Grandeur Cloud Pricing] for more details.
-
-By this time you would be like, okay! we got what motivated Grandeur to build this platform and yeah it is super great and super useful too. But how can we integrate it into our product? So here we have built these amazing SDKs for your apps and hardware to make the integration of Grandeur Cloud in your product quick and seamless. So dive straight in.
+* Extremely simple to [get started][Get Started with Grandeur Cloud] with your IoT product development. Just create a project from the [cloud dashboard][Grandeur Cloud Dashboard], plug your project's API key into our SDKs and start developing.
 
 [Here][Get Started With Grandeur Cloud] is how you can create a new project on Grandeur Cloud and start using the Javascript SDK to build your IoT apps.
 
-From here onwards, we'll look at how you can use the Hardware SDK to put your devices live and connected on Grandeur Cloud. Let's go!
+From here onwards, we'll look at how you can use the Hardware SDK to put your devices live and connected on Grandeur Cloud. Let's dive in!
 
 # Hardware SDK
 
 **Hardware SDK** is the official SDK for hardware that utilizes the *Apollo* API to connect your device to **[Grandeur Cloud][Grandeur Cloud]**.
 
-***NOTE***: Currently, **Apollo Device** SDK is available only for esp8266. Support for the following microcontrollers is coming very soon:
-
-* esp32
+> ***NOTE***: Currently, **Apollo Device** SDK is available only for esp8266. Support for the following microcontrollers is coming very soon:
+  * esp32
 
 Follow the [get started][Get Started with Hardware SDK] guidelines to quickly get into the context of integrating your devices to Grandeur Cloud or jump straight to an [Arduino example][Example] to make your hands dirty.
 
