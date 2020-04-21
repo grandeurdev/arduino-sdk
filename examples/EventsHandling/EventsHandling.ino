@@ -8,8 +8,8 @@
  *
  * Apollo.h is used for device's communication to Grandeur Cloud.
  * 
- * Here we set listeners for device's connection and disconnection with the cloud.
- * We also set listeners for device's summary and parms. We see when the device's
+ * In this example, we set listeners for device's connection and disconnection with the cloud.
+ * We also set update handlers for device's Summary and Parms. We see when the device's
  * summary or parms are updated, by the setSummary and setParms functions, these handlers
  * are called with the updated values.
  */

@@ -7,6 +7,10 @@
  * This file is part of the Hardware SDK for Grandeur Cloud.
  *
  * Apollo.h is used for device's communication to Grandeur Cloud.
+ * 
+ * This example connects to the WiFi using the provided WiFi settings. Then it
+ * connects to the cloud using the API Key and Access Token and starts fetching
+ * the Summary and Parms of this device from the cloud every 5 seconds.
  */
 
 #include <Apollo.h>

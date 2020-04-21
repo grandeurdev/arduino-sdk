@@ -37,7 +37,7 @@ void loop() {
 
   if(device.getState() == WIFI_NOT_CONNECTED) {
     Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n",
-      device.getSSID(), device.Passphrase());
+      device.getSSID(), device.getPassphrase());
   }
   else if(device.getState() == WIFI_CONNECTED) {
     Serial.printf("\nDevice has successfully connected to WiFi. Its IP Address is: %s\n",
@@ -46,10 +46,9 @@ void loop() {
       device.getDeviceID(), device.getApiKey(), device.getToken());
   }
   else if(device.getState() == APOLLO_CONNECTED) {
-    Serial.println("\nDevice has made a successful connection with the Cloud.\n
-      You can now get and set the summary and parms of this device there. \n
-      Checkout \"GettingDataFromCloud\" and \"UpdatingDataOnCloud\". Also run \"FullExample\"
-      to see your device in full action.\n");
+    Serial.println("\nDevice has made a successful connection with the Cloud.");
+    Serial.println("You can now get and set the summary and parms of this device here.");
+    Serial.println("Checkout examples \"GettingDataFromCloud\" and \"UpdatingDataOnCloud\". Also run \"FullExample\" to see your device in full action.\n");
   }
 
   // Keep updating the TCP buffer

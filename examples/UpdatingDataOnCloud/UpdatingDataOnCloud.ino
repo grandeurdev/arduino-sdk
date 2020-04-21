@@ -7,6 +7,10 @@
  * This file is part of the Hardware SDK for Grandeur Cloud.
  *
  * Apollo.h is used for device's communication to Grandeur Cloud.
+ * 
+ * This example connects to the WiFi using the provided WiFi settings. Then it
+ * connects to the cloud using the API Key and Access Token and starts updating
+ * the Summary and Parms of this device on the cloud every 5 seconds.
  */
 
 #include <Apollo.h>
@@ -34,8 +38,8 @@ void loop() {
 
       // This updates the device's summary on the Cloud
       JSONObject summary;
-      summary["voltage"] = 5;
-      summary["current"] = 0.1;
+      summary["voltage"] = 3.3;
+      summary["current"] = 1;
       device.setSummary(summary, [](JSONObject payload) {
         if(payload["code"] == "DEVICE-SUMMARY-UPDATED") {
           Serial.printf("Voltage is updated to: %d\n", (int) payload["update"]["voltage"]);
