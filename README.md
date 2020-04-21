@@ -41,9 +41,9 @@ From here onwards, we'll look at how you can use the Hardware SDK to put your de
 
 Follow the [get started][Get Started with Hardware SDK] guidelines to quickly get into the context of integrating your devices to Grandeur Cloud or jump straight to an [Arduino example][Example] to make your hands dirty.
 
-To get deeper insights and a developer reference for the hardware SDK, you can have a look at the [documentation][Documentation].
+For a developer reference for the hardware SDK, you can have a look at the [documentation][Documentation].
 
-To understand the core concepts Grandeur Cloud is built upon, simply dive into the [Grandeur Ecosystem][Ecosystem] section.
+To get a deeper understanding of the core concepts Grandeur Cloud is built upon, dive into the [Grandeur Ecosystem][Ecosystem] section.
 
 * [Get Started](#get-started)
   * [Installation](#installation)
@@ -63,7 +63,7 @@ To understand the core concepts Grandeur Cloud is built upon, simply dive into t
     * [User and Administrator](#user-and-administrator)
     * [Device](#device)
     * [Device Registry](#device-registry)
-    * [Templates](#templates)
+    * [Models](#models)
     * [Authentication and Access](#authentication-and-access)
     * [Networking](#networking)
     * [Allowed Origins](#allowed-origins)
@@ -160,7 +160,7 @@ void loop() {
 
 ### Updating Device TCP Buffer
 
-For now, the device does not automatically push messages to the network or pulls new messages from the network. You have to constantly do polling for that. Calling `apolloDevice.update()` in the `loop()` does exactly that.
+For now, the device does not automatically push messages to the network or pulls new messages from the network. You have to constantly do polling for that. Calling `apolloDevice.update()` in the `loop()` will do that for you.
 
 ### Events Listening
 
@@ -168,7 +168,7 @@ You can also listen on connection-related events. For example, to run some code 
 
 Similarly, you can pass the `Callback` function as a parameter to `apolloDevice.onApolloDisconnected()` and it will be called when the device disconnects from the cloud.
 
-The `Callback` function is a special type of function that accepts an `JSONObject` as a parameter and returns `void`. Read more about `Callback` and `JSONObject` [here][jsonobject].
+The `Callback` function is a special type of function that accepts a `JSONObject` as a parameter and returns `void`. Read more about `Callback` and `JSONObject` [here][jsonobject].
 
 ```cpp
 ApolloDevice apolloDevice;
@@ -208,7 +208,7 @@ In the Grandeur ecosystem, we generally classify the device data into two types:
 * `apolloDevice.setSummary()`
 * `apolloDevice.setParms()`
 
-You pass a `Callback` to these functions which is called when response from the cloud arrives.
+They accept a `Callback` function which is called when response from the cloud arrives.
 
 In setter functions, you specify the new summary and parms as `JSONObject`.
 
@@ -263,12 +263,11 @@ void loop() {
 }
 
 // **RESULT**
-// When the loop() starts, summary and parms are fetched. Then the summary and parms are
-// updated with the new values. When the summary and parms arrive from the cloud, their
-// corresponding callback is called. In our case, both callbacks print the variables stored
-// in summary and parms.
-// When the summary and parms updates complete, their callbacks are called with the
-// updated values of their variables and these updated values are printed on the screen.
+// When the loop() starts, summary and parms are fetched. When they arrive from the cloud, their
+// corresponding callbacks are called which print the variables stored in summary and parms objects.
+// Then the summary and parms are updated with the new values. When their updates complete, their
+// callbacks are called with the updated values of their variables and these updated values are
+// printed on the screen.
 ```
 
 ### Down from the Cloud - Updates Handling
@@ -306,13 +305,13 @@ void loop() {
 
 ## Example
 
-Here we go through a general example to explain the **Hardware SDK** in action. For smaller and more detailed examples, have a look at [this][Examples].
+Here we go through a general example to explain the **Hardware SDK** in action. For features breakdown examples of the SDK, have a look at [this][Examples].
 
 To begin working with the **Hardware SDK**, the very first step is to [create a new project][Grandeur Cloud Dashboard] and [register a new device][Grandeur Cloud Devices] through the [Cloud Dashboard][Grandeur Cloud Dashboard].
 
 ### Create a New Sketch
 
-Create a new folder for your `hardware workspace`, create a `.ino` file in it and open it with [Arduino IDE][Arduino IDE]. This is the sketch file where you'll write your hardware device's program.
+Create a new folder for your `hardware workspace`, create a `.ino` file in it, and open it with [Arduino IDE][Arduino IDE]. This is the sketch file where you'll write your hardware device's program.
 
 ### Include Apollo.h into Your Sketch
 
@@ -343,7 +342,7 @@ You can find the API Key on the [settings page][Grandeur Cloud Settings] of your
 
 ### Initialize Your Device
 
-Before doing anything, you need to initialize your device with the data from the cloud. You can get all the device variables by using `getSummary()` and `getParms()` functions. Here's how you can get the device state from the cloud.
+Before doing anything, you need to initialize your device with data from the cloud. You can get all the device variables by using `getSummary()` and `getParms()` functions. Here's how you can get the device state from the cloud.
 
 ```cpp
 #include <Apollo.h>
@@ -358,7 +357,7 @@ void setup() {
   apolloDevice.getParms([](JSONObject parms) {
     if(payload["code"] == "DEVICE-PARMS-FETCHED") {
       bool state = (bool) payload["deviceParms"]["state"];
-      // We can set a digital pin here with the state value
+      // You can set a digital pin here with the state value
       // to switch the hardware connected to it ON/OFF.
     }
   });
@@ -383,14 +382,14 @@ void setup() {
   apolloDevice.getParms([](JSONObject parms) {
     if(payload["code"] == "DEVICE-PARMS-FETCHED") {
       bool state = (bool) payload["deviceParms"]["state"];
-      // We can set a digital pin here with the state value
+      // You can set a digital pin here with the state value
       // to switch the hardware connected to it ON/OFF.
     }
   });
 
   apolloDevice.onParmsUpdated([](JSONObject updatedParms) {
     bool newState = (bool) updatedParms["state"];
-    // We can set a digital pin here with the newState value
+    // You can set a digital pin here with the newState value
     // to switch the hardware connected to it ON/OFF.
   });
 }
@@ -398,7 +397,7 @@ void setup() {
 
 ### Update Device Variables
 
-To see the live state of the device on the webapp (even if the device is switched off manually), you need to keep sending the updated state after some interval. Since the device's state is stored in **Parms**, you'll use the `setParms()` function to update the state value.
+To see the live state of the device on the webapp, you need to keep sending the updated state after some interval. Since the device's state is stored in **Parms**, you'll use the `setParms()` function to update the state value.
 
 ```cpp
 #include <Apollo.h>
@@ -413,14 +412,14 @@ void setup() {
   apolloDevice.getParms([](JSONObject parms) {
     if(payload["code"] == "DEVICE-PARMS-FETCHED") {
       bool state = (bool) payload["deviceParms"]["state"];
-      // We can set a digital pin here with the state value
+      // You can set a digital pin here with the state value
       // to switch the hardware connected to it ON/OFF.
     }
   });
 
   apolloDevice.onParmsUpdated([](JSONObject updatedParms) {
     bool newState = (bool) updatedParms["state"];
-    // We can set a digital pin here with the newState value
+    // You can set a digital pin here with the newState value
     // to switch the hardware connected to it ON/OFF.
   });
 }
@@ -440,7 +439,7 @@ void loop() {
 
 ### Test it With Your Webapp
 
-You can build a webapp for your product to control your hardware device over the cloud. [Here's an simple example for that][An Example Webapp].
+You can build a webapp for your product to control your hardware device over the cloud. [Here's a simple example for that][An Example Webapp].
 
 ## The Dexterity of Hardware SDK
 
@@ -480,7 +479,7 @@ The Hardware SDK is aimed at providing extremely to-the-point functions, being a
   ```
   For now, it is the only function type accepted by the Async functions of `ApolloDevice` class as a parameter.
 
-* [`JSONObject`][jsonobject] is a special variable type which acts like a container for other variables, just like a javascript object. You can store variables in it as key-value pairs. That's how summary and parms are represented, as `JSONObject`s.
+* [`JSONObject`][jsonobject] is a special variable type which acts like a container for other variables, just like a javascript object or a C++ map. You can store variables in it as key-value pairs. That's how summary and parms are represented, as `JSONObject`s.
 
 ```cpp
 JSONObject summary;
