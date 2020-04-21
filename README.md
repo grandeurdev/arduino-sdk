@@ -308,6 +308,140 @@ void loop() {
 
 Here we go through a general example to explain the **Hardware SDK** in action. For smaller and more detailed examples, have a look at [this][Examples].
 
+To begin working with the **Hardware SDK**, the very first step is to [create a new project][Grandeur Cloud Dashboard] and [register a new device][Grandeur Cloud Devices] through the [Cloud Dashboard][Grandeur Cloud Dashboard].
+
+### Create a New Sketch
+
+Create a new folder for your `hardware workspace`, create a `.ino` file in it and open it with [Arduino IDE][Arduino IDE]. This is the sketch file where you'll write your hardware device's program.
+
+### Include Apollo.h into Your Sketch
+
+After [cloning the Hardware SDK][installation] and [installing it][Installing an Arduino Library], you can import it into your sketch as:
+
+```cpp
+#include <Apollo.h>
+```
+
+### Get a Reference to Your Device on the Cloud
+
+**Hardware SDK** takes care of both your device's connection to WiFi and to Grandeur Cloud. To use it into your sketch, you need to initialize it first. You can do that using the global object `apollo`. Initializing the SDK returns an object of `ApolloDevice` class which exposes all the SDK's functions. The object of `ApolloDevice` class is technically a reference to your device on the cloud. You can use it to access, manipulate, and do all kinds of things to the data in your device's scope.
+
+```cpp
+#include <Apollo.h>
+
+ApolloDevice apolloDevice;
+
+void setup() {
+  apolloDevice = apollo.init(
+    YourDeviceID, YourAPIKey, YourToken, YourWiFiSSID, YourWiFiPassphrase
+  );
+}
+```
+
+You can find the API Key on the [settings page][Grandeur Cloud Settings] of your project's dashboard. For the Access Token for your device, you need to pair your device with a user account in your project. A device can only connect to Grandeur Cloud if it's paired with a user. And only the paired user can access the device's data through its webapp. For convenient testing, we have added device pairing function on the [devices page][Grandeur Cloud Devices] too. You can find your device's ID and pair your device with a user account from the [devices page][Grandeur Cloud Devices]. If your project has no registered user, you can add one easily from the [accounts page][Grandeur Cloud Accounts].
+
+
+### Initialize Your Device
+
+Before doing anything, you need to initialize your device with the data from the cloud. You can get all the device variables by using `getSummary()` and `getParms()` functions. Here's how you can get the device state from the cloud.
+
+```cpp
+#include <Apollo.h>
+
+ApolloDevice apolloDevice;
+
+void setup() {
+  apolloDevice = apollo.init(
+    YourDeviceID, YourAPIKey, YourToken, YourWiFiSSID, YourWiFiPassphrase
+  );
+
+  apolloDevice.getParms([](JSONObject parms) {
+    if(payload["code"] == "DEVICE-PARMS-FETCHED") {
+      bool state = (bool) payload["deviceParms"]["state"];
+      // We can set a digital pin here with the state value
+      // to switch the hardware connected to it ON/OFF.
+    }
+  });
+}
+```
+
+### Set Update Handlers
+
+Update handlers are the functions which are called when a device variable is updated on the cloud. The update could be from a user or the device itself. Without the handlers, your device would not be notified when a user turns it off from the webapp.
+Here's how you can set update handlers in your sketch for the device's state stored in parms.
+
+```cpp
+#include <Apollo.h>
+
+ApolloDevice apolloDevice;
+
+void setup() {
+  apolloDevice = apollo.init(
+    YourDeviceID, YourAPIKey, YourToken, YourWiFiSSID, YourWiFiPassphrase
+  );
+
+  apolloDevice.getParms([](JSONObject parms) {
+    if(payload["code"] == "DEVICE-PARMS-FETCHED") {
+      bool state = (bool) payload["deviceParms"]["state"];
+      // We can set a digital pin here with the state value
+      // to switch the hardware connected to it ON/OFF.
+    }
+  });
+
+  apolloDevice.onParmsUpdated([](JSONObject updatedParms) {
+    bool newState = (bool) updatedParms["state"];
+    // We can set a digital pin here with the newState value
+    // to switch the hardware connected to it ON/OFF.
+  });
+}
+```
+
+### Update Device Variables
+
+To see the live state of the device on the webapp (even if the device is switched off manually), you need to keep sending the updated state after some interval. Since the device's state is stored in **Parms**, you'll use the `setParms()` function to update the state value.
+
+```cpp
+#include <Apollo.h>
+
+ApolloDevice apolloDevice;
+
+void setup() {
+  apolloDevice = apollo.init(
+    YourDeviceID, YourAPIKey, YourToken, YourWiFiSSID, YourWiFiPassphrase
+  );
+
+  apolloDevice.getParms([](JSONObject parms) {
+    if(payload["code"] == "DEVICE-PARMS-FETCHED") {
+      bool state = (bool) payload["deviceParms"]["state"];
+      // We can set a digital pin here with the state value
+      // to switch the hardware connected to it ON/OFF.
+    }
+  });
+
+  apolloDevice.onParmsUpdated([](JSONObject updatedParms) {
+    bool newState = (bool) updatedParms["state"];
+    // We can set a digital pin here with the newState value
+    // to switch the hardware connected to it ON/OFF.
+  });
+}
+
+void loop() {
+  JSONObject parms;
+  // You can read a digital pin here that manages the state of the
+  // hardware connected.
+  parms["state"] = true;
+  apolloDevice.setParms(parms, [](JSONObject result) {
+    if(result["code"] == "DEVICE-PARMS-UPDATED") {
+      Serial.printf("State is updated to: %d\n", (bool) payload["update"]["state"]);
+    }
+  })
+}
+```
+
+### Test it With Your Webapp
+
+You can build a webapp for your product to control your hardware device over the cloud. [Here's an simple example for that][An Example Webapp].
+
 ## The Dexterity of Hardware SDK
 
 The Hardware SDK is aimed at providing extremely to-the-point functions, being almost invisible in your hardware program, and hence making the integration of Grandeur Cloud seamless. Here is what it does under the hood without you paying attention to the most painful things:
@@ -1072,10 +1206,17 @@ void loop() {
 [Grandeur Cloud]: https://cloud.grandeur.tech "Grandeur Cloud"
 [Grandeur Cloud Sign Up]: https://cloud.grandeur.tech/register "Sign up on Grandeur Cloud"
 [Grandeur Cloud Dashboard]: https://cloud.grandeur.tech/dashboard "Grandeur Cloud Dashboard"
+[Grandeur Cloud Accounts]: https://cloud.grandeur.tech/accounts "Grandeur Cloud Accounts"
+[Grandeur Cloud Devices]: https://cloud.grandeur.tech/devices "Grandeur Cloud Devices"
+[Grandeur Cloud Settings]: https://cloud.grandeur.tech/settings "Grandeur Cloud Settings"
 [Grandeur Cloud Pricing]: https://grandeur.tech/pricing "Pricing"
 [Get Started With Grandeur Cloud]: https://github.com/grandeurtech/grandeurcloud-js-sdk#get-started "Get Started With Grandeur Cloud"
+[An Example Webapp]: https://github.com/grandeurtech/grandeurcloud-js-sdk#example "An Example Webapp"
 [Examples]:  https://github.com/grandeurtech/grandeurcloud-hardware-sdk/tree/master/examples/
+[Arduino IDE]: https://www.arduino.cc/en/main/software "Arduino IDE"
+[Installing an Arduino Library]: https://www.arduino.cc/en/guide/libraries "Installing an Arduino Library"
 
+[Installation]: #installation "Installation"
 [Example]: #example "Hardware SDK Example"
 [Documentation]: #documentation "Documentation"
 [Ecosystem]: #grandeur-ecosystem "Grandeur Ecosystem"
