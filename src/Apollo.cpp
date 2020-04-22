@@ -129,6 +129,10 @@ char* ApolloDevice::getDeviceIP(void) {
     return _deviceIP;
 }
 
+char* ApolloDevice::getDeviceID(void) {
+    return config->deviceID;
+}
+
 char* ApolloDevice::getApiKey(void) {
     return config->apiKey;
 }

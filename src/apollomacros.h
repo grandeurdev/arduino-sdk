@@ -9,8 +9,8 @@
  */
 
 // Connection macros
-#define APOLLO_URL "api.grandeur.tech"
-#define APOLLO_PORT 443
+#define APOLLO_URL "192.168.1.12"
+#define APOLLO_PORT 8000
 #define APOLLO_FINGERPRINT ""
 
 // Strings sizes
