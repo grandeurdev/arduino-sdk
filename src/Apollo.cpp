@@ -210,8 +210,8 @@ void initializeWiFi(void) {
 }
 
 void initializeDuplex(void) {
-    duplexClient.beginSSL(APOLLO_URL, APOLLO_PORT, "/?type=device&apiKey=" + String(config->apiKey) + "&token=" + String(config->token), APOLLO_FINGERPRINT, "node");
-    //client.beginSSL(APOLLO_URL, APOLLO_PORT, "/?type=device&apiKey=" + String(config->apiKey) + "&token=" + String(config->token), APOLLO_FINGERPRINT, "node");
+    duplexClient.beginSSL(APOLLO_URL, APOLLO_PORT, "/?type=device&apiKey=" + String(config->apiKey), APOLLO_FINGERPRINT, "node");
+    duplexClient.setAuthorization(config->token);
     // Setting up event handler
     duplexClient.onEvent(&apolloDevice.apolloEventHandler);
     // Scheduling reconnect every 5 seconds if it disconnects

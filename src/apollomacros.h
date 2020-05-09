@@ -9,7 +9,7 @@
  */
 
 // Connection macros
-#define APOLLO_URL "192.168.1.12"
+#define APOLLO_URL "192.168.1.8"
 #define APOLLO_PORT 8000
 #define APOLLO_FINGERPRINT ""
 
