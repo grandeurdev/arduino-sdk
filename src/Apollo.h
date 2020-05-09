@@ -4,7 +4,7 @@
  * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
- * This file is part of the Hardware SDK for ESP8266 module.
+ * This file is part of the Arduino SDK for ESP8266 module.
  *
  */
 

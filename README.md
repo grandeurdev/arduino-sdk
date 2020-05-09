@@ -30,18 +30,18 @@ Grandeur Cloud is not a regular IoT cloud. It's a complete IoT product developme
 
 [Here][Get Started With Grandeur Cloud] is how you can create a new project on Grandeur Cloud and start using the Javascript SDK to build your IoT apps.
 
-From here onwards, we'll look at how you can use the Hardware SDK to put your devices live and connected on Grandeur Cloud. Let's dive in!
+From here onwards, we'll look at how you can use the Arduino SDK for arduino-compatible modules to put your devices live and connected on Grandeur Cloud. Let's dive in!
 
-# Hardware SDK
+# Arduino SDK
 
-**Hardware SDK** is the official SDK for hardware that utilizes the *Apollo* API to connect your device to **[Grandeur Cloud][Grandeur Cloud]**.
+**Arduino SDK** is the official SDK for hardware that utilizes the *Apollo* API to connect your device to **[Grandeur Cloud][Grandeur Cloud]**.
 
-> ***NOTE***: Currently, **Apollo Device** SDK is available only for esp8266. Support for the following microcontrollers is coming very soon:
+> ***NOTE***: Currently, **Arduino SDK** is available only for esp8266. Support for the following microcontrollers is coming very soon:
 >   * esp32
 
-Follow the [get started][Get Started with Hardware SDK] guidelines to quickly get into the context of integrating your devices to Grandeur Cloud or jump straight to an [Arduino example][Example] to make your hands dirty.
+Follow the [get started][Get Started with Arduino SDK] guidelines to quickly get into the context of integrating your devices to Grandeur Cloud or jump straight to an [Arduino example][Example] to make your hands dirty.
 
-For a developer reference for the hardware SDK, you can have a look at the [documentation][Documentation].
+For a developer reference for the Arduino SDK, you can have a look at the [documentation][Documentation].
 
 To get a deeper understanding of the core concepts Grandeur Cloud is built upon, dive into the [Grandeur Ecosystem][Ecosystem] section.
 
@@ -54,7 +54,7 @@ To get a deeper understanding of the core concepts Grandeur Cloud is built upon,
   * [Up to the Cloud - Fetching and Updating Device Data](#up-to-the-cloud---fetching-and-updating-device-data)
   * [Down from the Cloud - Updates Handling](#down-from-the-cloud---updates-handling)
 * [Example](#example)
-* [The Dexterity of Hardware SDK](#the-dexterity-of-hardware-sdk)
+* [The Dexterity of Arduino SDK](#the-dexterity-of-arduino-sdk)
 * [Grandeur Ecosystem](#grandeur-ecosystem)
   * [A Brief Case Study](#a-brief-case-study)
   * [Concepts](#concepts)
@@ -91,7 +91,7 @@ To get a deeper understanding of the core concepts Grandeur Cloud is built upon,
 
 ### Installation
 
-You can clone **Hardware SDK** from [here][Hardware SDK].
+You can clone **Arduino SDK** from [here][Arduino SDK].
 
 ### Initialization
 
@@ -212,7 +212,7 @@ They accept a `Callback` function which is called when response from the cloud a
 
 In setter functions, you specify the new summary and parms as `JSONObject`.
 
-Read more about them [here][the dexterity of hardware sdk].
+Read more about them [here][the dexterity of arduino sdk].
 
 ```cpp
 ApolloDevice apolloDevice;
@@ -305,17 +305,17 @@ void loop() {
 
 ## Example
 
-Here we go through a general example to explain the **Hardware SDK** in action. For features breakdown examples of the SDK, have a look at [this][Examples].
+Here we go through a general example to explain the **Arduino SDK** in action. For features breakdown examples of the SDK, have a look at [this][Examples].
 
-To begin working with the **Hardware SDK**, the very first step is to [create a new project][Grandeur Cloud Dashboard] and [register a new device][Grandeur Cloud Devices] through the [Cloud Dashboard][Grandeur Cloud Dashboard].
+To begin working with the **Arduino SDK**, the very first step is to [create a new project][Grandeur Cloud Dashboard] and [register a new device][Grandeur Cloud Devices] through the [Cloud Dashboard][Grandeur Cloud Dashboard].
 
 ### Create a New Sketch
 
-Create a new folder for your `hardware workspace`, create a `.ino` file in it, and open it with [Arduino IDE][Arduino IDE]. This is the sketch file where you'll write your hardware device's program.
+Create a new folder for your `arduino workspace`, create a `.ino` file in it, and open it with [Arduino IDE][Arduino IDE]. This is the sketch file where you'll write your arduino-compatible device's program.
 
 ### Include Apollo.h into Your Sketch
 
-After [cloning the Hardware SDK][installation] and [installing it][Installing an Arduino Library], you can import it into your sketch as:
+After [cloning the Arduino SDK][installation] and [installing it][Installing an Arduino Library], you can import it into your sketch as:
 
 ```cpp
 #include <Apollo.h>
@@ -323,7 +323,7 @@ After [cloning the Hardware SDK][installation] and [installing it][Installing an
 
 ### Get a Reference to Your Device on the Cloud
 
-**Hardware SDK** takes care of both your device's connection to WiFi and to Grandeur Cloud. To use it into your sketch, you need to initialize it first. You can do that using the global object `apollo`. Initializing the SDK returns an object of `ApolloDevice` class which exposes all the SDK's functions. The object of `ApolloDevice` class is technically a reference to your device on the cloud. You can use it to access, manipulate, and do all kinds of things to the data in your device's scope.
+**Arduino SDK** takes care of both your device's connection to WiFi and to Grandeur Cloud. To use it into your sketch, you need to initialize it first. You can do that using the global object `apollo`. Initializing the SDK returns an object of `ApolloDevice` class which exposes all the SDK's functions. The object of `ApolloDevice` class is technically a reference to your device on the cloud. You can use it to access, manipulate, and do all kinds of things to the data in your device's scope.
 
 ```cpp
 #include <Apollo.h>
@@ -441,20 +441,20 @@ void loop() {
 
 You can build a webapp for your product to control your hardware device over the cloud. [Here's a simple example for that][An Example Webapp].
 
-## The Dexterity of Hardware SDK
+## The Dexterity of Arduino SDK
 
-The Hardware SDK is aimed at providing extremely to-the-point functions, being almost invisible in your hardware program, and hence making the integration of Grandeur Cloud seamless. Here is what it does under the hood without you paying attention to the most painful things:
+The Arduino SDK is aimed at providing extremely to-the-point functions, being almost invisible in your device program, and hence making the integration of Grandeur Cloud seamless. Here is what it does under the hood without you paying attention to the most painful things:
 
-* **Hardware SDK** takes care of your device's WiFi connectivity by itself. It starts trying to connect to WiFi as soon as you do `apollo.init()`.
+* **Arduino SDK** takes care of your device's WiFi connectivity by itself. It starts trying to connect to WiFi as soon as you do `apollo.init()`.
 
-* **Hardware SDK** also takes care of your device's connection to [Grandeur Cloud][Grandeur Cloud]. As soon as the WiFi gets connected, **Hardware SDK** begins trying to connect to *[Grandeur Cloud][Grandeur Cloud]* using the *API Key* and the *Access Token* you provide during `apollo.init()`. When it connects, only then can it request the *[cloud][Grandeur Cloud]* to fetch or update any data or listen to any events of your device.
+* **Arduino SDK** also takes care of your device's connection to [Grandeur Cloud][Grandeur Cloud]. As soon as the WiFi gets connected, **Arduino SDK** begins trying to connect to *[Grandeur Cloud][Grandeur Cloud]* using the *API Key* and the *Access Token* you provide during `apollo.init()`. When it connects, only then can it request the *[cloud][Grandeur Cloud]* to fetch or update any data or listen to any events of your device.
 
 * And as your device quickly flies through these states, i.e.,
   * Device is not connected to WiFi.
   * Device is connected to WiFi, but not connected to Grandeur Cloud yet.
   * Device is finally connected to Grandeur Cloud.
 
-  **Hardware SDK** exposes the state of your device through [`getState()`][getState] function to let you make your decisions based on that.
+  **Arduino SDK** exposes the state of your device through [`getState()`][getState] function to let you make your decisions based on that.
 
 * You can even set **event handlers** on device's connection and disconnection to Grandeur Cloud using [`onApolloConnected()`][onApolloConnected] and [`onApolloDisconnected()`][onApolloDisconnected].
 
@@ -473,7 +473,7 @@ The Hardware SDK is aimed at providing extremely to-the-point functions, being a
 
   `getParms()` for example, requests the cloud for the device's parms and schedules the `callback` function for when the parms arrive, because obviously, they don't arrive instantaneously.
 
-* There is a special type of function defined in **Hardware SDK** as [`Callback`][callback]. It's nothing but a regular function of the form:
+* There is a special type of function defined in **Arduino SDK** as [`Callback`][callback]. It's nothing but a regular function of the form:
   ```cpp
   void callback(JSONObject result) {}
   ```
@@ -497,7 +497,7 @@ summary["foobar"]["foo"] = "This is foo inside foobar";
 //  }
 ```
 
-To see the **Hardware SDK** in action, jump to [Example][Example].
+To see the **Arduino SDK** in action, jump to [Example][Example].
 
 # Grandeur Ecosystem
 
@@ -535,7 +535,7 @@ Each project is identified by a digital signature that we call the API key, just
 
 Apollo is the API that exposes Grandeur Cloud to the outside world. Our SDKs utilize this API and map each functionality to a function. We have tried our best to make the integration of our SDKs into your codebase simple. For example, while developing your web app, you simply need to drop in the link of JS SDK CDN in your codebase and you are done. We have developed our SDKs for each platform in coherence with each other so you could work and collaborate everywhere seamlessly.
 
-This is how they work: In every SDK, there is a global object aka. `apollo`. You can initialize your configurations (API Key and a couple of more stuff in case of hardware SDK) by calling `apollo.init()`. This returns you a reference to your whole project (in case of your app) or just to your device (in case of hardware because hardware scope is limited to the device itself). In **JS SDK**, you can interact with the authentication API, the device API, the file storage and the datastore API. In the case of **Hardware SDK** your scope is limited to just the device's namespace. Check out the [Authentication and Access][Authentication and Access] section to get more insight into how scope varies across the different platforms (app and hardware).
+This is how they work: In every SDK, there is a global object aka. `apollo`. You can initialize your configurations (API Key and a couple of more stuff in case of hardware SDK) by calling `apollo.init()`. This returns you a reference to your whole project (in case of your app) or just to your device (in case of hardware because hardware scope is limited to the device itself). In **JS SDK**, you can interact with the authentication API, the device API, the file storage and the datastore API. In the case of **Arduino SDK** your scope is limited to just the device's namespace. Check out the [Authentication and Access][Authentication and Access] section to get more insight into how scope varies across the different platforms (app and hardware).
 
 ### User and Administrator
 
@@ -564,7 +564,7 @@ The device entity, in the end, defines two things:
 
 This matters a lot because you would never want your neighbor to control your air conditioner (that would be a horrible situation). That's what this entity has been designed for. A user can only interact with devices that are paired with it.
 
-When you pair a device with a user account, an access token is generated for the device. This token is what the device uses to connect to Grandeur Cloud. This token also delegates access of the device namespace to the Hardware SDK. The Hardware SDK takes this access token along with the project's API Key while doing `apollo.init()`. To read about the device's namespace and how the device's data is stored on Grandeur Cloud, have a look at the [Device Registry][Device Registry] section.
+When you pair a device with a user account, an access token is generated for the device. This token is what the device uses to connect to Grandeur Cloud. This token also delegates access of the device namespace to the Arduino SDK. The Arduino SDK takes this access token along with the project's API Key while doing `apollo.init()`. To read about the device's namespace and how the device's data is stored on Grandeur Cloud, have a look at the [Device Registry][Device Registry] section.
 
 > ***NOTE***: A user cannot pair with a device that is already paired.
 
@@ -607,7 +607,7 @@ Here we write about how the networking works on Grandeur Cloud.
 
 We work with two communication channels in **Web SDK** i) HTTP based REST API channel and ii) Duplex based realtime API channel. We use the first to do some basic things like authentication or handle big requests like file uploading, while the latter, as its name suggests, for realtime communication like fetching or updating the device's data. The realtime channel is as fast as 200ms RTT. It is based on our custom protocol aka. Duplex. We do not allow any unauthenticated communication over this channel and therefore authenticate a connection over the REST channel first.
 
-In the **Hardware SDK**, we only use the realtime channel. A device cannot establish a connection over this channel unless and until its access token is validated. A device access token is provided while initializing the apollo configurations through `apollo.init()`.
+In the **Arduino SDK**, we only use the realtime channel. A device cannot establish a connection over this channel unless and until its access token is validated. A device access token is provided while initializing the apollo configurations through `apollo.init()`.
 
 ### Allowed Origins
 
@@ -628,7 +628,7 @@ So to allow a web app to interact with your project using the Web SDK, you first
 > apollo.init (deviceID: _const char*_, apiKey: _const char*_, token: _const char*_, ssid: _const char*_, passphrase: _const char*_) : returns _ApolloDevice_
 
 
-Method to initialize apollo configurations (SSID, Passphrase, API Key and Auth Token) in one go. It returns an object of the `ApolloDevice` class. `ApolloDevice` class is what exposes all the functions of the Hardware SDK.
+Method to initialize apollo configurations (SSID, Passphrase, API Key and Auth Token) in one go. It returns an object of the `ApolloDevice` class. `ApolloDevice` class is what exposes all the functions of the Arduino SDK.
 
 #### Parameters
 
@@ -1211,12 +1211,12 @@ void loop() {
 [Grandeur Cloud Pricing]: https://grandeur.tech/pricing "Pricing"
 [Get Started With Grandeur Cloud]: https://github.com/grandeurtech/grandeurcloud-js-sdk#get-started "Get Started With Grandeur Cloud"
 [An Example Webapp]: https://github.com/grandeurtech/grandeurcloud-js-sdk#example "An Example Webapp"
-[Examples]:  https://github.com/grandeurtech/grandeurcloud-hardware-sdk/tree/master/examples/
+[Examples]:  https://github.com/grandeurtech/grandeurcloud-arduino-sdk/tree/master/examples/
 [Arduino IDE]: https://www.arduino.cc/en/main/software "Arduino IDE"
 [Installing an Arduino Library]: https://www.arduino.cc/en/guide/libraries "Installing an Arduino Library"
 
 [Installation]: #installation "Installation"
-[Example]: #example "Hardware SDK Example"
+[Example]: #example "Arduino SDK Example"
 [Documentation]: #documentation "Documentation"
 [Ecosystem]: #grandeur-ecosystem "Grandeur Ecosystem"
 
@@ -1228,14 +1228,14 @@ void loop() {
 [Allowed Origins]: #allowed-origins "Allowed Origins"
 [Device Registry]: #device-registry "Device Registry"
 
-[Get Started with Hardware SDK]: #get-started "Get Started with Hardware SDK"
-[Hardware SDK]: https://github.com/grandeurtech/grandeurcloud-hardware-sdk "Hardware SDK"
+[Get Started with Arduino SDK]: #get-started "Get Started with Arduino SDK"
+[Arduino SDK]: https://github.com/grandeurtech/grandeurcloud-arduino-sdk "Arduino SDK"
 [project]: #project "Project"
 [summary]: #device-registry "Summary"
 [parms]: #device-registry "Parms"
-[callback]: #the-dexterity-of-hardware-sdk "The Dexterity of Hardware SDK"
-[jsonobject]: #the-dexterity-of-hardware-sdk "The Dexterity of Hardware SDK"
-[the dexterity of hardware sdk]: #the-dexterity-of-hardware-sdk "The Dexterity of Hardware SDK"
+[callback]: #the-dexterity-of-arduino-sdk "The Dexterity of Arduino SDK"
+[jsonobject]: #the-dexterity-of-arduino-sdk "The Dexterity of Arduino SDK"
+[the dexterity of arduino sdk]: #the-dexterity-of-arduino-sdk "The Dexterity of Arduino SDK"
 [models]: #models "Models"
 [apikey]: #project "Project"
 [access token]: #authentication-and-access "Authentication and Access"

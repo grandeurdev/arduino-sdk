@@ -4,7 +4,7 @@
  * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
- * This file is part of the Hardware SDK for Grandeur Cloud.
+ * This file is part of the Arduino SDK for Grandeur Cloud.
  *
  * Apollo.h is used for device's communication to Grandeur Cloud.
  */
