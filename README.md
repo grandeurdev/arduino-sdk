@@ -127,10 +127,10 @@ void setup() {
 
 void loop() {
     // Getting the state of this device. State can exclusively be one of these:
-    // {WIFI_NOT_CONNECTED, WIFI_CONNECTED, DUPLEX_CONNECTED}
+    // {WIFI_DISCONNECTED, WIFI_CONNECTED, DUPLEX_CONNECTED}
     int state = apolloDevice.getState();
 
-    if(state == WIFI_NOT_CONNECTED) {
+    if(state == WIFI_DISCONNECTED) {
       // Initially when your device boots up, this code block is run.
     }
     else if(state == WIFI_CONNECTED) {
@@ -149,8 +149,8 @@ void loop() {
 }
 
 // **RESULT**
-// Initially, the code inside the if(state == WIFI_NOT_CONNECTED) runs and
-// "WIFI_NOT_CONNECTED" is printed to stdout in a loop.
+// Initially, the code inside the if(state == WIFI_DISCONNECTED) runs and
+// "WIFI_DISCONNECTED" is printed to stdout in a loop.
 // When device connects to WiFi, "WIFI_CONNECTED" starts appearing on the screen
 // and the code inside the if(state == WIFI_CONNECTED) runs.
 // Finally, When device gets connected to the cloud, it changes to "APOLLO_CONNECTED"
@@ -695,7 +695,7 @@ Gets the current state of the device. State of the device can be one of the foll
 
 | Macro                 | Expands to   |
 |-----------------------|--------------|
-| WIFI_NOT_CONNECTED    | 0            |
+| WIFI_DISCONNECTED    | 0            |
 | WIFI_CONNECTED        | 1            |
 | APOLLO_CONNECTED      | 2            |
 
@@ -710,7 +710,7 @@ void setup() {
 void loop() {
   // getState() returns an integer state of the device
 
-  if(apolloDevice.getState() == WIFI_NOT_CONNECTED) {
+  if(apolloDevice.getState() == WIFI_DISCONNECTED) {
     std::cout<<"Device is not connected to WiFi!\n";
   }
   else if(apolloDevice.getState() == WIFI_CONNECTED) {
@@ -739,7 +739,7 @@ Gets the current state of the device as a string.
 
 | Macro                 | Stringified Form      |
 |-----------------------|-----------------------|
-| WIFI_NOT_CONNECTED    | "WIFI_NOT_CONNECTED"  |
+| WIFI_DISCONNECTED    | "WIFI_DISCONNECTED"  |
 | WIFI_CONNECTED        | "WIFI_CONNECTED"      |
 | APOLLO_CONNECTED      | "APOLLO_CONNECTED"    |
 
@@ -761,7 +761,7 @@ void loop() {
 }
 
 // **RESULT**
-// In the beginning, "WIFI_NOT_CONNECTED" is printed to the stdout. When the WiFi
+// In the beginning, "WIFI_DISCONNECTED" is printed to the stdout. When the WiFi
 // is connected, "WIFI_CONNECTED" begins appearing on the screen. And it quickly
 // changes to "APOLLO_CONNECTED" when the device makes a successful connection to
 // Grandeur Cloud.

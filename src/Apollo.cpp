@@ -56,7 +56,7 @@ ApolloDevice Apollo::init(const char* deviceID, const char* apiKey, const char* 
         DEBUG_APOLLO("\n*** APOLLO DISCONNECTED ***\n");
         DEBUG_APOLLO("\n*** WIFI CONNECTED ***\n");
         break;
-      case WIFI_NOT_CONNECTED:
+      case WIFI_DISCONNECTED:
         DEBUG_APOLLO("\n*** WIFI DISCONNECTED ***\n");
     }
   });
@@ -144,7 +144,7 @@ char* ApolloDevice::getPassphrase(void) {
 }
 
 char* ApolloDevice::getDeviceIP(void) {
-  if(_state != WIFI_NOT_CONNECTED) {
+  if(_state != WIFI_DISCONNECTED) {
     WiFi.localIP().toString().toCharArray(_deviceIP, IP_SIZE);
   }
   return _deviceIP;
@@ -169,7 +169,7 @@ short ApolloDevice::getState(void) {
 char* ApolloDevice::getStringifiedState(void) {
   switch(_state) {
     case 0:
-      return (char*)"WIFI_NOT_CONNECTED";
+      return (char*)"WIFI_DISCONNECTED";
     case 1:
       return (char*)"WIFI_CONNECTED";
     case 2:
@@ -190,7 +190,7 @@ void onWiFiConnected(const WiFiEventStationModeConnected& event) {
 void onWiFiDisconnected(const WiFiEventStationModeDisconnected& event) {
   // Method called when WiFi gets disconnected
   // Updating Apollo state
-  apolloDevice._state = WIFI_NOT_CONNECTED;
+  apolloDevice._state = WIFI_DISCONNECTED;
   // Calling the Connection Handler
   JSONObject updateObject;
   updateObject["state"] = apolloDevice._state;
@@ -242,7 +242,7 @@ void initializeDuplex(void) {
 }
 
 void ApolloDevice::update(void) {
-  if(_state != WIFI_NOT_CONNECTED) {
+  if(_state != WIFI_DISCONNECTED) {
     // If WiFi is connected
     if(millis() - pingSchedularVariable >= PING_INTERVAL) {
         // Ping Apollo if PING_INTERVAL milliseconds have passed

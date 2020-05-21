@@ -30,12 +30,12 @@ void loop() {
   // This prints the state of the device in loop.
   Serial.println(device.getStringifiedState());
 
-  // Initially, the device is not connected to WiFi (WIFI_NOT_CONNECTED).
+  // Initially, the device is not connected to WiFi (WIFI_DISCONNECTED).
   // Then it connects to WiFi using the SSID and Passphrase (WIFI_CONNECTED).
   // And finally it makes connection to Grandeur Cloud using the Device ID,
   // API Key and Access Token (APOLLO_CONNECTED).
 
-  if(device.getState() == WIFI_NOT_CONNECTED) {
+  if(device.getState() == WIFI_DISCONNECTED) {
     Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n",
       device.getSSID(), device.getPassphrase());
   }

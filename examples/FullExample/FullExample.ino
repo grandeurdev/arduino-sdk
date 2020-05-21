@@ -39,7 +39,7 @@ void setup() {
           Serial.println("Device is disconnected from the cloud.");
           break;
 
-        case WIFI_NOT_CONNECTED:
+        case WIFI_DISCONNECTED:
           Serial.println("Device WiFi is disconnected.");
           break;
       }

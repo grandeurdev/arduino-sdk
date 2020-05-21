@@ -45,7 +45,7 @@
 #define PING_INTERVAL 25000
 
 // Defining macros for Apollo states
-#define WIFI_NOT_CONNECTED 0
+#define WIFI_DISCONNECTED 0
 #define WIFI_CONNECTED 1
 #define APOLLO_CONNECTED 2
 
