@@ -30,20 +30,24 @@ void setup() {
     // Initialize the global object "apollo" with your configurations.
     device = apollo.init(deviceID, apiKey, token, ssid, passphrase);
 
-    // This sets a callback function to be called when the device makes a successful
-    // connection with the Cloud.
-    device.onApolloConnected([](JSONObject message) {
-      Serial.println("Device is connected to the cloud");
-      // Initializing the millis counter for the five
-      // seconds timer. So that the timer starts after the device is connected
-      // to the cloud.
-      current = millis();
-    });
+    // This sets a callback function to be called when the device's state changes
+    device.onConnection([](JSONObject updateObject) {
+      switch((int) updateObject["state"]) {
+        case APOLLO_CONNECTED:
+          Serial.println("Device is connected to the cloud.");
 
-    // This sets a callback function to be called when the device's connection with the
-    // cloud breaks.
-    device.onApolloDisconnected([](JSONObject message) {
-      Serial.println("Device is disconnected from the cloud");
+          // Initializing the millis counter for the five
+          // seconds timer.
+          current = millis();
+          break;
+        case WIFI_CONNECTED:
+          Serial.println("Device is disconnected from the cloud.");
+          break;
+
+        case WIFI_NOT_CONNECTED:
+          Serial.println("Device WiFi is disconnected.");
+          break;
+      }
     });
 
     // This sets a callback function to be called when someone changes device's

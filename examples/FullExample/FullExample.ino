@@ -25,12 +25,24 @@ void setup() {
     // Initialize the global object "apollo" with your configurations.
     device = apollo.init(deviceID, apiKey, token, ssid, passphrase);
 
-    // This sets a callback function to be called when the device makes a successful
-    // connection with the Cloud.
-    device.onApolloConnected([](JSONObject message) {
-      // Initializing the millis counter for the five
-      // seconds timer.
-      current = millis();
+    // This sets a callback function to be called when the device's state changes
+    device.onConnection([](JSONObject updateObject) {
+      switch((int) updateObject["state"]) {
+        case APOLLO_CONNECTED:
+          Serial.println("Device is connected to the cloud.");
+
+          // Initializing the millis counter for the five
+          // seconds timer.
+          current = millis();
+          break;
+        case WIFI_CONNECTED:
+          Serial.println("Device is disconnected from the cloud.");
+          break;
+
+        case WIFI_NOT_CONNECTED:
+          Serial.println("Device WiFi is disconnected.");
+          break;
+      }
     });
 
     // This sets a callback function to be called when someone changes device's
@@ -38,6 +50,7 @@ void setup() {
     device.onSummaryUpdated([](JSONObject updatedSummary) {
       Serial.printf("Updated Voltage is: %d\n", (int) updatedSummary["voltage"]);
       Serial.printf("Updated Current is: %d\n", (int) updatedSummary["current"]);
+
       /* Here you can set some pins or trigger events that depend on
       ** device's summary update.
       */
@@ -59,8 +72,9 @@ void loop() {
     if(millis() - current >= 5000) {
       // This if-condition makes sure that the code inside this block runs only after
       // every five seconds.
-      
+
       // Requests the cloud for device's summary.
+      Serial.println("Getting Summary");
       device.getSummary([](JSONObject payload) {
         if(payload["code"] == "DEVICE-SUMMARY-FETCHED") {
           // If there were no problems in fetching the device's summary.
@@ -79,8 +93,10 @@ void loop() {
         Serial.println("Failed to Fetch Summary");
         return;
       });
-      
+
+
       // Gets the device's parms from the Cloud
+      Serial.println("Getting Parms");
       device.getParms([](JSONObject payload) {
         if(payload["code"] == "DEVICE-PARMS-FETCHED") {
           Serial.printf("state: %d\n", (int) payload["deviceParms"]["state"]);
@@ -95,6 +111,7 @@ void loop() {
       });
 
       // This updates the device's summary on the Cloud
+      Serial.println("Setting Summary");
       JSONObject summary;
       summary["voltage"] = 3.3;
       summary["current"] = 0.01;
@@ -112,6 +129,7 @@ void loop() {
       });
 
       // This updates the device's parms to "true" on the Cloud
+      Serial.println("Setting Parms");
       JSONObject parms;
       parms["state"] = true;
       device.setParms(parms, [](JSONObject payload) {

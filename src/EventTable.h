@@ -22,8 +22,8 @@ typedef ApolloID EventID;
 typedef Callback EventData;
 // Event table data
 typedef struct {
-    EventID id;
-    EventData data;
+  EventID id;
+  EventData data;
 } EventTableData;
 // Event table key
 typedef std::string EventTableKey;
@@ -36,30 +36,30 @@ extern const char* events[T_S];
 
 // Event table entry
 class EventTableEntry {
-    public:
-        EventTableKey k;
-        EventTableData v;
-        EventTableEntry* next;
-        EventTableEntry(EventTableKey k, EventTableData v);
+  public:
+    EventTableKey k;
+    EventTableData v;
+    EventTableEntry* next;
+    EventTableEntry(EventTableKey k, EventTableData v);
 };
 
 class EventTable {
-    private:
-        EventTableEntry **t;
-    public:
-        // Constructor for a hashtable
-        EventTable();
-        // Hash function for Event Table
-        int hashFunc(EventTableKey k);
-        // Method to insert an entry into the hashtable
-        int insert(EventTableKey k, EventID id, EventData data);
-        // Method to remove an entry from the hashtable
-        int remove(EventTableKey k, EventID id);
-        // Method to find and remove an entry from the hashtable
-        EventData findAndRemove(EventTableKey k, EventID id);
-        void print();
-        // Destructor for a hashtable
-        ~EventTable();
+  private:
+    EventTableEntry **t;
+  public:
+    // Constructor for a hashtable
+    EventTable();
+    // Hash function for Event Table
+    int hashFunc(EventTableKey k);
+    // Method to insert an entry into the hashtable
+    int insert(EventTableKey k, EventID id, EventData data);
+    // Method to remove an entry from the hashtable
+    int remove(EventTableKey k, EventID id);
+    // Method to find and remove an entry from the hashtable
+    EventData findAndRemove(EventTableKey k, EventID id);
+    void print();
+    // Destructor for a hashtable
+    ~EventTable();
 };
 
 #endif

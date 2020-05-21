@@ -9,9 +9,22 @@
  */
 
 // Connection macros
-#define APOLLO_URL "192.168.1.8"
-#define APOLLO_PORT 8000
+#define APOLLO_URL "api.grandeur.tech"
+#define APOLLO_PORT 443
 #define APOLLO_FINGERPRINT ""
+
+// Debugging macros
+///#define DEBUG_PORT Serial
+
+#ifdef DEBUG_PORT
+#define DEBUG_APOLLO(...) DEBUG_PORT.printf(__VA_ARGS__)
+#else
+//#define DEBUG_DUPLEX(...) os_printf( __VA_ARGS__ )
+#endif
+
+#ifndef DEBUG_APOLLO
+#define DEBUG_APOLLO(...)
+#endif
 
 // Strings sizes
 #define SSID_SIZE 32
@@ -35,11 +48,6 @@
 #define WIFI_NOT_CONNECTED 0
 #define WIFI_CONNECTED 1
 #define APOLLO_CONNECTED 2
-
-// Indexes for handlers callbacks
-#define ONCONNECTED 0
-#define ONDISCONNECTED 1
-#define ONMESSAGE 2
 
 // Indexes for update handler callbacks in subscriptions array
 #define NUMBER_OF_TOPICS 2
