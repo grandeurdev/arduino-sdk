@@ -666,7 +666,7 @@ void loop() {
 
 > update ( ) : returns _void_
 
-Updates the device's TCP buffer. This must be called in `loop()` and without being suspected to any kind of *delay*. This method is what pulls and pushes messages to and from the TCP channel. Any kind of *delay* in `loop()` would delay pushing the request and pulling the response to and from the server.
+Updates Apollo variables. This must be called in `loop()` and without being suspected to any kind of *delay*. This method is what runs the event loop and makes all the **async** functions possible.
 
 [Here][Using Millis Instead of Delay] is how you can use `millis()` instead of `delay()` if you want a function to run after every few moments.
 
@@ -684,7 +684,7 @@ void loop() {
   apolloDevice.update();  
 }
 // **RESULT**
-// Updates the TCP buffer every time loop() gets executed.
+// Updates Apollo variables every time loop() gets executed.
 ```
 
 ### Get State
@@ -765,6 +765,36 @@ void loop() {
 // is connected, "WIFI_CONNECTED" begins appearing on the screen. And it quickly
 // changes to "APOLLO_CONNECTED" when the device makes a successful connection to
 // Grandeur Cloud.
+```
+
+### Get Configurations
+
+> getConfig ( ) : returns _Config_
+
+Gets the configurations currently in use by the device.
+
+#### Example
+
+```cpp
+ApolloDevice apolloDevice;
+void setup() {
+  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
+}
+
+void loop() {
+  // getConfig() returns all the configurations currently being in use by the device.
+  Config config = apolloDevice.getConfig();
+  std::cout<<config.deviceID<<"\n";
+  std::cout<<config.apiKey<<"\n";
+  std::cout<<config.token<<"\n";
+  std::cout<<config.ssid<<"\n";
+  std::cout<<config.passphrase<<"\n";
+
+  apolloDevice.update();
+}
+
+// **RESULT**
+// Keeps printing the WiFi device ID, API key, Access token, WiFi SSID, and WiFi passphrase in loop.
 ```
 
 ### Get WiFi SSID
@@ -1066,15 +1096,15 @@ void loop() {
 
 ### Apollo Connection Listener
 
-> onApolloConnected (callback : _Callback_) : returns _void_
+> onConnection (callback : _Callback_) : returns _void_
 
-Receives a function that is called when the device successfully connects to Grandeur Cloud.
+Receives a function that is called when the device connects/disconnects from Grandeur Cloud.
 
 #### Parameters
 
-| Name        | Type       | Description                                                        |
-|-------------|------------|--------------------------------------------------------------------|
-| callback    | _Callback_ | A function to be called when the device connects to Grandeur Cloud |
+| Name        | Type       | Description                                                                      |
+|-------------|------------|----------------------------------------------------------------------------------|
+| callback    | _Callback_ | A function to be called when the device connects/disconnects from Grandeur Cloud |
 
 More on Callback [here][callback].
 
@@ -1085,8 +1115,15 @@ ApolloDevice apolloDevice;
 void setup() {
   apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
 
-  apolloDevice.onApolloConnected([](JSONObject result) {
-    std::cout<<"Device Connected!\n";
+  apolloDevice.onConnection([](JSONObject updateObject) {
+    switch((int) updateObject["event"]) {
+      case CONNECTED:
+        std::cout<<"Device Connected to the Cloud!\n";
+        break;
+      case DISCONNECTED:
+        std::cout<<"Device Disconnected from the Cloud!\n";
+        break;
+    }
   });
 }
 
@@ -1095,20 +1132,21 @@ void loop() {
 }
 
 // **RESULT**
-// Prints "Device Connected" on the stdout when device makes a successful connection to Grandeur Cloud.
+// Prints "Device Connected to the Cloud!" on the stdout when device makes a successful connection to Grandeur Cloud
+// and "Device Disconnected from the Cloud!" when device breaks connection from Grandeur Cloud.
 ```
 
-### Apollo Disconnection Listener
+### WiFi Connection Listener
 
-> onApolloDisconnected (callback : _Callback_) : returns _void_
+> onWiFiConnected (callback : _Callback_) : returns _void_
 
-Receives a function that is called when the device disconnects from Grandeur Cloud.
+Receives a function that is called when the device connects/disconnects from the WiFi.
 
 #### Parameters
 
-| Name        | Type       | Description                                                           |
-|-------------|------------|-----------------------------------------------------------------------|
-| callback    | _Callback_ | A function to be called when the device disconnects to Grandeur Cloud |
+| Name        | Type       | Description                                                                |
+|-------------|------------|----------------------------------------------------------------------------|
+| callback    | _Callback_ | A function to be called when the device connects/disconnects from the WiFi |
 
 More on Callback [here][callback].
 
@@ -1119,8 +1157,15 @@ ApolloDevice apolloDevice;
 void setup() {
   apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourToken, YourWiFiSSID, YourWiFiPassphrase);
 
-  apolloDevice.onApolloDisconnected([](JSONObject result) {
-    std::cout<<"Device Disconnected!\n";
+  apolloDevice.onWiFiConnection([](JSONObject updateObject) {
+    switch((int) updateObject["event"]) {
+      case CONNECTED:
+        std::cout<<"Device Connected with the WiFi!\n";
+        break;
+      case DISCONNECTED:
+        std::cout<<"Device Disconnected from the WiFi!\n";
+        break;
+    }
   });
 }
 
@@ -1129,7 +1174,8 @@ void loop() {
 }
 
 // **RESULT**
-// Prints "Device Disconnected" on the stdout when device disconnects from Grandeur Cloud.
+// Prints "Device Connected with the WiFi!" on the stdout when device makes a successful connection with the WiFi
+// and "Device Disconnected from the WiFi!" accordingly.
 ```
 
 ### Summary Update Handler

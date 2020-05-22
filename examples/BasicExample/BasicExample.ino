@@ -49,6 +49,10 @@ void loop() {
     Serial.println("\nDevice has made a successful connection with the Cloud.");
     Serial.println("You can now get and set the summary and parms of this device here.");
     Serial.println("Checkout examples \"GettingDataFromCloud\" and \"UpdatingDataOnCloud\". Also run \"FullExample\" to see your device in full action.\n");
+    // Printing device's configurations object
+    Config config = device.getConfig();
+    Serial.printf("DeviceID: %s, API Key: %s, Token: %s, SSID: %s, Passphrase: %s\n",
+      config.deviceID, config.apiKey, config.token, config.ssid, config.passphrase);
   }
 
   // Keep updating the TCP buffer

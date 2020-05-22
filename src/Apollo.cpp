@@ -121,6 +121,11 @@ void ApolloDevice::setParms(JSONObject parms, Callback callback) {
   _send("setDeviceParms", jsonString, callback);
 }
 
+Config ApolloDevice::getConfig() {
+  Config apolloConfig(config->deviceID, config->apiKey, config->token, config->ssid, config->passphrase);
+  return apolloConfig;
+}
+
 char* ApolloDevice::getSSID(void) {
   return config->ssid;
 }

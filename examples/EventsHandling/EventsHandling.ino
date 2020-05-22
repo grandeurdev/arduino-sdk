@@ -30,22 +30,32 @@ void setup() {
     // Initialize the global object "apollo" with your configurations.
     device = apollo.init(deviceID, apiKey, token, ssid, passphrase);
 
-    // This sets a callback function to be called when the device's state changes
+    // This sets a callback function to be called when the device's makes/breaks
+    // its WiFi connection
+    device.onWiFiConnection([](JSONObject updateObject) {
+      switch((int) updateObject["event"]) {
+        case CONNECTED:
+          Serial.println("Device WiFi is connected.");
+          break;
+        case DISCONNECTED:
+          Serial.println("Device WiFi is disconnected.");
+          break;
+      }
+    });
+
+    // This sets a callback function to be called when the device makes/breaks
+    // connection with the cloud
     device.onConnection([](JSONObject updateObject) {
-      switch((int) updateObject["state"]) {
-        case APOLLO_CONNECTED:
+      switch((int) updateObject["event"]) {
+        case CONNECTED:
           Serial.println("Device is connected to the cloud.");
 
           // Initializing the millis counter for the five
           // seconds timer.
           current = millis();
           break;
-        case WIFI_CONNECTED:
+        case DISCONNECTED:
           Serial.println("Device is disconnected from the cloud.");
-          break;
-
-        case WIFI_DISCONNECTED:
-          Serial.println("Device WiFi is disconnected.");
           break;
       }
     });
@@ -60,7 +70,7 @@ void setup() {
     // This sets a callback function to be called when someone changes device's
     // parms on the cloud.
     device.onParmsUpdated([](JSONObject updatedParms) {
-      Serial.printf("Updated State is: %d\n", (int) updatedParms["state"]);  
+      Serial.printf("Updated State is: %d\n", (bool) updatedParms["state"]);  
     });
 }
 

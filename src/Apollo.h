@@ -54,6 +54,7 @@ class ApolloDevice {
     char* getStringifiedState(void);
 
     // Getter methods for Apollo configurations
+    Config getConfig();
     char* getSSID(void);
     char* getPassphrase(void);
     char* getDeviceIP(void);
