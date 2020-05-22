@@ -14,7 +14,7 @@
 #define APOLLO_FINGERPRINT ""
 
 // Debugging macros
-///#define DEBUG_PORT Serial
+#define DEBUG_PORT Serial
 
 #ifdef DEBUG_PORT
 #define DEBUG_APOLLO(...) DEBUG_PORT.printf(__VA_ARGS__)
@@ -44,10 +44,14 @@
 // Ping interval in milliseconds
 #define PING_INTERVAL 25000
 
-// Defining macros for Apollo states
+// Macros for device states
 #define WIFI_DISCONNECTED 0
 #define WIFI_CONNECTED 1
 #define APOLLO_CONNECTED 2
+
+// Reusable macros for connection events (Cloud and WiFi)
+#define DISCONNECTED 0
+#define CONNECTED 1
 
 // Indexes for update handler callbacks in subscriptions array
 #define NUMBER_OF_TOPICS 2

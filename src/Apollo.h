@@ -29,6 +29,9 @@ class ApolloDevice {
     
     // Container for apollo connection callback
     static Callback _connectionCallback;
+    // Container for wifi connection callback
+    static Callback _wifiConnectionCallback;
+
     // Events Table
     static EventTable _eventsTable;
 
@@ -69,6 +72,8 @@ class ApolloDevice {
 
     // When device makes/breaks connection with the Cloud
     void onConnection(Callback connectionHandler);
+    // When device makes/breaks connection with the WiFi
+    void onWiFiConnection(Callback _wifiConnectionHandler);
 
     // Listeners for events from the Cloud
     void onSummaryUpdated(Callback callback);

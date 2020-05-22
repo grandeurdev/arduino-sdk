@@ -9,7 +9,6 @@
  */
 
 #include "Apollo.h"
-#include <iostream>
 
 /* VARIABLE INITIALIZATIONS */
 DuplexClient duplexClient;
@@ -20,8 +19,10 @@ SendData* sendQueue[SENDQUEUE_SIZE] = {};
 Config* config;
 ApolloDevice apolloDevice;
 Apollo apollo;
+
 EventTable ApolloDevice::_eventsTable;
 Callback ApolloDevice::_connectionCallback = [](JSONObject updateObject) {};
+Callback ApolloDevice::_wifiConnectionCallback = [](JSONObject updateObject) {};
 Callback ApolloDevice::_subscriptions[4] = {};
 short ApolloDevice::_state = 0;
 char ApolloDevice::_deviceIP[IP_SIZE] = "IP-NOT-SET";
@@ -45,21 +46,6 @@ ApolloDevice Apollo::init(const char* deviceID, const char* apiKey, const char* 
   initializeWiFi();
   // Initializing Duplex connection
   initializeDuplex();
-  
-  // Setting up device connection event handler
-  apolloDevice.onConnection([](JSONObject updateObject) {
-    switch((int) updateObject["state"]) {
-      case APOLLO_CONNECTED:
-        DEBUG_APOLLO("\n*** APOLLO CONNECTED ***\n");
-        break;
-      case WIFI_CONNECTED:
-        DEBUG_APOLLO("\n*** APOLLO DISCONNECTED ***\n");
-        DEBUG_APOLLO("\n*** WIFI CONNECTED ***\n");
-        break;
-      case WIFI_DISCONNECTED:
-        DEBUG_APOLLO("\n*** WIFI DISCONNECTED ***\n");
-    }
-  });
 
   return apolloDevice;
 }
@@ -177,28 +163,12 @@ char* ApolloDevice::getStringifiedState(void) {
   }
 }
 
-void onWiFiConnected(const WiFiEventStationModeConnected& event) {
-  // Method called when WiFi gets connected
-  // Updating Apollo state
-  apolloDevice._state = WIFI_CONNECTED;
-  // Calling the Connection Handler
-  JSONObject updateObject;
-  updateObject["state"] = apolloDevice._state;
-  apolloDevice._connectionCallback(updateObject);
-}
-
-void onWiFiDisconnected(const WiFiEventStationModeDisconnected& event) {
-  // Method called when WiFi gets disconnected
-  // Updating Apollo state
-  apolloDevice._state = WIFI_DISCONNECTED;
-  // Calling the Connection Handler
-  JSONObject updateObject;
-  updateObject["state"] = apolloDevice._state;
-  apolloDevice._connectionCallback(updateObject);
-}
-
 void ApolloDevice::onConnection(Callback connectionHandler) {
   _connectionCallback = connectionHandler;
+}
+
+void ApolloDevice::onWiFiConnection(Callback wifiConnectionHandler) {
+  _wifiConnectionCallback = wifiConnectionHandler;
 }
 
 void ApolloDevice::onSummaryUpdated(Callback updateHandler) {
@@ -230,15 +200,42 @@ void initializeWiFi(void) {
   // Setting WiFi event handlers
   onWiFiConnectedHandler = WiFi.onStationModeConnected(&onWiFiConnected);
   onWiFiDisconnectedHandler = WiFi.onStationModeDisconnected(&onWiFiDisconnected);
+
+  // Setting up device wifi connection event handler
+  apolloDevice.onWiFiConnection([](JSONObject updateObject) {
+    switch((int) updateObject["event"]) {
+      case CONNECTED:
+        DEBUG_APOLLO("\n*** WIFI CONNECTED ***\n");
+        break;
+      case DISCONNECTED:
+        DEBUG_APOLLO("\n*** WIFI DISCONNECTED ***\n");
+        break;
+    }
+  });
+
 }
 
 void initializeDuplex(void) {
-  duplexClient.beginSSL(APOLLO_URL, APOLLO_PORT, "/?type=device&apiKey=" + String(config->apiKey), APOLLO_FINGERPRINT, "node");
-  duplexClient.setAuthorization(config->token);
   // Setting up event handler
   duplexClient.onEvent(&apolloEventHandler);
   // Scheduling reconnect every 5 seconds if it disconnects
   duplexClient.setReconnectInterval(5000);
+
+  // Setting up device cloud connection event handler
+  apolloDevice.onConnection([](JSONObject updateObject) {
+    switch((int) updateObject["event"]) {
+      case CONNECTED:
+        DEBUG_APOLLO("\n*** APOLLO CONNECTED ***\n");
+        break;
+      case DISCONNECTED:
+        DEBUG_APOLLO("\n*** APOLLO DISCONNECTED ***\n");
+        break;
+    }
+  });
+
+  // Opening up the connection
+  duplexClient.beginSSL(APOLLO_URL, APOLLO_PORT, "/?type=device&apiKey=" + String(config->apiKey), APOLLO_FINGERPRINT, "node");
+  duplexClient.setAuthorization(config->token);
 }
 
 void ApolloDevice::update(void) {
@@ -268,6 +265,26 @@ void ApolloDevice::ping() {
   }
 }
 
+void onWiFiConnected(const WiFiEventStationModeConnected& event) {
+  // Method called when WiFi gets connected
+  // Updating Apollo state
+  apolloDevice._state = WIFI_CONNECTED;
+  // Calling the Connection Handler
+  JSONObject updateObject;
+  updateObject["event"] = CONNECTED;
+  apolloDevice._wifiConnectionCallback(updateObject);
+}
+
+void onWiFiDisconnected(const WiFiEventStationModeDisconnected& event) {
+  // Method called when WiFi gets disconnected
+  // Updating Apollo state
+  apolloDevice._state = WIFI_DISCONNECTED;
+  // Calling the Connection Handler
+  JSONObject updateObject;
+  updateObject["event"] = DISCONNECTED;
+  apolloDevice._wifiConnectionCallback(updateObject);
+}
+
 void apolloEventHandler(WStype_t eventType, uint8_t* packet, size_t length) {
   // Printing payload character by character
   JSONObject updateObject;
@@ -275,7 +292,7 @@ void apolloEventHandler(WStype_t eventType, uint8_t* packet, size_t length) {
     case WStype_CONNECTED:
       // When duplex connection opens
       apolloDevice._state = APOLLO_CONNECTED;
-      updateObject["state"] = apolloDevice._state;
+      updateObject["event"] = CONNECTED;
       apolloDevice._connectionCallback(updateObject);
       // Sending all queued messages
       for(int i = 0; i < sendQueueSize; i++) {
@@ -286,7 +303,7 @@ void apolloEventHandler(WStype_t eventType, uint8_t* packet, size_t length) {
     case WStype_DISCONNECTED:
       // When duplex connection closes
       apolloDevice._state = WIFI_CONNECTED;
-      updateObject["state"] = apolloDevice._state;
+      updateObject["event"] = DISCONNECTED;
       return apolloDevice._connectionCallback(updateObject);
 
     case WStype_TEXT:
