@@ -4,7 +4,7 @@
  * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
- * This file is part of the Hardware SDK for Grandeur Cloud.
+ * This file is part of the Arduino SDK for Grandeur Cloud.
  *
  * Apollo.h is used for device's communication to Grandeur Cloud.
  * 
@@ -30,20 +30,34 @@ void setup() {
     // Initialize the global object "apollo" with your configurations.
     device = apollo.init(deviceID, apiKey, token, ssid, passphrase);
 
-    // This sets a callback function to be called when the device makes a successful
-    // connection with the Cloud.
-    device.onApolloConnected([](JSONObject message) {
-      Serial.println("Device is connected to the cloud");
-      // Initializing the millis counter for the five
-      // seconds timer. So that the timer starts after the device is connected
-      // to the cloud.
-      current = millis();
+    // This sets a callback function to be called when the device's makes/breaks
+    // its WiFi connection
+    device.onWiFiConnection([](JSONObject updateObject) {
+      switch((int) updateObject["event"]) {
+        case CONNECTED:
+          Serial.println("Device WiFi is connected.");
+          break;
+        case DISCONNECTED:
+          Serial.println("Device WiFi is disconnected.");
+          break;
+      }
     });
 
-    // This sets a callback function to be called when the device's connection with the
-    // cloud breaks.
-    device.onApolloDisconnected([](JSONObject message) {
-      Serial.println("Device is disconnected from the cloud");
+    // This sets a callback function to be called when the device makes/breaks
+    // connection with the cloud
+    device.onConnection([](JSONObject updateObject) {
+      switch((int) updateObject["event"]) {
+        case CONNECTED:
+          Serial.println("Device is connected to the cloud.");
+
+          // Initializing the millis counter for the five
+          // seconds timer.
+          current = millis();
+          break;
+        case DISCONNECTED:
+          Serial.println("Device is disconnected from the cloud.");
+          break;
+      }
     });
 
     // This sets a callback function to be called when someone changes device's
@@ -56,7 +70,7 @@ void setup() {
     // This sets a callback function to be called when someone changes device's
     // parms on the cloud.
     device.onParmsUpdated([](JSONObject updatedParms) {
-      Serial.printf("Updated State is: %d\n", (int) updatedParms["state"]);  
+      Serial.printf("Updated State is: %d\n", (bool) updatedParms["state"]);  
     });
 }
 

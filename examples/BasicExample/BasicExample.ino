@@ -4,7 +4,7 @@
  * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
- * This file is part of the Hardware SDK for Grandeur Cloud.
+ * This file is part of the Arduino SDK for Grandeur Cloud.
  *
  * Apollo.h is used for device's communication to Grandeur Cloud.
  */
@@ -30,12 +30,12 @@ void loop() {
   // This prints the state of the device in loop.
   Serial.println(device.getStringifiedState());
 
-  // Initially, the device is not connected to WiFi (WIFI_NOT_CONNECTED).
+  // Initially, the device is not connected to WiFi (WIFI_DISCONNECTED).
   // Then it connects to WiFi using the SSID and Passphrase (WIFI_CONNECTED).
   // And finally it makes connection to Grandeur Cloud using the Device ID,
   // API Key and Access Token (APOLLO_CONNECTED).
 
-  if(device.getState() == WIFI_NOT_CONNECTED) {
+  if(device.getState() == WIFI_DISCONNECTED) {
     Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n",
       device.getSSID(), device.getPassphrase());
   }
@@ -49,6 +49,10 @@ void loop() {
     Serial.println("\nDevice has made a successful connection with the Cloud.");
     Serial.println("You can now get and set the summary and parms of this device here.");
     Serial.println("Checkout examples \"GettingDataFromCloud\" and \"UpdatingDataOnCloud\". Also run \"FullExample\" to see your device in full action.\n");
+    // Printing device's configurations object
+    Config config = device.getConfig();
+    Serial.printf("DeviceID: %s, API Key: %s, Token: %s, SSID: %s, Passphrase: %s\n",
+      config.deviceID, config.apiKey, config.token, config.ssid, config.passphrase);
   }
 
   // Keep updating the TCP buffer

@@ -4,7 +4,7 @@
  * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
- * This file is part of the Hardware SDK for Grandeur Cloud.
+ * This file is part of the Arduino SDK for Grandeur Cloud.
  *
  */
 
@@ -19,23 +19,24 @@ typedef JSONVar JSONObject;
 typedef void (*Callback)(JSONObject);
 typedef void (*Send)(const char* task, const char* payload, Callback callback);
 typedef long ApolloID;
+typedef short ApolloState;
 
 // Config class for apollo configurations
 class Config {
-    public:
-        char deviceID[DEVICEID_SIZE];
-        char apiKey[APIKEY_SIZE];
-        char token[TOKEN_SIZE];
-        char ssid[SSID_SIZE];
-        char passphrase[PASSPHRASE_SIZE];
-        Config(
-            const char* deviceID,
-            const char* apiKey,
-            const char* token,
-            const char* ssid,
-            const char* passphrase
-        );
-        ~Config();
+  public:
+    char deviceID[DEVICEID_SIZE];
+    char apiKey[APIKEY_SIZE];
+    char token[TOKEN_SIZE];
+    char ssid[SSID_SIZE];
+    char passphrase[PASSPHRASE_SIZE];
+    Config(
+      const char* deviceID,
+      const char* apiKey,
+      const char* token,
+      const char* ssid,
+      const char* passphrase
+    );
+    ~Config();
 };
 
 // Class for Send Queue Data
@@ -45,9 +46,9 @@ class SendData {
         char payload[PACKET_SIZE];
         Callback callback;
         SendData(
-            const char* task,
-            const char* payload,
-            Callback callback
+          const char* task,
+          const char* payload,
+          Callback callback
         );
         ~SendData();
 };

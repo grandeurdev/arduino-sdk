@@ -4,14 +4,27 @@
  * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
- * This file is part of the Hardware SDK for Grandeur Cloud.
+ * This file is part of the Arduino SDK for Grandeur Cloud.
  *
  */
 
 // Connection macros
-#define APOLLO_URL "192.168.1.12"
-#define APOLLO_PORT 8000
+#define APOLLO_URL "api.grandeur.tech"
+#define APOLLO_PORT 443
 #define APOLLO_FINGERPRINT ""
+
+// Debugging macros
+#define DEBUG_PORT Serial
+
+#ifdef DEBUG_PORT
+#define DEBUG_APOLLO(...) DEBUG_PORT.printf(__VA_ARGS__)
+#else
+//#define DEBUG_DUPLEX(...) os_printf( __VA_ARGS__ )
+#endif
+
+#ifndef DEBUG_APOLLO
+#define DEBUG_APOLLO(...)
+#endif
 
 // Strings sizes
 #define SSID_SIZE 32
@@ -31,15 +44,14 @@
 // Ping interval in milliseconds
 #define PING_INTERVAL 25000
 
-// Defining macros for Apollo states
-#define WIFI_NOT_CONNECTED 0
+// Macros for device states
+#define WIFI_DISCONNECTED 0
 #define WIFI_CONNECTED 1
 #define APOLLO_CONNECTED 2
 
-// Indexes for handlers callbacks
-#define ONCONNECTED 0
-#define ONDISCONNECTED 1
-#define ONMESSAGE 2
+// Reusable macros for connection events (Cloud and WiFi)
+#define DISCONNECTED 0
+#define CONNECTED 1
 
 // Indexes for update handler callbacks in subscriptions array
 #define NUMBER_OF_TOPICS 2
