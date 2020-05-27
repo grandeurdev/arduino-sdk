@@ -30,7 +30,7 @@
 #define SSID_SIZE 32
 #define PASSPHRASE_SIZE 32
 #define DEVICEID_SIZE 32
-#define APIKEY_SIZE 32
+#define APIKEY_SIZE 35
 #define TOKEN_SIZE 512
 #define IP_SIZE 16
 #define FINGERPRINT_SIZE 256
