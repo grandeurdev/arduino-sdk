@@ -25,7 +25,7 @@ class ApolloDevice {
   // Class for handling device related functions
   private:
     // Device IP Address
-    static char _deviceIP[IP_SIZE];
+    static String _deviceIP;
     
     // Container for apollo connection callback
     static Callback _connectionCallback;
@@ -55,12 +55,12 @@ class ApolloDevice {
 
     // Getter methods for Apollo configurations
     Config getConfig();
-    char* getSSID(void);
-    char* getPassphrase(void);
-    char* getDeviceIP(void);
-    char* getDeviceID(void);
-    char* getApiKey(void);
-    char* getToken(void);
+    String getSSID(void);
+    String getPassphrase(void);
+    String getDeviceIP(void);
+    String getDeviceID(void);
+    String getApiKey(void);
+    String getToken(void);
 
     // Async methods
     void getSummary(Callback callback);
@@ -90,7 +90,6 @@ class ApolloDevice {
 class Apollo {
   private:
   public:
-    ApolloDevice init(const char* deviceID, const char* apiKey, const char* token, const char* ssid, const char* passphrase);
     ApolloDevice init(String deviceID, String apiKey, String token, String ssid, String passphrase);
 };
 

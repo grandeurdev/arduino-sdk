@@ -25,7 +25,7 @@ Callback ApolloDevice::_connectionCallback = [](JSONObject updateObject) {};
 Callback ApolloDevice::_wifiConnectionCallback = [](JSONObject updateObject) {};
 Callback ApolloDevice::_subscriptions[4] = {};
 short ApolloDevice::_state = 0;
-char ApolloDevice::_deviceIP[IP_SIZE] = "IP-NOT-SET";
+String ApolloDevice::_deviceIP = "IP-NOT-SET";
 
 
 void initializeWiFi(void);
@@ -38,7 +38,7 @@ void onWiFiConnected(const WiFiEventStationModeConnected& event);
 void onWiFiDisconnected(const WiFiEventStationModeDisconnected& event);
 void apolloEventHandler(WStype_t eventType, uint8_t* packet, size_t length);
 
-ApolloDevice Apollo::init(const char* deviceID, const char* apiKey, const char* token, const char* ssid, const char* passphrase) {
+ApolloDevice Apollo::init(String deviceID, String apiKey, String token, String ssid, String passphrase) {
   // Setting Apollo config
   config = new Config(deviceID, apiKey, token, ssid, passphrase);
 
@@ -48,20 +48,6 @@ ApolloDevice Apollo::init(const char* deviceID, const char* apiKey, const char* 
   initializeDuplex();
 
   return apolloDevice;
-}
-
-ApolloDevice Apollo::init(String deviceID, String apiKey, String token, String ssid, String passphrase) {
-  // Converting all Strings to Char Arrays
-  char deviceIDArray[DEVICEID_SIZE], apiKeyArray[APIKEY_SIZE], tokenArray[TOKEN_SIZE];
-  char ssidArray[SSID_SIZE], passphraseArray[PASSPHRASE_SIZE];
-  deviceID.toCharArray(deviceIDArray, DEVICEID_SIZE);
-  apiKey.toCharArray(apiKeyArray, APIKEY_SIZE);
-  token.toCharArray(tokenArray, TOKEN_SIZE);
-  ssid.toCharArray(ssidArray, SSID_SIZE);
-  passphrase.toCharArray(passphraseArray, PASSPHRASE_SIZE);
-  
-  // Initializing Apollo
-  init(deviceIDArray, apiKeyArray, tokenArray, ssidArray, passphraseArray);
 }
 
 ApolloDevice::ApolloDevice() {}
@@ -126,30 +112,30 @@ Config ApolloDevice::getConfig() {
   return apolloConfig;
 }
 
-char* ApolloDevice::getSSID(void) {
+String ApolloDevice::getSSID(void) {
   return config->ssid;
 }
 
-char* ApolloDevice::getPassphrase(void) {
+String ApolloDevice::getPassphrase(void) {
   return config->passphrase;
 }
 
-char* ApolloDevice::getDeviceIP(void) {
+String ApolloDevice::getDeviceIP(void) {
   if(_state != WIFI_DISCONNECTED) {
-    WiFi.localIP().toString().toCharArray(_deviceIP, IP_SIZE);
+    _deviceIP = WiFi.localIP().toString();
   }
   return _deviceIP;
 }
 
-char* ApolloDevice::getDeviceID(void) {
+String ApolloDevice::getDeviceID(void) {
   return config->deviceID;
 }
 
-char* ApolloDevice::getApiKey(void) {
+String ApolloDevice::getApiKey(void) {
   return config->apiKey;
 }
 
-char* ApolloDevice::getToken(void) {
+String ApolloDevice::getToken(void) {
   return config->token;
 }
 
@@ -200,7 +186,7 @@ void initializeWiFi(void) {
   // Set WiFi mode to Station
   WiFi.mode(WIFI_STA);
   // Begin connecting to WiFi
-  DEBUG_APOLLO("\n*** Connecting to WiFi %s using passphrase %s ***\n", config->ssid, config->passphrase);
+  DEBUG_APOLLO("\n*** Connecting to WiFi %s using passphrase %s ***\n", config->ssid.c_str(), config->passphrase.c_str());
   WiFi.begin(config->ssid, config->passphrase);
   // Setting WiFi event handlers
   onWiFiConnectedHandler = WiFi.onStationModeConnected(&onWiFiConnected);
@@ -239,8 +225,10 @@ void initializeDuplex(void) {
   });
 
   // Opening up the connection
-  duplexClient.beginSSL(APOLLO_URL, APOLLO_PORT, "/?type=device&apiKey=" + String(config->apiKey), APOLLO_FINGERPRINT, "node");
-  duplexClient.setAuthorization(config->token);
+  duplexClient.beginSSL(APOLLO_URL, APOLLO_PORT, "/?type=device&apiKey=" + config->apiKey, APOLLO_FINGERPRINT, "node");
+  char token[config->token.length()];
+  config->token.toCharArray(token, config->token.length());
+  duplexClient.setAuthorization(token);
 }
 
 void ApolloDevice::update(void) {
