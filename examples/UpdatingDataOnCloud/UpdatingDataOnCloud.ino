@@ -62,7 +62,7 @@ void setup() {
 }
 
 void loop() {
-  if(device.getState() == APOLLO_CONNECTED) {
+  if(device.getState() == CONNECTED) {
     if(millis() - current >= 5000) {
       // This if-condition makes sure that the code inside this block runs only after
       // every five seconds.

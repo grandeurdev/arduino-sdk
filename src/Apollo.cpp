@@ -44,7 +44,7 @@ ApolloDevice Apollo::init(String deviceID, String apiKey, String token, Begin be
 ApolloDevice::ApolloDevice() {}
 
 void ApolloDevice::_send(const char* task, const char* payload, Callback callback) {
-  if(_state != APOLLO_CONNECTED) {
+  if(_state != CONNECTED) {
     sendQueue[sendQueueSize++] = new SendData(task, payload, callback);
     return ;
   }
@@ -150,10 +150,10 @@ void initializeDuplex(void) {
   // Setting up device cloud connection event handler
   apolloDevice.onConnection([](JSONObject updateObject) {
     switch((int) updateObject["event"]) {
-      case APOLLO_CONNECTED:
+      case CONNECTED:
         DEBUG_APOLLO("\n*** DEVICE CONNECTED WITH CLOUD ***\n");
         break;
-      case APOLLO_DISCONNECTED:
+      case DISCONNECTED:
         DEBUG_APOLLO("\n*** DEVICE DISCONNECTED FROM CLOUD ***\n");
         break;
     }
@@ -182,7 +182,7 @@ void ApolloDevice::update(void) {
 /** This function pings the cloud to keep the connection alive.
 */
 void ApolloDevice::ping() {
-  if(_state == APOLLO_CONNECTED) {
+  if(_state == CONNECTED) {
     char packet[PING_PACKET_SIZE];
     ApolloID packetID = millis();
     // Saving callback to eventsTable
@@ -204,8 +204,8 @@ void apolloEventHandler(WStype_t eventType, uint8_t* packet, size_t length) {
   switch(eventType) {
     case WStype_CONNECTED:
       // When duplex connection opens
-      apolloDevice._state = APOLLO_CONNECTED;
-      updateObject["event"] = APOLLO_CONNECTED;
+      apolloDevice._state = CONNECTED;
+      updateObject["event"] = CONNECTED;
       apolloDevice._connectionCallback(updateObject);
       // Sending all queued messages
       for(int i = 0; i < sendQueueSize; i++) {
@@ -215,8 +215,8 @@ void apolloEventHandler(WStype_t eventType, uint8_t* packet, size_t length) {
 
     case WStype_DISCONNECTED:
       // When duplex connection closes
-      apolloDevice._state = APOLLO_CONNECTED;
-      updateObject["event"] = APOLLO_DISCONNECTED;
+      apolloDevice._state = CONNECTED;
+      updateObject["event"] = DISCONNECTED;
       return apolloDevice._connectionCallback(updateObject);
 
     case WStype_TEXT:

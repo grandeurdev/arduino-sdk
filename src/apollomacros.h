@@ -39,8 +39,8 @@
 #define PING_INTERVAL 25000
 
 // Macros for connection states
-#define APOLLO_DISCONNECTED 0
-#define APOLLO_CONNECTED 1
+#define DISCONNECTED 0
+#define CONNECTED 1
 
 // Indexes for update handler callbacks in subscriptions array
 #define NUMBER_OF_TOPICS 2

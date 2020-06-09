@@ -48,7 +48,7 @@ void loop() {
   // When that happens, the last parameter (the function) passed to apollo.init() returns
   // true and SDK begins connecting with the cloud.
   // Finally it makes connection to Grandeur Cloud using the Device ID,
-  // API Key and Access Token (APOLLO_CONNECTED).
+  // API Key and Access Token (CONNECTED).
   if(WiFi.status() != WL_CONNECTED) {
     // Updating WiFI status
     wifiConnected = false;
@@ -61,7 +61,7 @@ void loop() {
     Serial.printf("\nConnecting the device %s to the Cloud using API Key %s and Access Token %s.\n",
       device.getDeviceID().c_str(), device.getApiKey().c_str(), device.getToken().c_str());
   }
-  else if(device.getState() == APOLLO_CONNECTED) {
+  else if(device.getState() == CONNECTED) {
     Serial.println("\nDevice has made a successful connection with the Cloud.");
     Serial.println("You can now get and set the summary and parms of this device here.");
     Serial.println("Checkout examples \"GettingDataFromCloud\" and \"UpdatingDataOnCloud\". Also run \"FullExample\" to see your device in full action.\n");

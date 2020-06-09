@@ -65,14 +65,14 @@ void setup() {
   // connection with the cloud.
   device.onConnection([](JSONObject updateObject) {
     switch((int) updateObject["event"]) {
-      case APOLLO_CONNECTED:
+      case CONNECTED:
         Serial.println("Device is connected to the cloud.");
 
         // Initializing the millis counter for the five
         // seconds timer.
         current = millis();
         break;
-      case APOLLO_DISCONNECTED:
+      case DISCONNECTED:
         Serial.println("Device is disconnected from the cloud.");
         break;
     }
@@ -93,7 +93,7 @@ void setup() {
 }
 
 void loop() {
-  if(device.getState() == APOLLO_CONNECTED) {
+  if(device.getState() == CONNECTED) {
     if(millis() - current >= 5000) {
       // This if-condition makes sure that the code inside this block runs only after
       // every five seconds.
