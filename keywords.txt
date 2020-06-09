@@ -7,6 +7,7 @@
 ApolloDevice	KEYWORD1
 Apollo	KEYWORD1
 Callback	KEYWORD1
+Begin	KEYWORD1
 JSONObject	KEYWORD1
 #######################################
 # Methods and Functions 
@@ -14,10 +15,8 @@ JSONObject	KEYWORD1
 
 init	KEYWORD2
 getState	KEYWORD2
-getStringifiedState	KEYWORD2
-getSSID	KEYWORD2
-getPassphrase	KEYWORD2
-getDeviceIP	KEYWORD2
+getConfig	KEYWORD2
+getDeviceID	KEYWORD2
 getApiKey	KEYWORD2
 getToken	KEYWORD2
 getSummary	KEYWORD2
@@ -25,8 +24,6 @@ getParms	KEYWORD2
 setSummary	KEYWORD2
 setParms	KEYWORD2
 update	KEYWORD2
-onWiFiConnected	KEYWORD2
-onWiFiDisconnected	KEYWORD2
 onConnection	KEYWORD2
 onSummaryUpdated	KEYWORD2
 onParmsUpdated	KEYWORD2
@@ -34,7 +31,6 @@ onParmsUpdated	KEYWORD2
 #######################################
 # Constants
 #######################################
- 
-WIFI_DISCONNECTED	LITERAL1
-WIFI_CONNECTED	LITERAL1
-APOLLO_CONNECTED	LITERAL1
+
+CONNECTED	LITERAL1
+DISCONNECTED	LITERAL1

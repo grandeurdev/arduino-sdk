@@ -9,7 +9,6 @@
  */
 
 // Including headers
-#include <ESP8266WiFi.h>
 #include "DuplexClient.h"
 #include "Duplex.h"
 #include "EventTable.h"
@@ -24,13 +23,8 @@ class Apollo;
 class ApolloDevice {
   // Class for handling device related functions
   private:
-    // Device IP Address
-    static char _deviceIP[IP_SIZE];
-    
     // Container for apollo connection callback
     static Callback _connectionCallback;
-    // Container for wifi connection callback
-    static Callback _wifiConnectionCallback;
 
     // Events Table
     static EventTable _eventsTable;
@@ -42,6 +36,7 @@ class ApolloDevice {
     static short _state;
     
     void ping();
+    static Begin _begin;
     
     void _send(const char* task, const char* payload, Callback callback);
     void _subscribe(short event, const char* payload, Callback updateHandler);
@@ -51,16 +46,12 @@ class ApolloDevice {
     ApolloDevice();
     // Getter for Apollo state
     short getState(void);
-    char* getStringifiedState(void);
 
     // Getter methods for Apollo configurations
     Config getConfig();
-    char* getSSID(void);
-    char* getPassphrase(void);
-    char* getDeviceIP(void);
-    char* getDeviceID(void);
-    char* getApiKey(void);
-    char* getToken(void);
+    String getDeviceID(void);
+    String getApiKey(void);
+    String getToken(void);
 
     // Async methods
     void getSummary(Callback callback);
@@ -73,25 +64,19 @@ class ApolloDevice {
 
     // When device makes/breaks connection with the Cloud
     void onConnection(Callback connectionHandler);
-    // When device makes/breaks connection with the WiFi
-    void onWiFiConnection(Callback _wifiConnectionHandler);
-
     // Listeners for events from the Cloud
     void onSummaryUpdated(Callback callback);
     void onParmsUpdated(Callback callback);
 
     
     friend void apolloEventHandler(WStype_t eventType, uint8_t* packet, size_t length);
-    friend void onWiFiDisconnected(const WiFiEventStationModeDisconnected& event);
-    friend void onWiFiConnected(const WiFiEventStationModeConnected& event);
     friend class Apollo;
 };
 
 class Apollo {
   private:
   public:
-    ApolloDevice init(const char* deviceID, const char* apiKey, const char* token, const char* ssid, const char* passphrase);
-    ApolloDevice init(String deviceID, String apiKey, String token, String ssid, String passphrase);
+    ApolloDevice init(String deviceID, String apiKey, String token, Begin begin);
 };
 
 extern Apollo apollo;

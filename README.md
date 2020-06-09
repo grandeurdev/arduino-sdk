@@ -114,7 +114,7 @@ void loop() {}
 
 ### Device State
 
-As your device is transitioning its state from `WIFI_DISCONNECTED` to `WIFI_CONNECTED` and then to `APOLLO_CONNECTED`, you can track those transitions and run code based on that. `apolloDevice.getState()` is your buddy here. It returns the state your device currently is in.
+As your device is transitioning its state from `WIFI_DISCONNECTED` to `WIFI_CONNECTED` and then to `CONNECTED`, you can track those transitions and run code based on that. `apolloDevice.getState()` is your buddy here. It returns the state your device currently is in.
 You can also get the stringified form of these states by calling `apolloDevice.getStringifiedState()`.
 
 ```cpp
@@ -136,7 +136,7 @@ void loop() {
     else if(state == WIFI_CONNECTED) {
       // This block runs after the device gets connected to WiFi.
     }
-    else if(state == APOLLO_CONNECTED) {
+    else if(state == CONNECTED) {
       // This runs after the device has made a successful connection
       // to the cloud
     }
@@ -153,8 +153,8 @@ void loop() {
 // "WIFI_DISCONNECTED" is printed to stdout in a loop.
 // When device connects to WiFi, "WIFI_CONNECTED" starts appearing on the screen
 // and the code inside the if(state == WIFI_CONNECTED) runs.
-// Finally, When device gets connected to the cloud, it changes to "APOLLO_CONNECTED"
-// on the stdout and the code inside the if(state == APOLLO_CONNECTED) starts
+// Finally, When device gets connected to the cloud, it changes to "CONNECTED"
+// on the stdout and the code inside the if(state == CONNECTED) starts
 // executing.
 ```
 
@@ -225,7 +225,7 @@ void setup() {
 void loop() {
     int state = apolloDevice.getState();
 
-    if(state == APOLLO_CONNECTED) {
+    if(state == CONNECTED) {
         // Getting device's summary
         apolloDevice.getSummary([](JSONObject result) {
           // This function prints the variables stored in summary
@@ -697,7 +697,7 @@ Gets the current state of the device. State of the device can be one of the foll
 |-----------------------|--------------|
 | WIFI_DISCONNECTED    | 0            |
 | WIFI_CONNECTED        | 1            |
-| APOLLO_CONNECTED      | 2            |
+| CONNECTED      | 2            |
 
 #### Example
 
@@ -716,7 +716,7 @@ void loop() {
   else if(apolloDevice.getState() == WIFI_CONNECTED) {
     std::cout<<"Yay! Device is now connected to WiFi!\n";
   }
-  else if(apolloDevice.getState() == APOLLO_CONNECTED) {
+  else if(apolloDevice.getState() == CONNECTED) {
     std::cout<<"Mazay! Device has made a successful connection to Grandeur Cloud!\n";
   }
 
@@ -741,7 +741,7 @@ Gets the current state of the device as a string.
 |-----------------------|-----------------------|
 | WIFI_DISCONNECTED    | "WIFI_DISCONNECTED"  |
 | WIFI_CONNECTED        | "WIFI_CONNECTED"      |
-| APOLLO_CONNECTED      | "APOLLO_CONNECTED"    |
+| CONNECTED      | "CONNECTED"    |
 
 #### Example
 
@@ -763,7 +763,7 @@ void loop() {
 // **RESULT**
 // In the beginning, "WIFI_DISCONNECTED" is printed to the stdout. When the WiFi
 // is connected, "WIFI_CONNECTED" begins appearing on the screen. And it quickly
-// changes to "APOLLO_CONNECTED" when the device makes a successful connection to
+// changes to "CONNECTED" when the device makes a successful connection to
 // Grandeur Cloud.
 ```
 

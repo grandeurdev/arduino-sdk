@@ -17,6 +17,7 @@
 
 typedef JSONVar JSONObject;
 typedef void (*Callback)(JSONObject);
+typedef bool (*Begin)(void);
 typedef void (*Send)(const char* task, const char* payload, Callback callback);
 typedef long ApolloID;
 typedef short ApolloState;
@@ -24,17 +25,13 @@ typedef short ApolloState;
 // Config class for apollo configurations
 class Config {
   public:
-    char deviceID[DEVICEID_SIZE];
-    char apiKey[APIKEY_SIZE];
-    char token[TOKEN_SIZE];
-    char ssid[SSID_SIZE];
-    char passphrase[PASSPHRASE_SIZE];
+    String deviceID;
+    String apiKey;
+    String token;
     Config(
-      const char* deviceID,
-      const char* apiKey,
-      const char* token,
-      const char* ssid,
-      const char* passphrase
+      String deviceID,
+      String apiKey,
+      String token
     );
     ~Config();
 };

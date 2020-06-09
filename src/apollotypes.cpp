@@ -12,17 +12,13 @@
 #include "Arduino.h"
 
 Config::Config(
-  const char* deviceID,
-  const char* apiKey,
-  const char* token,
-  const char* ssid,
-  const char* passphrase
+  String deviceID,
+  String apiKey,
+  String token
   ) {
-  strcpy(this->deviceID, deviceID);
-  strcpy(this->apiKey, apiKey);
-  strcpy(this->token, token);
-  strcpy(this->ssid, ssid);
-  strcpy(this->passphrase, passphrase);
+  this->deviceID = deviceID;
+  this->apiKey = apiKey;
+  this->token = token;
 }
 
 
