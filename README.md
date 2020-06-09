@@ -1117,10 +1117,10 @@ void setup() {
 
   apolloDevice.onConnection([](JSONObject updateObject) {
     switch((int) updateObject["event"]) {
-      case CONNECTED:
+      case APOLLO_CONNECTED:
         std::cout<<"Device Connected to the Cloud!\n";
         break;
-      case DISCONNECTED:
+      case APOLLO_DISCONNECTED:
         std::cout<<"Device Disconnected from the Cloud!\n";
         break;
     }
@@ -1159,10 +1159,10 @@ void setup() {
 
   apolloDevice.onWiFiConnection([](JSONObject updateObject) {
     switch((int) updateObject["event"]) {
-      case CONNECTED:
+      case APOLLO_CONNECTED:
         std::cout<<"Device Connected with the WiFi!\n";
         break;
-      case DISCONNECTED:
+      case APOLLO_DISCONNECTED:
         std::cout<<"Device Disconnected from the WiFi!\n";
         break;
     }

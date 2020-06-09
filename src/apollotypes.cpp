@@ -14,15 +14,11 @@
 Config::Config(
   String deviceID,
   String apiKey,
-  String token,
-  String ssid,
-  String passphrase
+  String token
   ) {
   this->deviceID = deviceID;
   this->apiKey = apiKey;
   this->token = token;
-  this->ssid = ssid;
-  this->passphrase = passphrase;
 }
 
 
