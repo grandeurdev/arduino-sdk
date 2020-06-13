@@ -22,19 +22,19 @@ Apollo apollo;
 
 EventTable ApolloDevice::_eventsTable;
 Callback ApolloDevice::_connectionCallback = [](JSONObject updateObject) {};
-Begin ApolloDevice::_begin = []() -> bool {};
 Callback ApolloDevice::_subscriptions[4] = {};
 short ApolloDevice::_state = 0;
+// Begin the SDk if Begin function is not defined.
+Begin ApolloDevice::_begin = []() {return true;};
 
 void initializeDuplex(void);
 
 /* EVENT HANDLER FUNCTIONS */
 void apolloEventHandler(WStype_t eventType, uint8_t* packet, size_t length);
 
-ApolloDevice Apollo::init(String deviceID, String apiKey, String token, Begin begin) {
+ApolloDevice Apollo::init(String deviceID, String apiKey, String token) {
   // Setting Apollo config
   config = new Config(deviceID, apiKey, token);
-  ApolloDevice::_begin = begin;
   // Initializing Duplex connection
   initializeDuplex();
 
@@ -42,6 +42,10 @@ ApolloDevice Apollo::init(String deviceID, String apiKey, String token, Begin be
 }
 
 ApolloDevice::ApolloDevice() {}
+
+void ApolloDevice::begin(Begin begin) {
+  _begin = begin;
+}
 
 void ApolloDevice::_send(const char* task, const char* payload, Callback callback) {
   if(_state != CONNECTED) {
@@ -215,7 +219,7 @@ void apolloEventHandler(WStype_t eventType, uint8_t* packet, size_t length) {
 
     case WStype_DISCONNECTED:
       // When duplex connection closes
-      apolloDevice._state = CONNECTED;
+      apolloDevice._state = DISCONNECTED;
       updateObject["event"] = DISCONNECTED;
       return apolloDevice._connectionCallback(updateObject);
 

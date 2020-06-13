@@ -56,7 +56,10 @@ void setup() {
   // This sets up the device WiFi
   setupWiFi();
   // This initializes the SDK's configurations and returns a new object of ApolloDevice class.
-  device = apollo.init(deviceID, apiKey, token, []() {
+  device = apollo.init(deviceID, apiKey, token);
+  // This begins the SDK after the WiFi connection is established and wifiConnected returns
+  // true.
+  device.begin([]() {
     return wifiConnected;
   });
 }

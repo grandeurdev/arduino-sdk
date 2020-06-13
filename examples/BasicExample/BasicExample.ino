@@ -20,7 +20,6 @@ String ssid = "YOUR-WIFI-SSID";
 String passphrase = "YOUR-WIFI-PASSWORD";
 
 ApolloDevice device;
-bool wifiConnected = false;
 
 void setupWiFi(void) {
   // Disconnecting WiFi if it"s already connected
@@ -37,9 +36,7 @@ void setup() {
   // This sets up the device WiFi
   setupWiFi();
   // This initializes the SDK's configurations and returns a new object of ApolloDevice class.
-  device = apollo.init(deviceID, apiKey, token, []() {
-    return wifiConnected;
-  });
+  device = apollo.init(deviceID, apiKey, token);
 }
 
 void loop() {
@@ -49,24 +46,19 @@ void loop() {
   // true and SDK begins connecting with the cloud.
   // Finally it makes connection to Grandeur Cloud using the Device ID,
   // API Key and Access Token (CONNECTED).
-  if(WiFi.status() != WL_CONNECTED) {
-    // Updating WiFI status
-    wifiConnected = false;
-  }
   if(WiFi.status() == WL_CONNECTED) {
-    // Updating WiFI status
-    wifiConnected = true;
-    Serial.printf("\nDevice has successfully connected to WiFi. Its IP Address is: %s\n",
-      WiFi.localIP().toString().c_str());
-    Serial.printf("\nConnecting the device %s to the Cloud using API Key %s and Access Token %s.\n",
-      device.getDeviceID().c_str(), device.getApiKey().c_str(), device.getToken().c_str());
+    if(device.getState() == DISCONNECTED) {
+      Serial.printf("\nDevice has successfully connected to WiFi. Its IP Address is: %s\n",
+        WiFi.localIP().toString().c_str());
+      Serial.printf("\nConnecting the device %s to the Cloud using API Key %s and Access Token %s.\n",
+        device.getDeviceID().c_str(), device.getApiKey().c_str(), device.getToken().c_str()); 
+    }
+    else if(device.getState() == CONNECTED) {
+      Serial.println("\nDevice has made a successful connection with the Cloud.");
+      Serial.println("You can now get and set the summary and parms of this device here.");
+      Serial.println("Checkout examples \"GettingDataFromCloud\" and \"UpdatingDataOnCloud\". Also run \"FullExample\" to see your device in full action.\n");
+    }
+    // This synchronizes the SDK with the cloud.
+    device.update();
   }
-  else if(device.getState() == CONNECTED) {
-    Serial.println("\nDevice has made a successful connection with the Cloud.");
-    Serial.println("You can now get and set the summary and parms of this device here.");
-    Serial.println("Checkout examples \"GettingDataFromCloud\" and \"UpdatingDataOnCloud\". Also run \"FullExample\" to see your device in full action.\n");
-  }
-
-  // This synchronizes the SDK with the cloud.
-  device.update();
 }
