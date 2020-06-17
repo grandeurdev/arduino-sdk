@@ -7,7 +7,7 @@
 ApolloDevice	KEYWORD1
 Apollo	KEYWORD1
 Callback	KEYWORD1
-Begin	KEYWORD1
+Valve	KEYWORD1
 JSONObject	KEYWORD1
 #######################################
 # Methods and Functions 

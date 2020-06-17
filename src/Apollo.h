@@ -36,7 +36,6 @@ class ApolloDevice {
     static short _state;
     
     void ping();
-    static Begin _begin;
     
     void _send(const char* task, const char* payload, Callback callback);
     void _subscribe(short event, const char* payload, Callback updateHandler);
@@ -60,9 +59,7 @@ class ApolloDevice {
     void setParms(JSONObject parms, Callback callback);
 
     // Method to synchronize SDK with the Cloud
-    void update(void);
-    // Method to set a Begin function. Begin function tells the SDK when to begin.
-    void begin(Begin begin);
+    void loop(bool valve);
 
     // When device makes/breaks connection with the Cloud
     void onConnection(Callback connectionHandler);

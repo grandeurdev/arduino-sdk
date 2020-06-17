@@ -24,8 +24,6 @@ EventTable ApolloDevice::_eventsTable;
 Callback ApolloDevice::_connectionCallback = [](JSONObject updateObject) {};
 Callback ApolloDevice::_subscriptions[4] = {};
 short ApolloDevice::_state = 0;
-// Begin the SDk if Begin function is not defined.
-Begin ApolloDevice::_begin = []() {return true;};
 
 void initializeDuplex(void);
 
@@ -42,10 +40,6 @@ ApolloDevice Apollo::init(String deviceID, String apiKey, String token) {
 }
 
 ApolloDevice::ApolloDevice() {}
-
-void ApolloDevice::begin(Begin begin) {
-  _begin = begin;
-}
 
 void ApolloDevice::_send(const char* task, const char* payload, Callback callback) {
   if(_state != CONNECTED) {
@@ -170,9 +164,9 @@ void initializeDuplex(void) {
   duplexClient.setAuthorization(token);
 }
 
-void ApolloDevice::update(void) {
-  if(_begin()) {
-    // If begin returns true
+void ApolloDevice::loop(bool valve) {
+  if(valve) {
+    // If valve is true => valve is open
     if(millis() - pingSchedularVariable >= PING_INTERVAL) {
         // Ping Apollo if PING_INTERVAL milliseconds have passed
         pingSchedularVariable += PING_INTERVAL;
