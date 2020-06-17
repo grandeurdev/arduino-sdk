@@ -36,7 +36,6 @@ class ApolloDevice {
     static short _state;
     
     void ping();
-    static Begin _begin;
     
     void _send(const char* task, const char* payload, Callback callback);
     void _subscribe(short event, const char* payload, Callback updateHandler);
@@ -59,8 +58,8 @@ class ApolloDevice {
     void setSummary(JSONObject summary, Callback callback);
     void setParms(JSONObject parms, Callback callback);
 
-    // Method to update the device's TCP buffer
-    void update(void);
+    // Method to synchronize SDK with the Cloud
+    void loop(bool valve);
 
     // When device makes/breaks connection with the Cloud
     void onConnection(Callback connectionHandler);
@@ -76,7 +75,7 @@ class ApolloDevice {
 class Apollo {
   private:
   public:
-    ApolloDevice init(String deviceID, String apiKey, String token, Begin begin);
+    ApolloDevice init(String deviceID, String apiKey, String token);
 };
 
 extern Apollo apollo;

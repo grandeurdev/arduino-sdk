@@ -22,7 +22,6 @@ Apollo apollo;
 
 EventTable ApolloDevice::_eventsTable;
 Callback ApolloDevice::_connectionCallback = [](JSONObject updateObject) {};
-Begin ApolloDevice::_begin = []() -> bool {};
 Callback ApolloDevice::_subscriptions[4] = {};
 short ApolloDevice::_state = 0;
 
@@ -31,10 +30,9 @@ void initializeDuplex(void);
 /* EVENT HANDLER FUNCTIONS */
 void apolloEventHandler(WStype_t eventType, uint8_t* packet, size_t length);
 
-ApolloDevice Apollo::init(String deviceID, String apiKey, String token, Begin begin) {
+ApolloDevice Apollo::init(String deviceID, String apiKey, String token) {
   // Setting Apollo config
   config = new Config(deviceID, apiKey, token);
-  ApolloDevice::_begin = begin;
   // Initializing Duplex connection
   initializeDuplex();
 
@@ -166,9 +164,9 @@ void initializeDuplex(void) {
   duplexClient.setAuthorization(token);
 }
 
-void ApolloDevice::update(void) {
-  if(_begin()) {
-    // If begin returns true
+void ApolloDevice::loop(bool valve) {
+  if(valve) {
+    // If valve is true => valve is open
     if(millis() - pingSchedularVariable >= PING_INTERVAL) {
         // Ping Apollo if PING_INTERVAL milliseconds have passed
         pingSchedularVariable += PING_INTERVAL;
@@ -215,7 +213,7 @@ void apolloEventHandler(WStype_t eventType, uint8_t* packet, size_t length) {
 
     case WStype_DISCONNECTED:
       // When duplex connection closes
-      apolloDevice._state = CONNECTED;
+      apolloDevice._state = DISCONNECTED;
       updateObject["event"] = DISCONNECTED;
       return apolloDevice._connectionCallback(updateObject);
 

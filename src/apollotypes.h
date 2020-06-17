@@ -17,7 +17,6 @@
 
 typedef JSONVar JSONObject;
 typedef void (*Callback)(JSONObject);
-typedef bool (*Begin)(void);
 typedef void (*Send)(const char* task, const char* payload, Callback callback);
 typedef long ApolloID;
 typedef short ApolloState;
