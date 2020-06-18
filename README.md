@@ -89,7 +89,9 @@ To get a deeper understanding of the core concepts Grandeur Cloud is built upon,
 
 ### Installation
 
-You can clone **Arduino SDK** from [here][Arduino SDK] and [install it in your Arduino IDE][Installing an Arduino Library].
+1. You can search for **Grandeur Cloud** in Arduino's library manager. In Arduino IDE, open `Sketch > Include Library > Manage Libraries` and install Grandeur Cloud from there.
+
+2. You can also clone **Arduino SDK** from [here][Arduino SDK] and [install it in your Arduino IDE][Installing an Arduino Library].
 
 ### Inclusion
 
