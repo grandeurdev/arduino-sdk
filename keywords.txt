@@ -4,10 +4,14 @@
 # Class
 #######################################
 
-ApolloDevice	KEYWORD1
-Apollo	KEYWORD1
+ApolloDevice	KEYWORD3
+Apollo	KEYWORD3
+
+#######################################
+# Datatypes 
+#######################################
+
 Callback	KEYWORD1
-Valve	KEYWORD1
 JSONObject	KEYWORD1
 #######################################
 # Methods and Functions 
@@ -23,7 +27,7 @@ getSummary	KEYWORD2
 getParms	KEYWORD2
 setSummary	KEYWORD2
 setParms	KEYWORD2
-update	KEYWORD2
+loop	KEYWORD2
 onConnection	KEYWORD2
 onSummaryUpdated	KEYWORD2
 onParmsUpdated	KEYWORD2
