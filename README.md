@@ -38,7 +38,7 @@ From here onwards, we'll look at how you can use the Arduino SDK for all arduino
 
 # Arduino SDK
 
-**Arduino SDK** is the official SDK for arduino-compatible hardware modules that utilizes the *Apollo* API to connect your device to **[Grandeur Cloud][Grandeur Cloud]**.
+**Arduino SDK** is the official SDK for arduino-compatible hardware modules and it utilizes the *Apollo* API to connect your device to **[Grandeur Cloud][Grandeur Cloud]**.
 
 Follow the [get started][Get Started with Arduino SDK] guidelines to quickly get into the context of integrating your devices to Grandeur Cloud or jump straight to an [Arduino example][Example] to make your hands dirty.
 
