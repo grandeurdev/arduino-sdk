@@ -30,7 +30,7 @@ Grandeur Cloud is not a regular IoT cloud. It's a complete IoT product developme
 
 * It is terrifically simple to [get started][Get Started with Grandeur Cloud] with your IoT product development. Just create a project from the [cloud dashboard][Grandeur Cloud Dashboard], plug your project's API key into our SDKs and start developing.
 
-Follow [our Hackster community][Grandeur Cloud Hackster] for quick starts and advanced development projects.
+Follow [our Hackster Hub][Grandeur Cloud Hackster] for quick starts and advanced development projects.
 
 [Here][Get Started With Grandeur Cloud] is how you can create a new project on Grandeur Cloud and start using the Javascript SDK to build your IoT apps.
 
