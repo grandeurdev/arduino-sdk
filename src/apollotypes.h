@@ -19,7 +19,6 @@ typedef JSONVar JSONObject;
 typedef void (*Callback)(JSONObject);
 typedef void (*Send)(const char* task, const char* payload, Callback callback);
 typedef long ApolloID;
-typedef short ApolloState;
 
 // Config class for apollo configurations
 class Config {
@@ -27,26 +26,21 @@ class Config {
     String deviceID;
     String apiKey;
     String token;
-    Config(
-      String deviceID,
-      String apiKey,
-      String token
-    );
-    ~Config();
+    Config(String deviceID, String apiKey, String token);
+    Config();
 };
 
 // Class for Send Queue Data
 class SendData {
-    public:
-        char task[TASK_SIZE];
-        char payload[PACKET_SIZE];
-        Callback callback;
-        SendData(
-          const char* task,
-          const char* payload,
-          Callback callback
-        );
-        ~SendData();
+  public:
+    char task[TASK_SIZE];
+    char payload[PACKET_SIZE];
+    Callback callback;
+    SendData(
+      const char* task,
+      const char* payload,
+      Callback callback
+    );
 };
 
 #endif

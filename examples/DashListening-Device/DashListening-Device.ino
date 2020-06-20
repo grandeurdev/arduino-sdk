@@ -26,7 +26,8 @@ String ssid = "YOUR-WIFI-SSID";
 String passphrase = "YOUR-WIFI-PASSWORD";
 
 // Declaring and initializing other variables
-ApolloDevice device;
+Project project;
+Device device;
 WiFiEventHandler onWiFiConnectedHandler;
 WiFiEventHandler onWiFiDisconnectedHandler;
 int statePin = D0;
@@ -42,18 +43,20 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   // This initializes the SDK's configurations and returns a new object of ApolloDevice class.
-  device = apollo.init(deviceID, apiKey, token);
-  // This schedules the connectionCallback() function to be called when the device makes/breaks
-  // connection with the cloud.
-  device.onConnection(connectionCallback);
-  // This schedules parmsUpdatedCallback() function to be called when someone changes any
-  // variable stored in device's parms on the Cloud.
+  project = apollo.init(deviceID, apiKey, token);
+  // Getting object of Device class.
+  device = project.device();
+  // This schedules the connectionCallback() function to be called when connection with the cloud
+  // is made/broken.
+  project.onConnection(connectionCallback);
+  // This schedules parmsUpdatedCallback() function to be called when variable stored
+  // in device's parms are changed on the Cloud.
   device.onParmsUpdated(parmsUpdatedCallback);
 }
 
 void loop() {
   // The SDK only runs when the WiFi is connected.
-  device.loop(WiFi.status() == WL_CONNECTED);
+  project.loop(WiFi.status() == WL_CONNECTED);
 }
 
 void setupWiFi(void) {
@@ -76,13 +79,15 @@ void setupWiFi(void) {
   Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid.c_str(), passphrase.c_str());
 }
 
-void connectionCallback(JSONObject updateObject) {
-  switch((int) updateObject["event"]) {
+void connectionCallback(bool status) {
+  switch(status) {
     case CONNECTED:
       // On successful connection with the cloud, we initialize the device's *state*.
-      // We set the *state pin* to the value of *state* that we receive from the cloud in parms.
+      // To do that, we get device parms from the cloud and set the *state pin* to the
+      // value of *state* in those parms.
       Serial.println("Device is connected to the cloud.");
       device.getParms(initializeState);
+      Serial.println("Listening for parms update from the cloud...");
       break;
     case DISCONNECTED:
       Serial.println("Device is disconnected from the cloud.");
