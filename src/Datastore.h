@@ -14,6 +14,20 @@
 #ifndef DATASTORE_H_
 #define DATASTORE_H_
 
+class Collection {
+  // Class for a datastore collection
+  private:
+    String _name;
+    DuplexHandler _duplex;
+  public:
+    // Collection constructor
+    Collection(String name, DuplexHandler duplexHandler);
+    // Methods
+    void insert(JSONObject documents, Callback inserted);
+
+    friend class Apollo;
+};
+
 class Datastore {
   // Class for handling datastore related functions
   private:
@@ -23,6 +37,8 @@ class Datastore {
     // Datastore constructor
     Datastore(String deviceID, DuplexHandler duplexHandler);
     Datastore();
+    // Methods
+    Collection collection(String name);
 
     friend class Apollo;
 };

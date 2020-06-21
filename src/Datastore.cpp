@@ -17,3 +17,21 @@ Datastore::Datastore(String deviceID, DuplexHandler duplexHandler) {
 }
 
 Datastore::Datastore() {}
+
+Collection Datastore::collection(String name) {
+  return Collection(name, _duplex);
+}
+
+Collection::Collection(String name, DuplexHandler duplexHandler) {
+  _name = name;
+  _duplex = duplexHandler;
+}
+
+void Collection::insert(JSONObject documents, Callback inserted) {
+  JSONObject jsonObject;
+  char jsonString[PACKET_SIZE];
+  jsonObject["collection"] = _name;
+  jsonObject["documents"] = documents;
+  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
+  _duplex.send("insertDocumentsDatastore", jsonString, inserted);
+}

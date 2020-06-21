@@ -12,8 +12,8 @@
 #include <iostream>
 
 const char* events[T_S] =
-  {"ping", "getDeviceSummary", "getDeviceParms", "setDeviceSummary", "setDeviceParms", "subscribeTopic",
-  "unsubscribeTopic", "unsubscribeAllTopics"};
+  {"ping", "subscribeTopic", "unsubscribeTopic", "unsubscribeAllTopics", "getDeviceSummary",
+  "getDeviceParms", "setDeviceSummary", "setDeviceParms", "insertDocumentsDatastore"};
 
 EventTableEntry::EventTableEntry(EventTableKey k, EventTableData v) {
   this->k= k;
@@ -34,7 +34,7 @@ int EventTable::hashFunc(EventTableKey k) {
       return i;
     }
   }
-  return T_S;
+  return (T_S - 1);
 }
 
 int EventTable::insert(EventTableKey k, EventID id, EventData data) {
