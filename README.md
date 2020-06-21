@@ -177,9 +177,11 @@ You can see this line in the previous subsection: `myProject.loop(WiFi.status() 
 
 `loop` function is what runs the SDK: it connects with the cloud; when disconnected, it automatically reconnects; pulls new messages from the cloud; pushes messages to the cloud; and so on. But doing any sort of communication on the internet is useless until the WiFi isn't connected. That's exactly what the statement does: it acts like a **valve** for the SDK. The conditional expression passed to the `loop` function decides when the SDK would run and when it would not. In this case, it would only run when the WiFi is connected, causing `WiFi.status() == WL_CONNECTED` expression to evaluate to `true`. If while running, the WiFi gets disconnected, `WiFi.status() == WL_CONNECTED` would evaluate to `false` and the SDK would stop running.
 
-### Events Listening
+### Setting Up Connection Event Handler
 
-You can also listen on SDK's connection-related events. For example, to run some code when the device makes a successful connection to the cloud or when the device's connection to the cloud breaks, you can wrap that code in a `Callback` function and pass it to `onConnection()` function. The `Callback` function is a special type of function that accepts a `JSONObject` as a parameter and returns `void`. Read more about `Callback` and `JSONObject` [here][jsonobject].
+You can also listen on SDK's connection-related events. For example, to run some code when the device makes a successful connection to the cloud or when the device's connection to the cloud breaks, you can wrap that code in a `Callback` function and pass it to `Project`'s `onConnection()` function.
+
+The `Callback` function is a special type of function that accepts a `JSONObject` as a parameter and returns `void`. Read more about `Callback` and `JSONObject` [here][jsonobject].
 
 Here's how you can handle the connection event:
 
@@ -187,7 +189,7 @@ Here's how you can handle the connection event:
 #include <Apollo.h>
 #include <ESP8266WiFi.h>
 
-ApolloDevice apolloDevice;
+Project myProject;
 
 void setupWiFi(void) {
   Serial.begin(9600);
@@ -200,9 +202,9 @@ void setupWiFi(void) {
   Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid.c_str(), passphrase.c_str());
 }
 
-void connectionCallback(JSONObject result) {
+void connectionCallback(bool status) {
   // This method handles the events related to device's connection with the Cloud.
-  switch((int) updateObject["event"]) {
+  switch(status) {
     case CONNECTED:
       // If the connection event occurred.
       Serial.println("Device Connected to the Cloud!\n");
@@ -219,14 +221,14 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   // You can initialize device configurations like this.
-  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourDeviceToken);
+  myProject = apollo.init(YourDeviceID, YourApiKey, YourDeviceToken);
   // Setting up listener for device's connection event
-  apolloDevice.onConnection(connectionCallback);
+  myProject.onConnection(connectionCallback);
 }
 
 void loop() {
   // This runs the SDK when the device WiFi is connected.
-  apolloDevice.loop(WiFi.status() == WL_CONNECTED);
+  myProject.loop(WiFi.status() == WL_CONNECTED);
 }
 
 // **RESULT**
@@ -237,7 +239,7 @@ void loop() {
 
 ### Fetching Device Variables and Updating Them
 
-On Gradeur Cloud, we generally store the device data in two containers: **summary** to contain uncontrollable device variables and **parms** to contain controllable device variables. You can get and set both types using the following functions:
+On Grandeur Cloud, we generally store the device data in two containers: **summary** to contain uncontrollable device variables and **parms** to contain controllable device variables. You can get and set both types using the following functions:
 
 * `apolloDevice.getSummary()`
 * `apolloDevice.getParms()`

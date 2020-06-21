@@ -31,8 +31,8 @@ typedef std::string EventTableKey;
 // Event table size
 const int T_S = 10;
 
-// Events Array
-extern const char* events[T_S];
+// Routes Array
+extern const char* routes[T_S];
 
 // Event table entry
 class EventTableEntry {

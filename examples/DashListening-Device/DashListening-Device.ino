@@ -19,8 +19,8 @@
 #include <ESP8266WiFi.h>
 
 // Device's connection configurations
-String deviceID = "YOUR-DEVICE-ID";
 String apiKey = "YOUR-PROJECT-APIKEY";
+String deviceID = "YOUR-DEVICE-ID";
 String token = "YOUR-ACCESS-TOKEN";
 String ssid = "YOUR-WIFI-SSID";
 String passphrase = "YOUR-WIFI-PASSWORD";
@@ -43,7 +43,7 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   // This initializes the SDK's configurations and returns a new object of ApolloDevice class.
-  project = apollo.init(deviceID, apiKey, token);
+  project = apollo.init(apiKey, deviceID, token);
   // Getting object of Device class.
   device = project.device();
   // This schedules the connectionCallback() function to be called when connection with the cloud

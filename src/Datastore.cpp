@@ -33,5 +33,5 @@ void Collection::insert(JSONObject documents, Callback inserted) {
   jsonObject["collection"] = _name;
   jsonObject["documents"] = documents;
   JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
-  _duplex.send("insertDocumentsDatastore", jsonString, inserted);
+  _duplex.send("/datastore/insert", jsonString, inserted);
 }

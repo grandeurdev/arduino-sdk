@@ -14,7 +14,7 @@
 /* VARIABLE INITIALIZATIONS */
 DuplexClient duplexClient;
 unsigned long millisCounterForPing = 0;
-const char* subscriptionTopics[] = {"setDeviceSummary", "setDeviceParms"};
+const char* subscriptionTopics[] = {"deviceSummary", "deviceParms"};
 size_t sendQueueSize = 0;
 SendData* sendQueue[SENDQUEUE_SIZE] = {};
 short DuplexHandler::_status = DISCONNECTED;
@@ -87,7 +87,7 @@ void DuplexHandler::send(const char* task, const char* payload, Callback callbac
 void DuplexHandler::subscribe(short event, const char* payload, Callback updateHandler) {
   // Saving updateHandler callback to subscriptions Array
   _subscriptions[event] = updateHandler;
-  send("subscribeTopic", payload, [](JSONObject payload) {});
+  send("/topic/subscribe", payload, [](JSONObject payload) {});
 }
 
 /** This function pings the cloud to keep the connection alive.

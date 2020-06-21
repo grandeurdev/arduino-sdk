@@ -17,12 +17,20 @@ Device::Device(String deviceID, DuplexHandler duplexHandler) {
 
 Device::Device() {}
 
+void Device::getSummary(Callback callback) {
+  JSONObject jsonObject;
+  char jsonString[PACKET_SIZE];
+  jsonObject["deviceID"] = _deviceID;
+  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
+  _duplex.send("/device/summary/get", jsonString, callback);
+}
+
 void Device::getParms(Callback callback) {
   JSONObject jsonObject;
   char jsonString[PACKET_SIZE];
   jsonObject["deviceID"] = _deviceID;
   JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
-  _duplex.send("getDeviceParms", jsonString, callback);
+  _duplex.send("/device/parms/get", jsonString, callback);
 }
 
 void Device::setSummary(JSONObject summary, Callback callback) {
@@ -31,7 +39,7 @@ void Device::setSummary(JSONObject summary, Callback callback) {
   jsonObject["deviceID"] = _deviceID;
   jsonObject["summary"] = summary;
   JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
-  _duplex.send("setDeviceSummary", jsonString, callback);
+  _duplex.send("/device/summary/set", jsonString, callback);
 }
 
 void Device::setParms(JSONObject parms, Callback callback) {
@@ -40,14 +48,14 @@ void Device::setParms(JSONObject parms, Callback callback) {
   jsonObject["deviceID"] = _deviceID;
   jsonObject["parms"] = parms;
   JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
-  _duplex.send("setDeviceParms", jsonString, callback);
+  _duplex.send("/device/parms/set", jsonString, callback);
 }
 
 void Device::onSummaryUpdated(Callback updateHandler) {
   JSONObject jsonObject;
   char jsonString[PACKET_SIZE];
   jsonObject["deviceID"] = _deviceID;
-  jsonObject["event"] = "setDeviceSummary";
+  jsonObject["event"] = "deviceSummary";
   JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
   _duplex.subscribe(SUMMARYUPDATE, jsonString, updateHandler);
 }
@@ -56,7 +64,7 @@ void Device::onParmsUpdated(Callback updateHandler) {
   JSONObject jsonObject;
   char jsonString[PACKET_SIZE];
   jsonObject["deviceID"] = _deviceID;
-  jsonObject["event"] = "setDeviceParms";
+  jsonObject["event"] = "deviceParms";
   JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
   _duplex.subscribe(PARMSUPDATE, jsonString, updateHandler);
 }

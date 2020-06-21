@@ -16,8 +16,8 @@
 #include <ESP8266WiFi.h>
 
 // Device's connection configurations
-String deviceID = "YOUR-DEVICE-ID";
 String apiKey = "YOUR-PROJECT-APIKEY";
+String deviceID = "YOUR-DEVICE-ID";
 String token = "YOUR-ACCESS-TOKEN";
 String ssid = "YOUR-WIFI-SSID";
 String passphrase = "YOUR-WIFI-PASSWORD";
@@ -34,7 +34,7 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   // This initializes the SDK's configurations and returns a new object of Project class.
-  project = apollo.init(deviceID, apiKey, token);
+  project = apollo.init(apiKey, deviceID, token);
   // Getting object of Device class
   device = project.device();
   Serial.printf("\nDevice %s is saying hello to Grandeur Cloud using API Key %s and Access Token %s.\n", deviceID.c_str(), apiKey.c_str(), token.c_str());
