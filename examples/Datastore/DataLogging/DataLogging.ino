@@ -102,9 +102,9 @@ void connectionCallback(bool status) {
   }
 }
 
-void insertCallback(JSONObject payload) {
+void insertCallback(JSONObject insertionResult) {
   // This function prints if the logs were successfully inserted into the datastore or not.
-  if(payload["code"] == "DATASTORE-DOCUMENTS-INSERTED") {
+  if(insertionResult["code"] == "DATASTORE-DOCUMENTS-INSERTED") {
     Serial.println("Voltage is successfully logged to the Cloud.");
     return;
   }

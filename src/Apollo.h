@@ -45,7 +45,7 @@ class Apollo {
     Config _config;
   public:
     Apollo();
-    Project init(String deviceID, String apiKey, String token);
+    Project init(String apiKey, String deviceID, String token);
 };
 
 extern Apollo apollo;

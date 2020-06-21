@@ -15,15 +15,18 @@ Apollo apollo;
 
 Apollo::Apollo() {}
 
-Project Apollo::init(String deviceID, String apiKey, String token) {
+Project Apollo::init(String apiKey, String deviceID, String token) {
   // Setting config
-  _config = {deviceID, apiKey, token};
-  Project apolloProject;
-  apolloProject._deviceID = _config.deviceID;
-  apolloProject._duplexHandler = DuplexHandler(_config);
-  // Starting Duplex
-  apolloProject._duplexHandler.init();
-  return apolloProject;
+  _config = {apiKey, deviceID, token};
+  // Creating a new project reference.
+  Project project;
+  // Setting device ID. This limits the scope of this project reference to only this device.
+  project._deviceID = _config.deviceID;
+  // Duplex handles the connection to the Cloud project.
+  project._duplexHandler = DuplexHandler(_config);
+  // Starting Duplex.
+  project._duplexHandler.init();
+  return project;
 }
 
 Project::Project() {}

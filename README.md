@@ -70,20 +70,23 @@ To get a deeper understanding of the core concepts Grandeur Cloud is built upon,
     * [Networking](#networking)
     * [Allowed Origins](#allowed-origins)
 * [Documentation](#documentation)
-  * [init](#apollo-init)
-  * [loop](#loop)
-  * [getState](#get-state)
-  * [getConfig](#get-configurations)
-  * [getDeviceID](#get-device-id)
-  * [getApiKey](#get-api-key)
-  * [getToken](#get-access-token)
-  * [getSummary](#get-summary)
-  * [getParms](#get-parms)
-  * [setSummary](#set-summary)
-  * [setParms](#set-parms)
-  * [onConnection](#apollo-connection-event-listener)
-  * [onSummaryUpdated](#summary-update-listener)
-  * [onParmsUpdated](#parms-update-listener)
+    * [init](#apollo-init)
+  * [Project](#project)
+    * [isConnected](#isconnected)
+    * [onConnection](#onconnection)
+    * [loop](#loop)
+    * [device](#device)
+    * [datastore](#datastore)
+  * [Device](#device)
+    * [getSummary](#getsummary)
+    * [getParms](#getparms)
+    * [setSummary](#setsummary)
+    * [setParms](#setparms)
+    * [onSummaryUpdated](#onsummaryupdated)
+    * [onParmsUpdated](#oparmsupdated)
+  * [Datastore](#datastore)
+    * [insert](#insert)
+* [Enhancements Under Consideration](#enhancements-under-consideration)
 
 ## Get Started
 
@@ -95,7 +98,7 @@ To get a deeper understanding of the core concepts Grandeur Cloud is built upon,
 
 ### Inclusion
 
-When you include `<Apollo.h>` in your sketch, a global object `apollo` is defined right away which you can use to initialize the SDK's configurations, get the object of `ApolloDevice` class, and go programming your device from there.
+When you include `<Apollo.h>` in your sketch, a global object `apollo` is defined right away which you can use to initialize the SDK's configurations.
 
 ```cpp
 #include <Apollo.h>
@@ -106,25 +109,25 @@ When you include `<Apollo.h>` in your sketch, a global object `apollo` is define
 
 ### Initialization
 
-Initialization is as simple as calling `apollo.init()` with your credentials (Device ID, Project's API Key and Device's Access Token).
+Initialization is as simple as calling `apollo.init()` with your credentials (Device ID, Project's API Key and Device's Access Token). The SDK uses your API key to select your project, and device ID and access token to limit its scope to only your device's data. It then returns a `Project` object which exposes other subclasses like `Device` and `Datastore`, and you can go programming your device from there.
 
 ```cpp
 #include <Apollo.h>
 
-ApolloDevice apolloDevice;
+Project myProject;
 
 void setup() {
-    // You can initialize device configurations like this.
-    apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourDeviceToken);
+  // You can initialize device configurations like this.
+  myProject = apollo.init(YourApiKey, YourDeviceID, YourDeviceToken);
 }
 
 void loop() {}
 
 // **RESULT**
-// Initializes the SDK's configurations.
+// Initializes the SDK's configurations and returns Project reference.
 ```
 
-As soon as you call `apollo.init()`, your device uses the configurations to start trying to connect with the Cloud. But it cannot reach Grandeur Cloud if the device is not already connected to a WiFi.
+As soon as you call `apollo.init()`, the SDK uses the configurations to start trying to connect with the your project on the Cloud. But it cannot reach Grandeur Cloud if the device is not already connected to a WiFi.
 
 ### Handling the WiFi
 
@@ -140,7 +143,7 @@ Here we illustrate how to handle your ESP8266's WiFi.
 #include <Apollo.h>
 #include <ESP8266WiFi.h>
 
-ApolloDevice apolloDevice;
+Project myProject;
 
 void setupWiFi(void) {
   Serial.begin(9600);
@@ -158,19 +161,21 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   // You can initialize device configurations like this.
-  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourDeviceToken);
+  myProject = apollo.init(YourDeviceID, YourApiKey, YourDeviceToken);
 }
 
 void loop() {
   // This runs the SDK when the device WiFi is connected.
-  apolloDevice.loop(WiFi.status() == WL_CONNECTED);
+  myProject.loop(WiFi.status() == WL_CONNECTED);
 }
 
 ```
 
 ### Setting Up the Valve
 
-You can see this line in the previous subsection: `apolloDevice.loop(WiFi.status() == WL_CONNECTED)`, but what does that mean? `loop` function is what runs the SDK: it connects with the cloud; when disconnected, it automatically reconnects; pulls new messages from the cloud; pushes messages to the cloud; and so on. But doing any sort of communication on the internet is useless until the WiFi isn't connected. That's exactly what the statement does: it acts like a **valve** for the SDK. The conditional expression passed to the `loop` function decides when the SDK would run and when it would not. In this case, it would only run when the WiFi is connected, causing `WiFi.status() == WL_CONNECTED` expression to evaluate to `true`. If while running, the WiFi gets disconnected, `WiFi.status() == WL_CONNECTED` would evaluate to `false` and the SDK would stop running.
+You can see this line in the previous subsection: `myProject.loop(WiFi.status() == WL_CONNECTED)`, but what does that mean?
+
+`loop` function is what runs the SDK: it connects with the cloud; when disconnected, it automatically reconnects; pulls new messages from the cloud; pushes messages to the cloud; and so on. But doing any sort of communication on the internet is useless until the WiFi isn't connected. That's exactly what the statement does: it acts like a **valve** for the SDK. The conditional expression passed to the `loop` function decides when the SDK would run and when it would not. In this case, it would only run when the WiFi is connected, causing `WiFi.status() == WL_CONNECTED` expression to evaluate to `true`. If while running, the WiFi gets disconnected, `WiFi.status() == WL_CONNECTED` would evaluate to `false` and the SDK would stop running.
 
 ### Events Listening
 
@@ -983,7 +988,7 @@ Device class exposes the functions of the device API. It generally handles your 
 
 It exposes the following functions:
 
-### Get Summary
+### getSummary
 
 > getSummary (callback: _Callback_) : returns _void_
 
@@ -1023,7 +1028,7 @@ void loop() {
 // Prints the value of the voltage variable stored in the device's summary on every loop.
 ```
 
-### Get Parms
+### getParms
 
 > getParms (callback: _Callback_) : returns _void_
 
@@ -1063,7 +1068,7 @@ void loop() {
 // Prints the value of the state variable stored in the device's parms on every loop.
 ```
 
-### Set Summary
+### setSummary
 
 > setSummary (summary : _JSONObject_, callback: _Callback_) : returns _void_
 
@@ -1110,7 +1115,7 @@ void loop() {
 // variables (voltage and current in our case) on every loop.
 ```
 
-### Set Parms
+### setParms
 
 > setParms (parms : _JSONObject_, callback: _Callback_) : returns _void_  
 
@@ -1155,7 +1160,7 @@ void loop() {
 // variables (just state in our case) on every loop
 ```
 
-### Summary Update Handler
+### onSummaryUpdated
 
 > onSummaryUpdated (callback : _Callback_) : returns _void_
 
@@ -1199,7 +1204,7 @@ void loop() {
 }
 ```
 
-### Parms Update Handler
+### onParmsUpdated
 
 > onParmsUpdated (callback : _Callback_) : returns _void_
 

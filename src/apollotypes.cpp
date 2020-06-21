@@ -11,9 +11,9 @@
 #include <apollotypes.h>
 #include "Arduino.h"
 
-Config::Config(String deviceID, String apiKey, String token) {
-  this->deviceID = deviceID;
+Config::Config(String apiKey, String deviceID, String token) {
   this->apiKey = apiKey;
+  this->deviceID = deviceID;
   this->token = token;
 }
 
