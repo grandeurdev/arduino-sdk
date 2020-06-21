@@ -1300,7 +1300,7 @@ void loop() {
 
 Here are some enhancements that we are considering to implement in the SDK. They have their corresponding issues as well. If you can relate to any one of these and would like to fast forward its implementation, just comment +1 on its issue. This would be a feedback for us to set priorities in a user-centered way. Thank you 👇
 
-#4 — Move the error handling inside the SDK. The developer would not have to check the response code to see if the request executed successfully or not. We would do that the native C-way instead: by returning 0 for success and 1, 2, 3 for other error codes. Or we can create some macros like SUCCESS, ERROR etc.
+[#4][i4] — Move the error handling inside the SDK. The developer would not have to check the response code to see if the request executed successfully or not. We would do that the native C-way instead: by returning 0 for success and 1, 2, 3 for other error codes. Or we can create some macros like SUCCESS, ERROR etc.
 
 [Grandeur Technologies]: https://grandeur.tech "Grandeur Technologies"
 [Grandeur Cloud]: https://cloud.grandeur.tech "Grandeur Cloud"
@@ -1350,3 +1350,5 @@ Here are some enhancements that we are considering to implement in the SDK. They
 [loop]: #loop
 
 [Using Millis Instead of Delay]: https://www.norwegiancreations.com/2017/09/arduino-tutorial-using-millis-instead-of-delay/ "Using millis() instead of delay()"
+
+[i4]: https://github.com/grandeurtech/grandeurcloud-arduino-sdk/issues/4
