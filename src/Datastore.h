@@ -32,10 +32,9 @@ class Datastore {
   // Class for handling datastore related functions
   private:
     DuplexHandler _duplex;
-    String _deviceID;
   public:
     // Datastore constructor
-    Datastore(String deviceID, DuplexHandler duplexHandler);
+    Datastore(DuplexHandler duplexHandler);
     Datastore();
     // Methods
     Collection collection(String name);

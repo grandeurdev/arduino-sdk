@@ -24,9 +24,8 @@ typedef long ApolloID;
 class Config {
   public:
     String apiKey;
-    String deviceID;
     String token;
-    Config(String apiKey, String deviceID, String token);
+    Config(String apiKey, String token);
     Config();
 };
 

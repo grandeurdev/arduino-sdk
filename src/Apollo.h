@@ -22,8 +22,6 @@ class Project {
   // Class for handling a complete project
   private:
     DuplexHandler _duplexHandler;
-    // Device ID limits the scope of this project reference to only this device.
-    String _deviceID;
   public:
     // Project constructor
     Project();
@@ -31,7 +29,7 @@ class Project {
     void onConnection(void connectionCallback(bool));
     bool isConnected(void);
     // Instantiator methods - return the objects of their classes
-    Device device(void);
+    Device device(String deviceID);
     Datastore datastore(void);
 
     // This method runs the SDK.
@@ -45,7 +43,7 @@ class Apollo {
     Config _config;
   public:
     Apollo();
-    Project init(String apiKey, String deviceID, String token);
+    Project init(String apiKey, String token);
 };
 
 extern Apollo apollo;

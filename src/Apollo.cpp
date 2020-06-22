@@ -15,13 +15,11 @@ Apollo apollo;
 
 Apollo::Apollo() {}
 
-Project Apollo::init(String apiKey, String deviceID, String token) {
+Project Apollo::init(String apiKey, String token) {
   // Setting config
-  _config = {apiKey, deviceID, token};
+  _config = {apiKey, token};
   // Creating a new project reference.
   Project project;
-  // Setting device ID. This limits the scope of this project reference to only this device.
-  project._deviceID = _config.deviceID;
   // Duplex handles the connection to the Cloud project.
   project._duplexHandler = DuplexHandler(_config);
   // Starting Duplex.
@@ -39,12 +37,12 @@ bool Project::isConnected(void) {
   return _duplexHandler.getStatus() == CONNECTED;
 }
 
-Device Project::device(void) {
-  return Device(_deviceID, _duplexHandler);
+Device Project::device(String deviceID) {
+  return Device(deviceID, _duplexHandler);
 }
 
 Datastore Project::datastore(void) {
-  return Datastore(_deviceID, _duplexHandler);
+  return Datastore(_duplexHandler);
 }
 
 void Project::loop(bool valve) {

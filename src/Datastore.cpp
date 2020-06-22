@@ -11,9 +11,8 @@
 // Including headers
 #include "Datastore.h"
 
-Datastore::Datastore(String deviceID, DuplexHandler duplexHandler) {
+Datastore::Datastore(DuplexHandler duplexHandler) {
   _duplex = duplexHandler;
-  _deviceID = deviceID;
 }
 
 Datastore::Datastore() {}

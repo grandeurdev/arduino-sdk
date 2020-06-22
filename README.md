@@ -239,14 +239,14 @@ void loop() {
 
 ### Fetching Device Variables and Updating Them
 
-On Grandeur Cloud, we generally store the device data in two containers: **summary** to contain uncontrollable device variables and **parms** to contain controllable device variables. You can get and set both types using the following functions:
+On Grandeur Cloud, we generally store the device data in two containers: **summary** to contain uncontrollable device variables and **parms** to contain controllable device variables. You can get and set both types using the following functions of the `Device` class:
 
-* `apolloDevice.getSummary()`
-* `apolloDevice.getParms()`
-* `apolloDevice.setSummary()`
-* `apolloDevice.setParms()`
+* `myDevice.getSummary()`
+* `myDevice.getParms()`
+* `myDevice.setSummary()`
+* `myDevice.setParms()`
 
-They are all Async functions because they communicate with the Cloud through internet. Communication through internet takes some time and we cannot wait, for example, for device's summary variables to arrive from the Cloud -- meanwhile blocking the rest of the device program. So, what we do is, we schedule a function to be called when the summary variables and resume with rest of the device program, forgetting that we ever called `getSummary()`. When the summary variables arrive, the SDK calls our scheduled function, giving us access to those variables inside that function.
+They are all **Async functions** because they communicate with the Cloud through internet. Communication through internet takes some time and we cannot wait, for example, for device's summary variables to arrive from the Cloud -- meanwhile blocking the rest of the device program. So, what we do is, we schedule a function to be called when the summary variables and resume with rest of the device program, forgetting that we ever called `getSummary()`. When the summary variables arrive, the SDK calls our scheduled function, giving us access to summary variables inside that function.
 
 For now, there's only one type of function that the SDK's Async methods accept: `Callback` which accepts a `JSONObject` as argument and returns nothing aka. `void`.
 
@@ -258,7 +258,8 @@ Here's how we would get and set device's summary and parms:
 #include <Apollo.h>
 #include <ESP8266WiFi.h>
 
-ApolloDevice apolloDevice;
+Project myProject;
+Device myDevice;
 
 void setupWiFi(void) {
   Serial.begin(9600);
@@ -301,30 +302,30 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   // You can initialize device configurations like this.
-  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourDeviceToken);
+  myProject = apollo.init(YourDeviceID, YourApiKey, YourDeviceToken);
+  myDevice = myProject.device();
 }
 
 void loop() {
-  int state = apolloDevice.getState();
 
-  if(state == CONNECTED) {
+  if(myProject.isConnected()) {
     // Getting device's summary
-    apolloDevice.getSummary(getSummaryCallback);
+    myDevice.getSummary(getSummaryCallback);
     // Getting device's parms
-    apolloDevice.getParms(getParmsCallback);
+    myDevice.getParms(getParmsCallback);
     // Updating device's summary
     JSONObject summary;
-    summary["voltage"] = 3.3;
-    summary["current"] = 2.1;
-    apolloDevice.setSummary(summary, setSummaryCallback);
+    summary["voltage"] = analogRead(A0);
+    summary["current"] = analogRead(A1);
+    myDevice.setSummary(summary, setSummaryCallback);
     // Updating device's parms
     JSONObject parms;
-    parms["state"] = true;
-    apolloDevice.setParms(parms, setParmsCallback);
+    parms["state"] = digitalRead(D0);
+    myDevice.setParms(parms, setParmsCallback);
   }
 
   // This runs the SDK when the device WiFi is connected.
-  apolloDevice.loop(WiFi.status() == WL_CONNECTED);
+  myProject.loop(WiFi.status() == WL_CONNECTED);
 }
 
 // **RESULT**

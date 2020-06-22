@@ -11,14 +11,12 @@
 #include <apollotypes.h>
 #include "Arduino.h"
 
-Config::Config(String apiKey, String deviceID, String token) {
+Config::Config(String apiKey, String token) {
   this->apiKey = apiKey;
-  this->deviceID = deviceID;
   this->token = token;
 }
 
 Config::Config() {
-  this->deviceID = "";
   this->apiKey = "";
   this->token = "";
 }
