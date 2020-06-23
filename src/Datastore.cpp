@@ -120,17 +120,11 @@ void Pipeline::execute(int pageNumber, Callback executed) {
   JSONObject jsonObject;
   char jsonString[PACKET_SIZE];
 
-  Serial.println("Executing...");
-
-  Serial.println(_collection);
-
   jsonObject["collection"] = _collection;
   jsonObject["pipeline"] = _query;
   jsonObject["pageNumber"] = pageNumber;
 
   JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
-
-  Serial.println(jsonString);
 
   _duplex.send("/datastore/pipeline", jsonString, executed);
 }

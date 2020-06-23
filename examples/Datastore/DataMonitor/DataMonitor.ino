@@ -53,6 +53,7 @@ void loop() {
     if(millis() - current >= 5000) {
       // This if-condition makes sure that the code inside this block runs only after
       // every five seconds.
+      // This fetches 1st page of all the documents stored in the datastore.
       myDatastore.collection("logs").search({}, {}, 0, searchCallback);
       // This updates the millis counter for
       // the five seconds scheduler.
@@ -91,7 +92,7 @@ void connectionCallback(bool status) {
       // To do that, we get device parms from the cloud and set the *state pin* to the
       // value of *state* in those parms.
       Serial.println("Device is connected to the cloud.");
-      Serial.println("Logging voltage to the Cloud...");
+      Serial.println("Fetching documents from the Cloud...");
       break;
     case DISCONNECTED:
       Serial.println("Device is disconnected from the cloud.");
@@ -103,7 +104,14 @@ void searchCallback(JSONObject searchResult) {
   // This function prints if the datastore search for the docs was successfully or not.
   if(searchResult["code"] == "DATASTORE-DOCUMENTS-FETCHED") {
     Serial.print("Documents fetched from the Cloud: ");
-    Serial.printtln(searchResult["documents"].length());
+    Serial.println(searchResult["documents"].length());
+    // Printing all the fetched documents.
+    for(int i = 0; i < searchResult["documents"].length(); i++) {
+      Serial.println(JSON.stringify(searchResult["documents"][i]).c_str());
+      // Just to keep the watchdog timer from tripping.
+      delay(1);
+    }
+    Serial.println("");
     return;
   }
   // If search is not successful.
