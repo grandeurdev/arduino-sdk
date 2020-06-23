@@ -33,8 +33,8 @@ class Device {
     void setParms(JSONObject parms, Callback callback);
 
     // Listeners for events from the Cloud
-    void onSummaryUpdated(Callback callback);
-    void onParmsUpdated(Callback callback);
+    void onSummary(Callback callback);
+    void onParms(Callback callback);
 };
 
 #endif

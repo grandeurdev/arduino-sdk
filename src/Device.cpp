@@ -51,7 +51,7 @@ void Device::setParms(JSONObject parms, Callback callback) {
   _duplex.send("/device/parms/set", jsonString, callback);
 }
 
-void Device::onSummaryUpdated(Callback updateHandler) {
+void Device::onSummary(Callback updateHandler) {
   JSONObject jsonObject;
   char jsonString[PACKET_SIZE];
   jsonObject["deviceID"] = _deviceID;
@@ -60,7 +60,7 @@ void Device::onSummaryUpdated(Callback updateHandler) {
   _duplex.subscribe(SUMMARYUPDATE, jsonString, updateHandler);
 }
 
-void Device::onParmsUpdated(Callback updateHandler) {
+void Device::onParms(Callback updateHandler) {
   JSONObject jsonObject;
   char jsonString[PACKET_SIZE];
   jsonObject["deviceID"] = _deviceID;

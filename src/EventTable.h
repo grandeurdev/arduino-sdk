@@ -29,7 +29,7 @@ typedef struct {
 typedef std::string EventTableKey;
 
 // Event table size
-const int T_S = 10;
+const int T_S = 16;
 
 // Routes Array
 extern const char* routes[T_S];

@@ -18,7 +18,6 @@
 
 // Device's connection configurations
 String apiKey = "YOUR-PROJECT-APIKEY";
-String deviceID = "YOUR-DEVICE-ID";
 String token = "YOUR-ACCESS-TOKEN";
 String ssid = "YOUR-WIFI-SSID";
 String passphrase = "YOUR-WIFI-PASSWORD";
@@ -33,15 +32,15 @@ unsigned long current = millis();
 
 // Function prototypes
 void setupWiFi(void);
-void connectionCallback(JSONObject updateObject);
-void insertCallback(JSONObject payload);
+void connectionCallback(bool status);
+void searchCallback(JSONObject payload);
 
 void setup() {
   Serial.begin(9600);
   // This sets up the device WiFi.
   setupWiFi();
   // This initializes the SDK's configurations and returns a reference to my project on the Cloud.
-  myProject = apollo.init(apiKey, deviceID, token);
+  myProject = apollo.init(apiKey, token);
   // Getting object of Datastore class.
   myDatastore = myProject.datastore();
   // This schedules the connectionCallback() function to be called when connection with the cloud
@@ -54,9 +53,7 @@ void loop() {
     if(millis() - current >= 5000) {
       // This if-condition makes sure that the code inside this block runs only after
       // every five seconds.
-      JSONObject logs;
-      logs[0]["voltage"] = analogRead(A0);
-      myDatastore.collection("logs").insert(logs, insertCallback);
+      myDatastore.collection("logs").search({}, {}, 0, searchCallback);
       // This updates the millis counter for
       // the five seconds scheduler.
       current = millis();
@@ -102,13 +99,14 @@ void connectionCallback(bool status) {
   }
 }
 
-void insertCallback(JSONObject insertionResult) {
-  // This function prints if the logs were successfully inserted into the datastore or not.
-  if(insertionResult["code"] == "DATASTORE-DOCUMENTS-INSERTED") {
-    Serial.println("Voltage is successfully logged to the Cloud.");
+void searchCallback(JSONObject searchResult) {
+  // This function prints if the datastore search for the docs was successfully or not.
+  if(searchResult["code"] == "DATASTORE-DOCUMENTS-FETCHED") {
+    Serial.print("Documents fetched from the Cloud: ");
+    Serial.printtln(searchResult["documents"].length());
     return;
   }
-  // If insertion is not successful.
-  Serial.println("Failed to log voltage");
+  // If search is not successful.
+  Serial.println("Failed to fetch documents.");
   return;
 }

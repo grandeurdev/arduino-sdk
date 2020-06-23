@@ -147,6 +147,9 @@ void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length) {
           }
         }
       }
+      else if(messageObject["header"]["task"] == "unpair") {
+        return ;
+      }
       // Fetching event callback function from the events Table
       Callback callback = DuplexHandler::_eventsTable.findAndRemove(
         (const char*) messageObject["header"]["task"],

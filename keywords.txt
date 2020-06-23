@@ -30,8 +30,8 @@ getSummary	KEYWORD2
 getParms	KEYWORD2
 setSummary	KEYWORD2
 setParms	KEYWORD2
-onSummaryUpdated	KEYWORD2
-onParmsUpdated	KEYWORD2
+onSummary	KEYWORD2
+onParms	KEYWORD2
 collection	KEYWORD2
 insert	KEYWORD2
 

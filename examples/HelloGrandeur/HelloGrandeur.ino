@@ -23,8 +23,8 @@ String ssid = "YOUR-WIFI-SSID";
 String passphrase = "YOUR-WIFI-PASSWORD";
 
 // Declaring and initializing other variables
-Project project;
-Device device;
+Project myProject;
+Device myDevice;
 
 // Function prototypes
 void setupWiFi(void);
@@ -34,14 +34,14 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   // This initializes the SDK's configurations and returns a new object of Project class.
-  project = apollo.init(apiKey, deviceID, token);
+  myProject = apollo.init(apiKey, token);
   // Getting object of Device class
-  device = project.device();
+  myDevice = myProject.device(deviceID);
   Serial.printf("\nDevice %s is saying hello to Grandeur Cloud using API Key %s and Access Token %s.\n", deviceID.c_str(), apiKey.c_str(), token.c_str());
 }
 
 void loop() {
-  if(project.isConnected()) {
+  if(myProject.isConnected()) {
     // When the device's connection with Grandeur Cloud is established, this if-block runs.
     Serial.println("\nDevice has made a successful connection with the Cloud!");
     Serial.println("Grandeur Cloud says hi. Grandeur Cloud will now respond to your commands...");
@@ -50,7 +50,7 @@ void loop() {
     Serial.println("Also checkout other examples: \n- DashListening-Device \n- DashListening-App \n- CrossListening.\n");
   }
   // This runs the SDK only when the WiFi is connected.
-  project.loop(WiFi.status() == WL_CONNECTED);
+  myProject.loop(WiFi.status() == WL_CONNECTED);
 }
 
 void setupWiFi(void) {
