@@ -11,27 +11,18 @@
 #include <apollotypes.h>
 #include "Arduino.h"
 
-Config::Config(
-  String deviceID,
-  String apiKey,
-  String token
-  ) {
-  this->deviceID = deviceID;
+Config::Config(String apiKey, String token) {
   this->apiKey = apiKey;
   this->token = token;
 }
 
-
-Config::~Config() {
-    
+Config::Config() {
+  this->apiKey = "";
+  this->token = "";
 }
 
 SendData::SendData(const char* task, const char* payload, Callback callback) {
   strcpy(this->task, task);
   strcpy(this->payload, payload);
   this->callback = callback;
-}
-
-
-SendData::~SendData() {
 }

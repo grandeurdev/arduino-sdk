@@ -4,8 +4,11 @@
 # Class
 #######################################
 
-ApolloDevice	KEYWORD3
 Apollo	KEYWORD3
+apollo	KEYWORD3
+Project	KEYWORD3
+Datastore	KEYWORD3
+Device	KEYWORD3
 
 #######################################
 # Datatypes 
@@ -18,19 +21,30 @@ JSONObject	KEYWORD1
 #######################################
 
 init	KEYWORD2
-getState	KEYWORD2
-getConfig	KEYWORD2
-getDeviceID	KEYWORD2
-getApiKey	KEYWORD2
-getToken	KEYWORD2
+onConnection	KEYWORD2
+isConnected	KEYWORD2
+parse	KEYWORD2
+stringify	KEYWORD2
+device 	KEYWORD2
+datastore	KEYWORD2
+loop	KEYWORD2
 getSummary	KEYWORD2
 getParms	KEYWORD2
 setSummary	KEYWORD2
 setParms	KEYWORD2
-loop	KEYWORD2
-onConnection	KEYWORD2
-onSummaryUpdated	KEYWORD2
-onParmsUpdated	KEYWORD2
+onSummary	KEYWORD2
+onParms	KEYWORD2
+collection	KEYWORD2
+insert	KEYWORD2
+remove	KEYWORD2
+update	KEYWORD2
+search	KEYWORD2
+pipeline	KEYWORD2
+match	KEYWORD2
+project	KEYWORD2
+group	KEYWORD2
+sort	KEYWORD2
+execute	KEYWORD2
 
 #######################################
 # Constants

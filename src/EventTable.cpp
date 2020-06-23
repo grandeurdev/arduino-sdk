@@ -11,9 +11,10 @@
 #include <EventTable.h>
 #include <iostream>
 
-const char* events[T_S] =
-  {"ping", "getDeviceSummary", "getDeviceParms", "setDeviceSummary", "setDeviceParms", "subscribeTopic",
-  "unsubscribeTopic", "unsubscribeAllTopics"};
+const char* routes[T_S] =
+  {"ping", "/topic/subscribe", "/topic/unsubscribe", "/topics/unsubscribe",
+  "/device/summary/get", "/device/parms/get", "/device/summary/set", "/device/parms/set",
+  "/datastore/insert", "/datastore/delete", "/datastore/update", "/datastore/pipeline"};
 
 EventTableEntry::EventTableEntry(EventTableKey k, EventTableData v) {
   this->k= k;
@@ -30,11 +31,11 @@ EventTable::EventTable() {
 
 int EventTable::hashFunc(EventTableKey k) {
   for(int i = 0; i < T_S; i++) {
-    if(events[i] == k) {
+    if(routes[i] == k) {
       return i;
     }
   }
-  return T_S;
+  return (T_S - 1);
 }
 
 int EventTable::insert(EventTableKey k, EventID id, EventData data) {

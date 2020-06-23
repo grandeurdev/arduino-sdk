@@ -4,78 +4,46 @@
  * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
- * This file is part of the Arduino SDK for ESP8266 module.
+ * This file is part of the Arduino SDK for Grandeur Cloud.
  *
  */
 
 // Including headers
-#include "DuplexClient.h"
-#include "Duplex.h"
-#include "EventTable.h"
-#include "apollotypes.h"
-#include "apollomacros.h"
+#include "Device.h"
+#include "Datastore.h"
+#include "DuplexHandler.h"
 
 #ifndef APOLLO_H_
 #define APOLLO_H_
 
 class Apollo;
 
-class ApolloDevice {
-  // Class for handling device related functions
+class Project {
+  // Class for handling a complete project
   private:
-    // Container for apollo connection callback
-    static Callback _connectionCallback;
-
-    // Events Table
-    static EventTable _eventsTable;
-
-    // Subscription Array for update handler functions
-    static Callback _subscriptions[4];
-    
-    // Apollo state variable
-    static short _state;
-    
-    void ping();
-    
-    void _send(const char* task, const char* payload, Callback callback);
-    void _subscribe(short event, const char* payload, Callback updateHandler);
-      
+    DuplexHandler _duplexHandler;
   public:
-    // Device constructor
-    ApolloDevice();
-    // Getter for Apollo state
-    short getState(void);
+    // Project constructor
+    Project();
+    // Connection related methods
+    void onConnection(void connectionCallback(bool));
+    bool isConnected(void);
+    // Instantiator methods - return the objects of their classes
+    Device device(String deviceID);
+    Datastore datastore(void);
 
-    // Getter methods for Apollo configurations
-    Config getConfig();
-    String getDeviceID(void);
-    String getApiKey(void);
-    String getToken(void);
-
-    // Async methods
-    void getSummary(Callback callback);
-    void getParms(Callback callback);
-    void setSummary(JSONObject summary, Callback callback);
-    void setParms(JSONObject parms, Callback callback);
-
-    // Method to synchronize SDK with the Cloud
+    // This method runs the SDK.
     void loop(bool valve);
 
-    // When device makes/breaks connection with the Cloud
-    void onConnection(Callback connectionHandler);
-    // Listeners for events from the Cloud
-    void onSummaryUpdated(Callback callback);
-    void onParmsUpdated(Callback callback);
-
-    
-    friend void apolloEventHandler(WStype_t eventType, uint8_t* packet, size_t length);
     friend class Apollo;
 };
 
 class Apollo {
   private:
+    Config _config;
   public:
-    ApolloDevice init(String deviceID, String apiKey, String token);
+    Apollo();
+    Project init(String apiKey, String token);
 };
 
 extern Apollo apollo;

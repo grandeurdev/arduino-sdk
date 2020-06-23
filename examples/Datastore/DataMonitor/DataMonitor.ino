@@ -1,6 +1,6 @@
 /**
- * @file DashListening-Device.ino
- * @date 24.03.2020
+ * @file Insertion.ino
+ * @date 21.06.2020
  * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
@@ -9,10 +9,8 @@
  * Apollo.h is used for device's communication to Grandeur Cloud.
  * ESP8266WiFi.h is used for handling device's WiFi.
  * 
- * Dash listening is for one-way listening.
- * This example illustrates the use case of a device listening for updates from the app.
- * It would be useful in building an INTERNET SWITCH to help you control your device without
- * caring about how your device responds to your commands.
+ * This example illustrates the insertion of data into the datastore.
+ * It would be useful in logging data on the cloud to visualize it in form of tables or graphs.
 */
 
 #include <Apollo.h>
@@ -20,41 +18,49 @@
 
 // Device's connection configurations
 String apiKey = "YOUR-PROJECT-APIKEY";
-String deviceID = "YOUR-DEVICE-ID";
 String token = "YOUR-ACCESS-TOKEN";
 String ssid = "YOUR-WIFI-SSID";
 String passphrase = "YOUR-WIFI-PASSWORD";
 
 // Declaring and initializing other variables
 Project myProject;
-Device myDevice;
+Datastore myDatastore;
 WiFiEventHandler onWiFiConnectedHandler;
 WiFiEventHandler onWiFiDisconnectedHandler;
 int statePin = D0;
+unsigned long current = millis();
 
 // Function prototypes
 void setupWiFi(void);
-void connectionCallback(bool state);
-void initializeState(JSONObject getResult);
-void parmsUpdatedCallback(JSONObject updatedParms);
+void connectionCallback(bool status);
+void searchCallback(JSONObject payload);
 
 void setup() {
   Serial.begin(9600);
   // This sets up the device WiFi.
   setupWiFi();
-  // This initializes the SDK's configurations and returns a new object of ApolloDevice class.
+  // This initializes the SDK's configurations and returns a reference to my project on the Cloud.
   myProject = apollo.init(apiKey, token);
-  // Getting object of Device class.
-  myDevice = myProject.device(deviceID);
+  // Getting object of Datastore class.
+  myDatastore = myProject.datastore();
   // This schedules the connectionCallback() function to be called when connection with the cloud
   // is made/broken.
   myProject.onConnection(connectionCallback);
-  // This schedules parmsUpdatedCallback() function to be called when variable stored
-  // in device's parms are changed on the Cloud.
-  myDevice.onParms(parmsUpdatedCallback);
 }
 
 void loop() {
+  if(myProject.isConnected()) {
+    if(millis() - current >= 5000) {
+      // This if-condition makes sure that the code inside this block runs only after
+      // every five seconds.
+      // This fetches 1st page of all the documents stored in the datastore.
+      myDatastore.collection("logs").search({}, {}, 0, searchCallback);
+      // This updates the millis counter for
+      // the five seconds scheduler.
+      current = millis();
+    }
+  }
+  
   // The SDK only runs when the WiFi is connected.
   myProject.loop(WiFi.status() == WL_CONNECTED);
 }
@@ -86,8 +92,7 @@ void connectionCallback(bool status) {
       // To do that, we get device parms from the cloud and set the *state pin* to the
       // value of *state* in those parms.
       Serial.println("Device is connected to the cloud.");
-      myDevice.getParms(initializeState);
-      Serial.println("Listening for parms update from the cloud...");
+      Serial.println("Fetching documents from the Cloud...");
       break;
     case DISCONNECTED:
       Serial.println("Device is disconnected from the cloud.");
@@ -95,22 +100,21 @@ void connectionCallback(bool status) {
   }
 }
 
-void initializeState(JSONObject getResult) {
-  // This function sets the *state pin* to the *state value* that we received in parms
-  // from the cloud.
-  if(getResult["code"] == "DEVICE-PARMS-FETCHED") {
-    int state = getResult["deviceParms"]["state"];
-    digitalWrite(statePin, state);
+void searchCallback(JSONObject searchResult) {
+  // This function prints if the datastore search for the docs was successfully or not.
+  if(searchResult["code"] == "DATASTORE-DOCUMENTS-FETCHED") {
+    Serial.print("Documents fetched from the Cloud: ");
+    Serial.println(searchResult["documents"].length());
+    // Printing all the fetched documents.
+    for(int i = 0; i < searchResult["documents"].length(); i++) {
+      Serial.println(JSON.stringify(searchResult["documents"][i]).c_str());
+      // Just to keep the watchdog timer from tripping.
+      delay(1);
+    }
+    Serial.println("");
     return;
   }
-  // If the parms could not be fetched.
-  Serial.println("Failed to Fetch Parms");
+  // If search is not successful.
+  Serial.println("Failed to fetch documents.");
   return;
-}
-
-void parmsUpdatedCallback(JSONObject updatedParms) {
-  // This function gets the *updated state* from the device parms and set the *state pin*
-  // with *state value*.
-  Serial.printf("Updated State is: %d\n", (bool) updatedParms["state"]);
-  digitalWrite(statePin, (bool) updatedParms["state"]); 
 }

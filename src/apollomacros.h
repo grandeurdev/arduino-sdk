@@ -38,9 +38,9 @@
 // Ping interval in milliseconds
 #define PING_INTERVAL 25000
 
-// Macros for connection states
-#define DISCONNECTED 0
-#define CONNECTED 1
+// Macros for connection status
+#define DISCONNECTED false
+#define CONNECTED true
 
 // Indexes for update handler callbacks in subscriptions array
 #define NUMBER_OF_TOPICS 2
