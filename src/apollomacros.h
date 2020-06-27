@@ -28,7 +28,7 @@
 
 // Strings sizes
 #define FINGERPRINT_SIZE 256
-#define PACKET_SIZE 512
+#define PACKET_SIZE 1024
 #define PING_PACKET_SIZE 64
 #define TASK_SIZE 32
 
