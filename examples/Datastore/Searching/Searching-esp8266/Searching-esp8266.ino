@@ -1,5 +1,5 @@
 /**
- * @file Insertion.ino
+ * @file Searching-esp8266.ino
  * @date 21.06.2020
  * @author Grandeur Technologies
  *
@@ -104,9 +104,9 @@ void searchCallback(JSONObject searchResult) {
   // This function prints if the datastore search for the docs was successfully or not.
   if(searchResult["code"] == "DATASTORE-DOCUMENTS-FETCHED") {
     Serial.print("Documents fetched from the Cloud: ");
-    Serial.println(searchResult["documents"].length());
+    Serial.println(searchResult["documents"].size());
     // Printing all the fetched documents.
-    for(int i = 0; i < searchResult["documents"].length(); i++) {
+    for(int i = 0; i < searchResult["documents"].size(); i++) {
       Serial.println(JSON.stringify(searchResult["documents"][i]).c_str());
       // Just to keep the watchdog timer from tripping.
       delay(1);

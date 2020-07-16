@@ -41,9 +41,9 @@ class Collection {
     Collection(String name, DuplexHandler duplexHandler);
     // Methods
     void insert(JSONObject documents, Callback inserted);
-    void remove(JSONObject filter, Callback inserted);
+    void remove(JSONObject filter, Callback removed);
     void update(JSONObject filter, JSONObject update, Callback updated);
-    void search(JSONObject filter, JSONObject projection, int pageNumber, Callback inserted);
+    void search(JSONObject filter, JSONObject projection, int pageNumber, Callback searched);
     Pipeline pipeline(void);
 };
 

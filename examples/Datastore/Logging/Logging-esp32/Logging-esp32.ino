@@ -1,6 +1,6 @@
 /**
- * @file DashListening-Device-esp32.ino
- * @date 24.03.2020
+ * @file Logging-esp32.ino
+ * @date 21.06.2020
  * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
@@ -9,10 +9,8 @@
  * Apollo.h is used for device's communication to Grandeur Cloud.
  * WiFi.h is used for handling device's WiFi.
  * 
- * Dash listening is for one-way listening.
- * This example illustrates the use case of a device listening for updates from the app.
- * It would be useful in building an INTERNET SWITCH to help you control your device without
- * caring about how your device responds to your commands.
+ * This example illustrates the insertion of data into the datastore.
+ * It would be useful in logging data on the cloud to visualize it in form of tables or graphs.
 */
 
 #include <Apollo.h>
@@ -20,40 +18,49 @@
 
 // Device's connection configurations
 String apiKey = "YOUR-PROJECT-APIKEY";
-String deviceID = "YOUR-DEVICE-ID";
 String token = "YOUR-ACCESS-TOKEN";
 const char* ssid = "YOUR-WIFI-SSID";
 const char* passphrase = "YOUR-WIFI-PASSWORD";
 
 // Declaring and initializing other variables
 Project myProject;
-Device myDevice;
+Datastore myDatastore;
 int statePin = 4;
+unsigned long current = millis();
 
 // Function prototypes
 void WiFiEventCallback(WiFiEvent_t event);
 void setupWiFi(void);
-void connectionCallback(bool state);
-void initializeState(JSONObject getResult);
-void parmsUpdatedCallback(JSONObject updatedParms);
+void connectionCallback(bool status);
+void insertCallback(JSONObject payload);
 
 void setup() {
   Serial.begin(9600);
   // This sets up the device WiFi.
   setupWiFi();
-  // This initializes the SDK's configurations and returns a new object of ApolloDevice class.
+  // This initializes the SDK's configurations and returns a reference to my project on the Cloud.
   myProject = apollo.init(apiKey, token);
-  // Getting object of Device class.
-  myDevice = myProject.device(deviceID);
+  // Getting object of Datastore class.
+  myDatastore = myProject.datastore();
   // This schedules the connectionCallback() function to be called when connection with the cloud
   // is made/broken.
   myProject.onConnection(connectionCallback);
-  // This schedules parmsUpdatedCallback() function to be called when variable stored
-  // in device's parms are changed on the Cloud.
-  myDevice.onParms(parmsUpdatedCallback);
 }
 
 void loop() {
+  if(myProject.isConnected()) {
+    if(millis() - current >= 5000) {
+      // This if-condition makes sure that the code inside this block runs only after
+      // every five seconds.
+      JSONObject logs;
+      logs[0]["voltage"] = analogRead(A0);
+      myDatastore.collection("logs").insert(logs, insertCallback);
+      // This updates the millis counter for
+      // the five seconds scheduler.
+      current = millis();
+    }
+  }
+  
   // The SDK only runs when the WiFi is connected.
   myProject.loop(WiFi.status() == WL_CONNECTED);
 }
@@ -78,7 +85,7 @@ void setupWiFi(void) {
   WiFi.disconnect();
   // Setting it to Station mode which basically scans for nearby WiFi routers
   WiFi.mode(WIFI_STA);
-  // Setting WiFi event handlers
+  // Setting WiFi event handler
   WiFi.onEvent(WiFiEventCallback);
   // Begin connecting to WiFi
   WiFi.begin(ssid, passphrase);
@@ -92,8 +99,7 @@ void connectionCallback(bool status) {
       // To do that, we get device parms from the cloud and set the *state pin* to the
       // value of *state* in those parms.
       Serial.println("Device is connected to the cloud.");
-      myDevice.getParms(initializeState);
-      Serial.println("Listening for parms update from the cloud...");
+      Serial.println("Logging voltage to the Cloud...");
       break;
     case DISCONNECTED:
       Serial.println("Device is disconnected from the cloud.");
@@ -101,22 +107,13 @@ void connectionCallback(bool status) {
   }
 }
 
-void initializeState(JSONObject getResult) {
-  // This function sets the *state pin* to the *state value* that we received in parms
-  // from the cloud.
-  if(getResult["code"] == "DEVICE-PARMS-FETCHED") {
-    int state = getResult["deviceParms"]["state"];
-    digitalWrite(statePin, state);
+void insertCallback(JSONObject insertResult) {
+  // This function prints if the logs were successfully inserted into the datastore or not.
+  if(insertResult["code"] == "DATASTORE-DOCUMENTS-INSERTED") {
+    Serial.println("Voltage is successfully logged to the Cloud.");
     return;
   }
-  // If the parms could not be fetched.
-  Serial.println("Failed to Fetch Parms");
+  // If insertion is not successful.
+  Serial.println("Failed to log voltage");
   return;
-}
-
-void parmsUpdatedCallback(JSONObject updatedParms) {
-  // This function gets the *updated state* from the device parms and set the *state pin*
-  // with *state value*.
-  Serial.printf("Updated State is: %d\n", (bool) updatedParms["state"]);
-  digitalWrite(statePin, (bool) updatedParms["state"]); 
 }
