@@ -1,22 +1,18 @@
 /**
- * @file CrossListening.ino
+ * @file DashListening-App-esp8266.ino
  * @date 24.03.2020
  * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
  * This file is part of the Arduino SDK for Grandeur Cloud.
  *
- * Apollo.h is used for device's communication with Grandeur Cloud.
+ * Apollo.h is used for device's communication to Grandeur Cloud.
  * ESP8266WiFi.h is used for handling device's WiFi.
  * 
- * Cross listening means when the device listens for updates from the app and the app
- * listens for updates from the device.
- * This example illustrates pretty much every basic thing you'd need in order to monitor /
- * control your device through Grandeur Cloud. Here are some of those:
- * 1. Listen to the cloud for updates in parms variables.
- * 2. Publish updates in summary and parms variables to the cloud every 5 seconds.
- * 3. Controlling SDK's internal valve. This helps if you want to run the SDK only when a
- * certain condition is true; in our case, if the WiFi is connected.
+ * Dash listening is for one-way listening.
+ * This example illustrates the use case of an app listening for updates from the device.
+ * It would be useful in building a DEVICE MONITOR which would show how your devices are
+ * behaving in terms of their energy units consumed for example.
 */
 
 #include <Apollo.h>
@@ -40,12 +36,10 @@ int voltagePin = A0;
 
 // Function prototypes
 void setupWiFi(void);
-void connectionCallback(JSONObject updateObject);
+void connectionCallback(bool state);
 void initializeState(JSONObject getResult);
-void parmsUpdatedCallback(JSONObject updatedParms);
 void summarySetCallback(JSONObject setResult);
 void parmsSetCallback(JSONObject setResult);
-
 
 void setup() {
   Serial.begin(9600);
@@ -58,9 +52,6 @@ void setup() {
   // This schedules the connectionCallback() function to be called when connection with the cloud
   // is made/broken.
   myProject.onConnection(connectionCallback);
-  // This schedules parmsUpdatedCallback() function to be called when variable stored
-  // in device's parms are changed on the Cloud.
-  myDevice.onParms(parmsUpdatedCallback);
 }
 
 void loop() {
@@ -119,11 +110,10 @@ void connectionCallback(bool state) {
   switch(state) {
     case CONNECTED:
       // On successful connection with the cloud, we initialize the device's *state*.
-      // To do that, we get device parms from the cloud and set the *state pin* to the
-      // value of *state* in those parms.
+      // To do that, we get device parms from the cloud and set the *state pin* to the value of *state* in those parms.
       Serial.println("Device is connected to the cloud.");
       myDevice.getParms(initializeState);
-      Serial.println("Listening for parms update from the cloud...");
+
       // Initializing the millis counter for the five
       // seconds timer.
       current = millis();
@@ -145,13 +135,6 @@ void initializeState(JSONObject getResult) {
   // If the parms could not be fetched.
   Serial.println("Failed to Fetch Parms");
   return;
-}
-
-void parmsUpdatedCallback(JSONObject updatedParms) {
-  // This function gets the *updated state* from the device parms and set the *state pin*
-  // with *state value*.
-  Serial.printf("Updated State is: %d\n", (bool) updatedParms["state"]);
-  digitalWrite(statePin, (bool) updatedParms["state"]); 
 }
 
 void summarySetCallback(JSONObject setResult) {

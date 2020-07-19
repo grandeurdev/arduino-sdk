@@ -82,8 +82,8 @@ To get a deeper understanding of the core concepts Grandeur Cloud is built upon,
     * [getParms](#getparms)
     * [setSummary](#setsummary)
     * [setParms](#setparms)
-    * [onSummaryUpdated](#onsummaryupdated)
-    * [onParmsUpdated](#oparmsupdated)
+    * [onSummary](#onsummary)
+    * [onParms](#onparms)
   * [Datastore](#datastore)
     * [insert](#insert)
 * [Enhancements Under Consideration](#enhancements-under-consideration)
@@ -118,7 +118,7 @@ Project myProject;
 
 void setup() {
   // You can initialize device configurations like this.
-  myProject = apollo.init(YourApiKey, YourDeviceID, YourDeviceToken);
+  myProject = apollo.init(YourDeviceID, YourDeviceToken);
 }
 
 void loop() {}
@@ -161,7 +161,7 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   // You can initialize device configurations like this.
-  myProject = apollo.init(YourDeviceID, YourApiKey, YourDeviceToken);
+  myProject = apollo.init(YourApiKey, YourDeviceToken);
 }
 
 void loop() {
@@ -221,7 +221,7 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   // You can initialize device configurations like this.
-  myProject = apollo.init(YourDeviceID, YourApiKey, YourDeviceToken);
+  myProject = apollo.init(YourApiKey, YourDeviceToken);
   // Setting up listener for device's connection event
   myProject.onConnection(connectionCallback);
 }
@@ -302,8 +302,8 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   // You can initialize device configurations like this.
-  myProject = apollo.init(YourDeviceID, YourApiKey, YourDeviceToken);
-  myDevice = myProject.device();
+  myProject = apollo.init(YourApiKey, YourDeviceToken);
+  myDevice = myProject.device(YourDeviceID);
 }
 
 void loop() {
@@ -339,13 +339,14 @@ void loop() {
 
 ### Handling Updates From the Cloud
 
-Device variables are distributed on the cloud in form of **summary** and **parms**. Passing a `Callback` to `onSummaryUpdated()` and `onParmsUpdated()` you can set **update handlers** for updates to those variables. Let's do that now:
+Device variables are distributed on the cloud in form of **summary** and **parms**. Passing a `Callback` to `onSummary()` and `onParms()` you can set **update handlers** for updates to those variables. Let's do that now:
 
 ```cpp
 #include <Apollo.h>
 #include <ESP8266WiFi.h>
 
-ApolloDevice apolloDevice;
+Project myProject;
+Device myDevice;
 
 void setupWiFi(void) {
   Serial.begin(9600);
@@ -372,15 +373,17 @@ void parmsUpdatedCallback(JSONObject result) {
 void setup() {
   Serial.begin(9600);
   setupWiFi();
-  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourDeviceToken);
 
-  apolloDevice.onSummaryUpdated(summaryUpdatedCallback);
-  apolloDevice.onParmsUpdated(parmsUpdatedCallback);
+  myProject = apollo.init(YourApiKey, YourDeviceToken);
+  myDevice = myProject.device(YourDeviceID);
+
+  myDevice.onSummary(summaryUpdatedCallback);
+  myDevice.onParms(parmsUpdatedCallback);
 }
 
 void loop() {
   // This runs the SDK when the device WiFi is connected.
-  apolloDevice.loop(WiFi.status() == WL_CONNECTED);
+  myProject.loop(WiFi.status() == WL_CONNECTED);
 }
 
 // **RESULT**
@@ -413,10 +416,11 @@ After [cloning the Arduino SDK][installation] and [installing it][Installing an 
 ```cpp
 #include <Apollo.h>
 
-ApolloDevice apolloDevice;
+Project myProject;
+Device myDevice;
 
 void setup() {
-  apolloDevice = apollo.init(YourDeviceID, YourAPIKey, YourToken);
+  myProject = apollo.init(YourAPIKey, YourToken);
 }
 ```
 
@@ -430,7 +434,8 @@ Here we illustrate this with the example of an ESP8266.
 #include <Apollo.h>
 #include <ESP8266WiFi.h>
 
-ApolloDevice apolloDevice;
+Project myProject;
+Device myDevice;
 
 void setupWiFi(void) {
   Serial.begin(9600);
@@ -448,12 +453,12 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   // You can initialize device configurations like this.
-  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourDeviceToken);
+  myProject = apollo.init(YourApiKey, YourDeviceToken);
 }
 
 void loop() {
   // This runs the SDK when the device WiFi is connected.
-  apolloDevice.loop(WiFi.status() == WL_CONNECTED);
+  myProject.loop(WiFi.status() == WL_CONNECTED);
 }
 ```
 
@@ -465,7 +470,8 @@ Before doing anything, you need to initialize your device with data from the clo
 #include <Apollo.h>
 #include <ESP8266WiFi.h>
 
-ApolloDevice apolloDevice;
+Project myProject;
+Device myDevice;
 
 void setupWiFi(void) {
   Serial.begin(9600);
@@ -491,15 +497,17 @@ void setup() {
   Serial.begin(9600);
   // This sets up the device WiFi.
   setupWiFi();
-  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourDeviceToken);
+  
+  myProject = apollo.init(YourApiKey, YourDeviceToken);
+  myDevice = myProject.device(YourDeviceID);
   // This gets the device's parms variables from the Cloud and passes them to
   // getParmsCallback() function.
-  apolloDevice.getParms(getParmsCallback);
+  myDevice.getParms(getParmsCallback);
 }
 
 void loop() {
   // This runs the SDK when the device WiFi is connected.
-  apolloDevice.loop(WiFi.status() == WL_CONNECTED);
+  myProject.loop(WiFi.status() == WL_CONNECTED);
 }
 ```
 
@@ -512,7 +520,8 @@ Here's how you can set update handlers in your sketch for the device's state sto
 #include <Apollo.h>
 #include <ESP8266WiFi.h>
 
-ApolloDevice apolloDevice;
+Project myProject;
+Device myDevice;
 
 void setupWiFi(void) {
   Serial.begin(9600);
@@ -545,18 +554,20 @@ void setup() {
   Serial.begin(9600);
   // This sets up the device WiFi.
   setupWiFi();
-  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourDeviceToken);
+  
+  myProject = apollo.init(YourApiKey, YourDeviceToken);
+  myDevice = myProject.device(YourDeviceID);
   // This gets the device's parms variables from the Cloud and passes them to
   // getParmsCallback() function.
-  apolloDevice.getParms(getParmsCallback);
+  myDevice.getParms(getParmsCallback);
   // This sets up the update handler for parms. When an update to parms occur on the Cloud,
   // parmsUpdatedCallback() function is called.
-  apolloDevice.onParmsUpdated(parmsUpdatedCallback);
+  myDevice.onParmsUpdated(parmsUpdatedCallback);
 }
 
 void loop() {
   // This runs the SDK when the device WiFi is connected.
-  apolloDevice.loop(WiFi.status() == WL_CONNECTED);
+  myProject.loop(WiFi.status() == WL_CONNECTED);
 }
 ```
 
@@ -568,7 +579,8 @@ To see the live state of the device on the web app, you need to keep sending the
 #include <Apollo.h>
 #include <ESP8266WiFi.h>
 
-ApolloDevice apolloDevice;
+Project myProject;
+Device myDevice;
 
 void setupWiFi(void) {
   Serial.begin(9600);
@@ -607,13 +619,15 @@ void setup() {
   Serial.begin(9600);
   // This sets up the device WiFi.
   setupWiFi();
-  apolloDevice = apollo.init(YourDeviceID, YourApiKey, YourDeviceToken);
+  
+  myProject = apollo.init(YourApiKey, YourDeviceToken);
+  myDevice = myProject.device(YourDeviceID);
   // This gets the device's parms variables from the Cloud and passes them to
   // getParmsCallback() function.
-  apolloDevice.getParms(getParmsCallback);
+  myDevice.getParms(getParmsCallback);
   // This sets up the update handler for parms. When an update to parms occur on the Cloud,
   // parmsUpdatedCallback() function is called.
-  apolloDevice.onParmsUpdated(parmsUpdatedCallback);
+  myDevice.onParmsUpdated(parmsUpdatedCallback);
 }
 
 void loop() {
@@ -622,10 +636,10 @@ void loop() {
   parms["state"] = digitalRead(D0);
   // This sends the updated parms to the Cloud and calls setParmsCallback() when
   // the response from the cloud arrives.
-  apolloDevice.setParms(parms, setParmsCallback);
+  myDevice.setParms(parms, setParmsCallback);
 
   // This runs the SDK when the device WiFi is connected.
-  apolloDevice.loop(WiFi.status() == WL_CONNECTED);
+  myProject.loop(WiFi.status() == WL_CONNECTED);
 }
 ```
 
@@ -645,12 +659,12 @@ The Arduino SDK is aimed at providing extremely to-the-point functions, being al
 
 * **Arduino SDK** is event-driven. You can set **event handler** for device's connection or disconnection with Grandeur Cloud by using [`onConnection()`][onConnection]. So, when the device connects or disconnects from the cloud, the function passed to `onConnection()` is called.
 
-* You can also set **update handlers** for device's summary and parms using [`onSummaryUpdated()`][onSummaryUpdated] and [`onParmsUpdated()`][onParmsUpdated]. So, when the any of the device variables stored in summary or parms is updated, the function passed to `onSummaryUpdated()` or `onParmsUpdated()` is called.
+* You can also set **update handlers** for device's summary and parms using [`onSummary()`][onSummary] and [`onParms()`][onParms]. So, when the any of the device variables stored in summary or parms is updated, the function passed to `onSummary()` or `onParmsUpdated()` is called.
 
 * **Async functions** are what make the event-drive of the SDK possible. They do all the same things as regular functions plus one extra. They receive a function parameter which they schedule for later. For example, in the `ApolloDevice` class, all of the following are Async functions:
   
   * `onConnection(Callback callback)`
-  * `onSummaryUpdated(Callback callback)`
+  * `onSummary(Callback callback)`
   * `onParmsUpdated(Callback callback)`
   * `getSummary(Callback callback)`
   * `getParms(Callback callback)`
@@ -805,21 +819,22 @@ So to allow a web app to interact with your project using the Web SDK, you first
 
 # Documentation
 
-`Project` is the main class and all functionalities originate from it. You get the object of this class when you initialize SDK's configurations using `apollo.init()`. `apollo` is the global object that gets available right away when you include `<Apollo.h>` in your sketch. It has only one purpose and therefore gives you only one function: `apollo.init()`.
+`Project` is the main class and all functionalities originate from it. You get the object of this class when you initialize SDK's configurations using `apollo.init()`. You can safely imagine the object of `Project` class as a reference to your project on Grandeur Cloud.
 
-> ***Note 2***: You cannot connect with Grandeur Cloud or even with internet without first connecting with the WiFi. Therefore, the examples below are just for reference and you are required to handle your device's WiFi in order for them to work. You can see [these ESP8266 examples][Examples] to get a deeper understanding. Plus they handle WiFi too. 😉
+`apollo` is the global object that gets available right away when you include `<Apollo.h>` in your sketch. It has just one purpose and therefore gives you only one function: `apollo.init()`.
+
+> ***Note 2***: You cannot connect with Grandeur Cloud or even with internet without first connecting with the WiFi. Therefore, the examples below are just for reference and you are required to handle your device's WiFi in order for them to work. You can see [these examples][Examples] to get a deeper understanding. They show WiFi handling too. 😉
 
 ### init
 
 > apollo.init (deviceID: _String_, apiKey: _String_, token: _String_) : returns _Project_
 
-This method initializes SDK's connection configurations: `deviceID`, `apiKey` and `authToken`, and returns an object of the `Project` class. `Project` class is the main class that exposes all other functions of the SDK.
+This method initializes SDK's connection configurations: `apiKey` and `authToken`, and returns an object of the `Project` class. `Project` class is the main class that exposes all functions of the SDK.
 
 #### Parameters
 
 | Name        | Type     | Description                                                     |
 |-------------|----------|-----------------------------------------------------------------|
-| deviceID    | _String_ | ID of your device                                               |
 | apiKey      | _String_ | API key of your project that your device belongs to             |
 | token       | _String_ | Access token generated when the device is paired with the user  |
 
@@ -829,7 +844,7 @@ This method initializes SDK's connection configurations: `deviceID`, `apiKey` an
 // Container for the object of ApolloDevice class.
 Project myProject;
 void setup() {
-  myProject = apollo.init(YourDeviceID, YourApiKey, YourToken);
+  myProject = apollo.init(YourApiKey, YourToken);
 }
 
 // **RESULT**
@@ -839,9 +854,9 @@ void setup() {
 
 ## Project
 
-Project is the main class of the SDK. When our SDK connects with the Cloud, this class represents our cloud project but at device scope. This means that device has access to its own data only. It cannot access all the project's data with any bounds.
+Project is the main class of the SDK. When SDK connects with the Cloud, this class represents your cloud project. But Arduino SDK's functionality is limited to devices and datastore APIs which are wrapped by their respective classes.
 
-This class exposes the methods:
+This class exposes the following methods:
 
 ### isConnected
 
@@ -854,7 +869,7 @@ This method returns true if the SDK is connected with Grandeur Cloud.
 ```cpp
 Project myProject;
 void setup() {
-  myProject = apollo.init(YourDeviceID, YourApiKey, YourToken);
+  myProject = apollo.init(YourApiKey, YourToken);
 }
 
 void loop() {
@@ -878,13 +893,13 @@ void loop() {
 
 > onConnection (callback : _Callback_) : returns _void_
 
-This method schedules a function to be called when the SDK's connection with Grandeur Cloud is made or broken. The function passed to it as argument is called an **event handler** for it handles events like connection / disconnection with the cloud. Example below illustrates how you can handle these events.
+This method schedules a function to be called when the SDK's connection with Grandeur Cloud is made or broken. The function passed to it as argument is called an **event handler** for it handles events like connection/disconnection with Cloud. Example below illustrates its usage.
 
 #### Parameters
 
-| Name        | Type             | Description                                                      |
-|-------------|------------------|------------------------------------------------------------------|
-| callback    | _void (*)(bool)_ | An event handler function for device's connection with the Cloud |
+| Name        | Type             | Description                                                                    |
+|-------------|------------------|--------------------------------------------------------------------------------|
+| callback    | _void (*)(bool)_ | An event handler function for device's connection/disconnection with the Cloud |
 
 
 #### Example
@@ -907,7 +922,7 @@ void connectionCallback(bool status) {
 }
 
 void setup() {
-  myProject = apollo.init(YourDeviceID, YourApiKey, YourToken);
+  myProject = apollo.init(YourApiKey, YourToken);
 
   myProject.onConnection(connectionCallback);
 }
@@ -925,17 +940,17 @@ void loop() {
 
 > loop (valve: _bool_) : returns _void_
 
-This method forms the legs of the SDK. Without it, the SDK can't run. Therefore, it must be called in Arduino's `loop()` and without being suspected to any kind of *delay*. **This method is what runs the underlying event loop and makes all the *Async* functions possible.**
-This method accepts an argument which we call **valve**. A **valve** is a boolean expression whose value decides if the SDK would run for this `loop` or not. For example, we can use it to dictate to the SDK to run only when the device WiFi is connected.
+This method is the legs of the SDK. Without it, the SDK can't run. Therefore, it must be called in Arduino's `loop()` and without being suspected to any *delay*. **This method is what runs the underlying event loop and makes all the *Async* functions possible.**
+It also accepts an argument which we call **valve**. A **valve** is a boolean expression whose value decides if the SDK would run for this `loop` or not. For example, we can use it to dictate to the SDK to run only when the device WiFi is connected.
 
-> **A Tidbit:** [Here][Using Millis Instead of Delay] is how you can use `millis()` instead of `delay()` if you want a function to run every few moments.
+> **A Tidbit:** [Here][Using Millis Instead of Delay] is how you can use `millis()` instead of `delay()` if you want a function to run after every few moments.
 
 #### Example
 
 ```cpp
 Project myProject;
 void setup() {
-  myProject = apollo.init(YourDeviceID, YourApiKey, YourToken);
+  myProject = apollo.init(YourApiKey, YourToken);
 }
 
 void loop() {
@@ -947,9 +962,9 @@ void loop() {
 
 ### device
 
-> device (void) : returns _Device_
+> device (deviceID: _String_) : returns _Device_
 
-This method returns an object of the **Device** class. Read about it [here][Device Class].
+This method returns an object of the **Device** class. Read about **Device** class [here][Device Class].
 
 #### Example
 
@@ -957,8 +972,8 @@ This method returns an object of the **Device** class. Read about it [here][Devi
 Project myProject;
 Device myDevice;
 void setup() {
-  myProject = apollo.init(YourDeviceID, YourApiKey, YourToken);
-  myDevice = myProject.device();
+  myProject = apollo.init(YourApiKey, YourToken);
+  myDevice = myProject.device(YourDeviceID);
 }
 
 // **RESULT**
@@ -969,7 +984,7 @@ void setup() {
 
 > datastore (void) : returns _Datastore_
 
-This method returns an object of the **Datastore** class. Datastore class exposes the functions of the datastore API which handles your queries to your project's datastore like: logging device variables to the cloud datastore, fetching those logs etc.
+This method returns an object of the **Datastore** class. Datastore class exposes the functions of the datastore API which handles your queries to your project's datastore like: logging device variables to the cloud datastore, searching for data, etc.
 
 #### Example
 
@@ -977,7 +992,7 @@ This method returns an object of the **Datastore** class. Datastore class expose
 Project myProject;
 Datastore myDatastore;
 void setup() {
-  myProject = apollo.init(YourDeviceID, YourApiKey, YourToken);
+  myProject = apollo.init(YourApiKey, YourToken);
   myDatastore = myProject.datastore();
 }
 
@@ -1015,8 +1030,8 @@ void getSummaryCallback(JSONObject result) {
 }
 
 void setup() {
-  myProject = apollo.init(YourDeviceID, YourApiKey, YourToken);
-  myDevice = myProject.device();
+  myProject = apollo.init(YourApiKey, YourToken);
+  myDevice = myProject.device(YourDeviceID);
 }
 
 void loop() {
@@ -1055,8 +1070,8 @@ void getParmsCallback(JSONObject result) {
 }
 
 void setup() {
-  myProject = apollo.init(YourDeviceID, YourApiKey, YourToken);
-  myDevice = myProject.device();
+  myProject = apollo.init(YourApiKey, YourToken);
+  myDevice = myProject.device(YourDeviceID);
 }
 
 void loop() {
@@ -1097,8 +1112,8 @@ void setSummaryCallback(JSONObject result) {
 }
 
 void setup() {
-  myProject = apollo.init(YourDeviceID, YourApiKey, YourToken);
-  myDevice = myProject.device();
+  myProject = apollo.init(YourApiKey, YourToken);
+  myDevice = myProject.device(YourDeviceID);
 }
 
 void loop() {
@@ -1143,8 +1158,8 @@ void setParmsCallback(JSONObject result) {
 }
 
 void setup() {
-  myProject = apollo.init(YourDeviceID, YourApiKey, YourToken);
-  myDevice = myProject.device();
+  myProject = apollo.init(YourApiKey, YourToken);
+  myDevice = myProject.device(YourDeviceID);
 }
 
 void loop() {
@@ -1163,9 +1178,9 @@ void loop() {
 // variables (just state in our case) on every loop
 ```
 
-### onSummaryUpdated
+### onSummary
 
-> onSummaryUpdated (callback : _Callback_) : returns _void_
+> onSummary (callback : _Callback_) : returns _void_
 
 This method schedules a function to be called when the summary of the device is updated on Grandeur Cloud.
 
@@ -1196,10 +1211,10 @@ void summaryUpdatedCallback(JSONObject result) {
 }
 
 void setup() {
-  myProject = apollo.init(YourDeviceID, YourApiKey, YourToken);
-  myDevice = myProject.device();
+  myProject = apollo.init(YourApiKey, YourToken);
+  myDevice = myProject.device(YourDeviceID);
 
-  myDevice.onSummaryUpdated(summaryUpdatedCallback);
+  myDevice.onSummary(summaryUpdatedCallback);
 }
 
 void loop() {
@@ -1207,9 +1222,9 @@ void loop() {
 }
 ```
 
-### onParmsUpdated
+### onParms
 
-> onParmsUpdated (callback : _Callback_) : returns _void_
+> onParms (callback : _Callback_) : returns _void_
 
 This method schedules a function to be called when the parms of the device are updated on Grandeur Cloud.
 
@@ -1236,9 +1251,9 @@ void parmsUpdatedCallback(JSONObject updatedParms) {
 }
 
 void setup() {
-  myProject = apollo.init(YourDeviceID, YourApiKey, YourToken);
-  myDevice = myProject.device();
-  myDevice.onParmsUpdated(parmsUpdatedCallback);
+  myProject = apollo.init(YourApiKey, YourToken);
+  myDevice = myProject.device(YourDeviceID);
+  myDevice.onParms(parmsUpdatedCallback);
 }
 
 void loop() {
@@ -1274,14 +1289,14 @@ Datastore myDatastore;
 void insertCallback(JSONObject insertionResult) {
   // This method just prints if the insertion is successful or not.
   if(insertionResult["code"] == "DATASTORE-DOCUMENTS-INSERTED") {
-    Serial.prinln("Insertion successful.");
+    Serial.println("Insertion successful.");
   }
   Serial.println("Insertion Failed.");
 }
 
 void setup() {
-  myProject = apollo.init(YourDeviceID, YourApiKey, YourToken);
-  myDatastore = myProject.datastore();
+  myProject = apollo.init(YourApiKey, YourToken);
+  myDatastore = myProject.datastore(YourDeviceID);
 }
 
 void loop() {
@@ -1302,6 +1317,61 @@ void loop() {
 // **RESULT**
 // Prints "Insertion successful." if documents are inserted. If an error occurred, it prints
 // "Insertion Failed."
+```
+
+### search
+
+> search (filter: _JSONObject_, projection: _JSONObject_, pageNumber: _int_, callback: _Callback_) : returns _void_
+
+This method searches for documents in the Cloud datastore based on the `filter` supplied. `Filter` describes what documents to return and `projection` describes what fields to mask/unmask in those documents. Their is a limit on the how many documents can be returned in one query. The documents are divided into pages and you can get subsequent pages by specifying the `pageNumber`.
+
+#### Parameters
+
+| Name        | Type         | Description                                                                                |
+|-------------|--------------|--------------------------------------------------------------------------------------------|
+| filter      | _JSONObject_ | A document that describes the conditions which the documents should satisfy to be returned |
+| projection  | _JSONObject_ | A document that describes what fields to return                                            |
+| pageNumber  | _int_        | Number of the requested page                                                               |
+| callback    | _Callback_   | A function to be called when insertion of documents is completed                           |
+
+#### Example
+
+```cpp
+Project myProject;
+Datastore myDatastore;
+
+void searchCallback(JSONObject searchResult) {
+  // This method just prints the documents if the search is successful.
+  if(searchResult["code"] == "DATASTORE-DOCUMENTS-FETCHED") {
+    Serial.print("Documents fetched from the Cloud: ");
+    Serial.println(searchResult["documents"].length());
+    // Printing all the fetched documents.
+    for(int i = 0; i < searchResult["documents"].length(); i++) {
+      Serial.println(JSON.stringify(searchResult["documents"][i]).c_str());
+      // Just to keep the watchdog timer from tripping.
+      delay(1);
+    }
+    Serial.println("");
+    return;
+  }
+  Serial.println("Search Failed.");
+}
+
+void setup() {
+  myProject = apollo.init(YourApiKey, YourToken);
+  myDatastore = myProject.datastore(YourDeviceID);
+}
+
+void loop() {
+  // This fetches 1st page of all the documents stored in the datastore.
+  myDatastore.collection("myCollectionName").search({}, {}, 0, searchCallback);
+
+  myProject.loop(true);
+}
+
+// **RESULT**
+// Prints the documents if search is successful. If an error occurred, it prints
+// "Search Failed."
 ```
 
 ## Enhancements Under Consideration:
@@ -1353,8 +1423,8 @@ Here are some enhancements that we are considering to implement in the SDK. They
 
 [getState]: #get-state
 [onConnection]: #apollo-connection-event-listener
-[onSummaryUpdated]: #summary-update-handler
-[onParmsUpdated]: #parms-update-handler
+[onSummary]: #onSummary
+[onParms]: #onParms
 [loop]: #loop
 
 [Using Millis Instead of Delay]: https://www.norwegiancreations.com/2017/09/arduino-tutorial-using-millis-instead-of-delay/ "Using millis() instead of delay()"

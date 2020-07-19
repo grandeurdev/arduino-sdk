@@ -9,10 +9,10 @@
  */
 
 #include "DuplexHandler.h"
-#include "Duplex.h"
+#include "arduinoWebSockets/WebSockets.h"
 
 /* VARIABLE INITIALIZATIONS */
-DuplexClient duplexClient;
+WebSocketsClient client;
 unsigned long millisCounterForPing = 0;
 const char* subscriptionTopics[] = {"deviceSummary", "deviceParms"};
 size_t sendQueueSize = 0;
@@ -38,14 +38,14 @@ DuplexHandler::DuplexHandler() {
 
 void DuplexHandler::init(void) {
   // Setting up event handler
-  duplexClient.onEvent(&duplexEventHandler);
+  client.onEvent(&duplexEventHandler);
   // Scheduling reconnect every 5 seconds if it disconnects
-  duplexClient.setReconnectInterval(5000);
+  client.setReconnectInterval(5000);
   // Opening up the connection
-  duplexClient.beginSSL(APOLLO_URL, APOLLO_PORT, _query, APOLLO_FINGERPRINT, "node");
+  client.beginSSL(APOLLO_URL, APOLLO_PORT, _query, APOLLO_FINGERPRINT, "node");
   char tokenArray[_token.length() + 1];
   _token.toCharArray(tokenArray, _token.length() + 1);
-  duplexClient.setAuthorization(tokenArray);
+  client.setAuthorization(tokenArray);
 }
 
 void DuplexHandler::onConnectionEvent(void connectionEventHandler(bool)) {
@@ -65,7 +65,7 @@ void DuplexHandler::loop(bool valve) {
         ping();
     }
     // Running duplex loop
-    duplexClient.loop();
+    client.loop();
   }
 }
 
@@ -81,7 +81,7 @@ void DuplexHandler::send(const char* task, const char* payload, Callback callbac
   // Formatting the packet
   snprintf(packet, PACKET_SIZE, "{\"header\": {\"id\": %lu, \"task\": \"%s\"}, \"payload\": %s}", packetID, task, payload);
   // Sending to server
-  duplexClient.sendTXT(packet);
+  client.sendTXT(packet);
 }
 
 void DuplexHandler::subscribe(short event, const char* payload, Callback updateHandler) {
@@ -101,7 +101,7 @@ void DuplexHandler::ping() {
     // Formatting the packet
     snprintf(packet, PING_PACKET_SIZE, "{\"header\": {\"id\": %lu, \"task\": \"ping\"}}", packetID);
     // Sending to server
-    duplexClient.sendTXT(packet);
+    client.sendTXT(packet);
   }
 }
 

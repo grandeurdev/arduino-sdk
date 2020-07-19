@@ -1,5 +1,5 @@
 /**
- * @file DashListening-App.ino
+ * @file DashListening-App-esp32.ino
  * @date 24.03.2020
  * @author Grandeur Technologies
  *
@@ -7,7 +7,7 @@
  * This file is part of the Arduino SDK for Grandeur Cloud.
  *
  * Apollo.h is used for device's communication to Grandeur Cloud.
- * ESP8266WiFi.h is used for handling device's WiFi.
+ * WiFi.h is used for handling device's WiFi.
  * 
  * Dash listening is for one-way listening.
  * This example illustrates the use case of an app listening for updates from the device.
@@ -16,25 +16,24 @@
 */
 
 #include <Apollo.h>
-#include <ESP8266WiFi.h>
+#include <WiFi.h>
 
 // Device's connection configurations
 String apiKey = "YOUR-PROJECT-APIKEY";
 String deviceID = "YOUR-DEVICE-ID";
 String token = "YOUR-ACCESS-TOKEN";
-String ssid = "YOUR-WIFI-SSID";
-String passphrase = "YOUR-WIFI-PASSWORD";
+const char* ssid = "YOUR-WIFI-SSID";
+const char* passphrase = "YOUR-WIFI-PASSWORD";
 
-/// Declaring and initializing other variables
+// Declaring and initializing other variables
 unsigned long current = millis();
 Project myProject;
 Device myDevice;
-WiFiEventHandler onWiFiConnectedHandler;
-WiFiEventHandler onWiFiDisconnectedHandler;
-int statePin = D0;
-int voltagePin = A0;
+int statePin = 4;
+int voltagePin = 2;
 
 // Function prototypes
+void WiFiEventCallback(WiFiEvent_t event);
 void setupWiFi(void);
 void connectionCallback(bool state);
 void initializeState(JSONObject getResult);
@@ -86,24 +85,31 @@ void loop() {
   myProject.loop(WiFi.status() == WL_CONNECTED);
 }
 
+void WiFiEventCallback(WiFiEvent_t event) {
+  switch(event) {
+    case SYSTEM_EVENT_STA_GOT_IP:
+      // This runs when the device connects with WiFi.
+      Serial.printf("\nDevice has successfully connected to WiFi. Its IP Address is: %s\n",
+        WiFi.localIP().toString().c_str());
+      break;
+    case SYSTEM_EVENT_STA_DISCONNECTED:
+      // This runs when the device disconnects with WiFi.
+      Serial.println("Device is disconnected from WiFi.");
+      break;
+    default: break;
+  }
+}
+
 void setupWiFi(void) {
   // Disconnecting WiFi if it"s already connected
   WiFi.disconnect();
   // Setting it to Station mode which basically scans for nearby WiFi routers
   WiFi.mode(WIFI_STA);
-  // Setting WiFi event handlers
-  onWiFiConnectedHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP& event) {
-    // This runs when the device connects with WiFi.
-    Serial.printf("\nDevice has successfully connected to WiFi. Its IP Address is: %s\n",
-      WiFi.localIP().toString().c_str());
-  });
-  onWiFiDisconnectedHandler = WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected& event) {
-    // This runs when the device disconnects with WiFi.
-    Serial.println("Device is disconnected from WiFi.");
-  });
+  // Setting WiFi event handler
+  WiFi.onEvent(WiFiEventCallback);
   // Begin connecting to WiFi
   WiFi.begin(ssid, passphrase);
-  Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid.c_str(), passphrase.c_str());
+  Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid, passphrase);
 }
 
 void connectionCallback(bool state) {

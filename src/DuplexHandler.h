@@ -12,7 +12,7 @@
 #include "EventTable.h"
 #include "apollotypes.h"
 #include "apollomacros.h"
-#include "DuplexClient.h"
+#include "arduinoWebSockets/WebSocketsClient.h"
 
 #ifndef DUPLEXHANDLER_H_
 #define DUPLEXHANDLER_H_
