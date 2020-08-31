@@ -164,6 +164,13 @@ void WebSocketsClient::loop(void) {
                 _client.tcp = NULL;
             }
             _client.ssl = new WEBSOCKETS_NETWORK_SSL_CLASS();
+            /** Added ourselves */
+            // Bug Fix
+            // Patch the Library to allow connection without
+            // Certificate Origin Confirmation
+#if defined(ESP8266)
+            _client.ssl->setInsecure();
+#endif
             _client.tcp = _client.ssl;
             if(_CA_cert) {
                 DEBUG_WEBSOCKETS("[WS-Client] setting CA certificate");
