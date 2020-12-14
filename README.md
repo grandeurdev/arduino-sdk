@@ -1394,7 +1394,7 @@ Here are some enhancements that we are considering to implement in the SDK. They
 [Arduino IDE]: https://www.arduino.cc/en/main/software "Arduino IDE"
 [Installing an Arduino Library]: https://www.arduino.cc/en/guide/libraries "Installing an Arduino Library"
 
-[Grandeur Hackster]: https://www.hackster.io/grandeurcloud "Hackster Community"
+[Grandeur Hackster]: https://www.hackster.io/grandeur "Hackster Community"
 
 [Installation]: #installation "Installation"
 [Example]: #example "Arduino SDK Example"
