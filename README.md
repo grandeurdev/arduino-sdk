@@ -1387,7 +1387,7 @@ Here are some enhancements that we are considering to implement in the SDK. They
 [Grandeur Accounts]: https://cloud.grandeur.tech/accounts "Grandeur Accounts"
 [Grandeur Devices]: https://cloud.grandeur.tech/devices "Grandeur Devices"
 [Grandeur Settings]: https://cloud.grandeur.tech/settings "Grandeur Settings"
-[Grandeur Pricing]: https://grandeur.tech/pricing "Pricing"
+[Grandeur Pricing]: https://grandeur.tech/pricing/ "Pricing"
 [Get Started With Grandeur]: https://github.com/grandeurtech/js-sdk#get-started "Get Started With Grandeur"
 [An Example Webapp]: https://github.com/grandeurtech/js-sdk#example "An Example Webapp"
 [Examples]:  https://github.com/grandeurtech/arduino-sdk/tree/master/examples/
