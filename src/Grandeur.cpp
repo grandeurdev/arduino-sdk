@@ -1,26 +1,26 @@
 /**
- * @file Apollo.cpp
+ * @file Grandeur.cpp
  * @date 24.03.2020
  * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
- * This file is part of the Arduino SDK for Grandeur Cloud.
+ * This file is part of the Arduino SDK for Grandeur.
  *
  */
 
-#include "Apollo.h"
+#include "Grandeur.h"
 #include "DuplexHandler.h"
 
-Apollo apollo;
+Grandeur grandeur;
 
-Apollo::Apollo() {}
+Grandeur::Grandeur() {}
 
-Project Apollo::init(String apiKey, String token) {
+Project Grandeur::init(String apiKey, String token) {
   // Setting config
   _config = {apiKey, token};
   // Creating a new project reference.
   Project project;
-  // Duplex handles the connection to the Cloud project.
+  // Duplex handles the realtime connection with the project.
   project._duplexHandler = DuplexHandler(_config);
   // Starting Duplex.
   project._duplexHandler.init();

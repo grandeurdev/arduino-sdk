@@ -4,22 +4,22 @@
  * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
- * This file is part of the Arduino SDK for Grandeur Cloud.
+ * This file is part of the Arduino SDK for Grandeur.
  *
- * Apollo.h is used for device's communication with Grandeur Cloud.
+ * Grandeur.h is used for device's communication with Grandeur.
  * WiFi.h is used for handling device's WiFi.
  * 
  * Cross listening means when the device listens for updates from the app and the app
  * listens for updates from the device.
  * This example illustrates pretty much every basic thing you'd need in order to monitor /
- * control your device through Grandeur Cloud. Here are some of those:
+ * control your device through Grandeur. Here are some of those:
  * 1. Listen to the cloud for updates in parms variables.
  * 2. Publish updates in summary and parms variables to the cloud every 5 seconds.
  * 3. Controlling SDK's internal valve. This helps if you want to run the SDK only when a
  * certain condition is true; in our case, if the WiFi is connected.
 */
 
-#include <Apollo.h>
+#include <Grandeur.h>
 #include <WiFi.h>
 
 // Device's connection configurations
@@ -51,20 +51,20 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   // This initializes the SDK's configurations and returns a new object of Project class.
-  myProject = apollo.init(apiKey, token);
+  myProject = grandeur.init(apiKey, token);
   // Getting object of Device class.
   myDevice = myProject.device(deviceID);
   // This schedules the connectionCallback() function to be called when connection with the cloud
   // is made/broken.
   myProject.onConnection(connectionCallback);
   // This schedules parmsUpdatedCallback() function to be called when variable stored
-  // in device's parms are changed on the Cloud.
+  // in device's parms are changed on Grandeur.
   myDevice.onParms(parmsUpdatedCallback);
 }
 
 void loop() {
   // In this loop() function, after every five seconds, we send the updated values of our
-  // device's voltage and state to the Cloud.
+  // device's voltage and state to Grandeur.
   if(myProject.isConnected()) {
     if(millis() - current >= 5000) {
       // This if-condition makes sure that the code inside this block runs only after
@@ -73,15 +73,15 @@ void loop() {
       Serial.println("Setting Summary");
       JSONObject summary;
       summary["voltage"] = analogRead(voltagePin);
-      // This updates the summary of our device on the Cloud and schedules summarySetCallback()
-      // function to be called when the Cloud responds with the SUMMARY UPDATED message.
+      // This updates the summary of our device on Grandeur and schedules summarySetCallback()
+      // function to be called when Grandeur responds with the SUMMARY UPDATED message.
       myDevice.setSummary(summary, summarySetCallback);
 
       Serial.println("Setting Parms");
       JSONObject parms;
       parms["state"] = digitalRead(statePin);
-      // This updates the parms of our device on the Cloud and schedules parmsSetCallback()
-      // function to be called when the Cloud responds with the PARMS UPDATED message.
+      // This updates the parms of our device on Grandeur and schedules parmsSetCallback()
+      // function to be called when Grandeur responds with the PARMS UPDATED message.
       myDevice.setParms(parms, parmsSetCallback);
 
       // This updates the millis counter for

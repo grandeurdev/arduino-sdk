@@ -1,20 +1,20 @@
-# Grandeur Cloud [![Version](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://cloud.grandeur.tech)
+# Grandeur [![Version](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://cloud.grandeur.tech)
 
 Building a smart (IoT) product is an art because it is about unifying the physical world with the digital one. When you put a piece of hardware on the web, magic happens. But one device on the web is one thing. Think about tens of them, interconnected, forging an automated ecosystem of pure reverie. Now imagine tens of thousands of these ecosystems spread throughout the globe. Seems profound, no? But developing an IoT product and then managing it is just as profoundly difficult. It involves development across a huge technology stack (your IoT hardware itself, your apps to monitor/control your hardware and a server backend to manage them both) to make such products work in production. And then in production comes the hardest challenge; you are going to have to scale it up as your user base grows.
 
 We understand this because we have been there.
 
-Introducing Grandeur Cloud: A backend as a service (Baas) platform for IoT. We have designed this platform so you do not have to worry about the backend of your next big thing, and can focus on what matters the most: your hardware and your apps. It is designed specifically to accelerate your IoT product development and push your products to market in weeks rather than in months or years. So you can then actually build *grandeur* ecosystems like the one above.
+Introducing Grandeur: A backend as a service (Baas) platform for IoT. We have designed this platform so you do not have to worry about the backend of your next big thing, and can focus on what matters the most: your hardware and your apps. It is designed specifically to accelerate your IoT product development and push your products to market in weeks rather than in months or years. So you can then actually build *grandeur* ecosystems like the one above.
 
-## Why Grandeur Cloud
+## Why Grandeur
 
-Grandeur Cloud is designed keeping in mind all the challenges a hardware engineer can face in developing and commercializing a smart (IoT) product. And we made available out-of-the-box APIs to help you integrate your devices and apps.
+Grandeur is designed keeping in mind all the challenges a hardware engineer can face in developing and commercializing a smart (IoT) product. And we made available out-of-the-box APIs to help you integrate your devices and apps.
 
-For example, you can use the **Auth API** to create *register* and *login* flows and make sure each user has access to its own data and no one other than the device admin itself should be able to interact with its device. You can store a humongous amount of data in cloud database to analyze and extract intelligent information from it and display useful graphs. Use our **datastore API** for that. You can host your product's website and your web app on Grandeur Cloud as well. It's **as simple as running literally a single command**. Also, your hardware device can listen for events and updates from your app, your app can listen for events and updates from your hardware device, and they can communicate with each other in realtime (with a latency of ~200ms). **Devices API** and **Device SDK** come into play here. But in no way would you have to waste your time in mixing and matching the APIs, checking which one works for your use case, and go through a huge learning curve -- like you would do while working with AWS or Google Cloud Platform. All the Grandeur APIs are completely integrated and speed and security is built in. The SDKs are designed around the whole ideology of **seamless integration.** 
+For example, you can use the **Auth API** to create *register* and *login* flows and make sure each user has access to its own data and no one other than the device admin itself should be able to interact with its device. You can store a humongous amount of data in cloud database to analyze and extract intelligent information from it and display useful graphs. Use our **datastore API** for that. You can host your product's website and your web app on Grandeur as well. It's **as simple as running literally a single command**. Also, your hardware device can listen for events and updates from your app, your app can listen for events and updates from your hardware device, and they can communicate with each other in realtime (with a latency of ~200ms). **Devices API** and **Device SDK** come into play here. But in no way would you have to waste your time in mixing and matching the APIs, checking which one works for your use case, and go through a huge learning curve -- like you would do while working with AWS or Google Cloud Platform. All the Grandeur APIs are completely integrated and speed and security is built in. The SDKs are designed around the whole ideology of **seamless integration.** 
 
-Grandeur Cloud is not a regular IoT cloud. It's a complete IoT product development and management platform, designed for production environments. Here's how:
+Grandeur is not a regular IoT cloud. It's a complete IoT product development and management platform, designed for production environments. Here's how:
 
-* Grandeur Cloud is product-centered. It is much more than just a medium of communication between your app and your hardware device. Focusing on expediting IoT product development, it offers an ecosystem of the most necessary tools integrated to make the most head-cracking development problems seamless. What problems you may ask?
+* Grandeur is product-centered. It is much more than just a medium of communication between your app and your hardware device. Focusing on expediting IoT product development, it offers an ecosystem of the most necessary tools integrated to make the most head-cracking development problems seamless. What problems you may ask?
   * Huge development stack (Your IoT product which is generally hardware, your web app, your server API, and the communication between all of these).
   * Your database design and management.
   * Setting up and maintaining your servers handling your compute, storage, and networking.
@@ -22,29 +22,29 @@ Grandeur Cloud is not a regular IoT cloud. It's a complete IoT product developme
   * Your IoT product development itself.
   * Scaling your system up to hundreds of thousands of devices as your business grows.
 
-* No need to mix and match various services to come up with your own solution. Grandeur Cloud is a single spot solution for all of your needs, from **built-in authentication** of your users and devices to **an integrated database** to an **out-of-the-box file storage system** and a registry of data for all of your devices. And You can manage absolutely everything from a single dashboard.
+* No need to mix and match various services to come up with your own solution. Grandeur is a single spot solution for all of your needs, from **built-in authentication** of your users and devices to **an integrated database** to an **out-of-the-box file storage system** and a registry of data for all of your devices. And You can manage absolutely everything from a single dashboard.
 
-* Simple pricing. Unlike Google and AWS, we do not have to deal with a different pricing model for each service and aggregate them together to compute the monthly bill making it almost impossible for the user to understand why he has to pay this much! Packaging all our services into one platform has let us develop a very simple and transparent pricing model. You can [start free][Grandeur Cloud Sign Up] for a certain quota and then pay as you go based on your resources consumption. Checkout [pricing][Grandeur Cloud Pricing] for more details.
+* Simple pricing. Unlike Google and AWS, we do not have to deal with a different pricing model for each service and aggregate them together to compute the monthly bill making it almost impossible for the user to understand why he has to pay this much! Packaging all our services into one platform has let us develop a very simple and transparent pricing model. You can [start free][Grandeur Sign Up] for a certain quota and then pay as you go based on your resources consumption. Checkout [pricing][Grandeur Pricing] for more details.
 
-* We have a growing [community on Hackster][Grandeur Cloud Hackster] which is equivalent to growing number of developers which are using Grandeur Cloud and improving the opensource SDKs resulting in increasing Grandeur Cloud support.
+* We have a growing [community on Hackster][Grandeur Hackster] which is equivalent to growing number of developers which are using Grandeur and improving the opensource SDKs resulting in increasing Grandeur support.
 
-* It is terrifically simple to [get started][Get Started with Grandeur Cloud] with your IoT product development. Just create a project from the [cloud dashboard][Grandeur Cloud Dashboard], plug your project's API key into our SDKs and start developing.
+* It is terrifically simple to [get started][Get Started with Grandeur] with your IoT product development. Just create a project from the [cloud dashboard][Grandeur Dashboard], plug your project's API key into our SDKs and start developing.
 
-Follow [our Hackster Hub][Grandeur Cloud Hackster] for quick starts and advanced development projects.
+Follow [our Hackster Hub][Grandeur Hackster] for quick starts and advanced development projects.
 
-[Here][Get Started With Grandeur Cloud] is how you can create a new project on Grandeur Cloud and start using the Javascript SDK to build your IoT apps.
+[Here][Get Started With Grandeur] is how you can create a new project on Grandeur and start using the Javascript SDK to build your IoT apps.
 
-From here onwards, we'll look at how you can use the Arduino SDK for all arduino-compatible modules to put your devices live and connected on Grandeur Cloud. Let's dive in!
+From here onwards, we'll look at how you can use the Arduino SDK for all arduino-compatible modules to put your devices live and connected on Grandeur. Let's dive in!
 
 # Arduino SDK
 
-**Arduino SDK** is the official SDK for arduino-compatible hardware modules and it utilizes the *Apollo* API to connect your device to **[Grandeur Cloud][Grandeur Cloud]**.
+**Arduino SDK** is the official SDK for arduino-compatible hardware modules and it utilizes the *Grandeur* API to connect your device to **[Grandeur][Grandeur]**.
 
-Follow the [get started][Get Started with Arduino SDK] guidelines to quickly get into the context of integrating your devices to Grandeur Cloud or jump straight to an [Arduino example][Example] to make your hands dirty.
+Follow the [get started][Get Started with Arduino SDK] guidelines to quickly get into the context of integrating your devices to Grandeur or jump straight to an [Arduino example][Example] to make your hands dirty.
 
 For a developer reference for the Arduino SDK, you can have a look at the [documentation][Documentation].
 
-To get a deeper understanding of the core concepts Grandeur Cloud is built upon, dive into the [Grandeur Ecosystem][Ecosystem] section.
+To get a deeper understanding of the core concepts Grandeur is built upon, dive into the [Grandeur Ecosystem][Ecosystem] section.
 
 * [Get Started](#get-started)
   * [Installation](#installation)
@@ -54,7 +54,7 @@ To get a deeper understanding of the core concepts Grandeur Cloud is built upon,
   * [Setting Up the Valve](#setting-up-the-valve)
   * [Events Listening](#events-listening)
   * [Fetching Device Variables and Updating Them](#fetching-device-variables-and-updating-them)
-  * [Handling Updates From the Cloud](#handling-updates-from-the-cloud)
+  * [Handling Updates From Grandeur](#handling-updates-from-the-cloud)
 * [Example](#example)
 * [The Dexterity of Arduino SDK](#the-dexterity-of-arduino-sdk)
 * [Grandeur Ecosystem](#grandeur-ecosystem)
@@ -70,7 +70,7 @@ To get a deeper understanding of the core concepts Grandeur Cloud is built upon,
     * [Networking](#networking)
     * [Allowed Origins](#allowed-origins)
 * [Documentation](#documentation)
-    * [init](#apollo-init)
+    * [init](#grandeur-init)
   * [Project](#project)
     * [isConnected](#isconnected)
     * [onConnection](#onconnection)
@@ -92,33 +92,33 @@ To get a deeper understanding of the core concepts Grandeur Cloud is built upon,
 
 ### Installation
 
-1. You can search for **Grandeur Cloud** in Arduino's library manager. In Arduino IDE, open `Sketch > Include Library > Manage Libraries` and install Grandeur Cloud from there.
+1. You can search for **Grandeur** in Arduino's library manager. In Arduino IDE, open `Sketch > Include Library > Manage Libraries` and install Grandeur from there.
 
 2. You can also clone **Arduino SDK** from [here][Arduino SDK] and [install it in your Arduino IDE][Installing an Arduino Library].
 
 ### Inclusion
 
-When you include `<Apollo.h>` in your sketch, a global object `apollo` is defined right away which you can use to initialize the SDK's configurations.
+When you include `<Grandeur.h>` in your sketch, a global object `grandeur` is defined right away which you can use to initialize the SDK's configurations.
 
 ```cpp
-#include <Apollo.h>
+#include <Grandeur.h>
 
 // **RESULT**
-// Includes the SDK in your sketch and defines the global object apollo.
+// Includes the SDK in your sketch and defines the global object grandeur.
 ```
 
 ### Initialization
 
-Initialization is as simple as calling `apollo.init()` with your credentials (Device ID, Project's API Key and Device's Access Token). The SDK uses your API key to select your project, and device ID and access token to limit its scope to only your device's data. It then returns a `Project` object which exposes other subclasses like `Device` and `Datastore`, and you can go programming your device from there.
+Initialization is as simple as calling `grandeur.init()` with your credentials (Device ID, Project's API Key and Device's Access Token). The SDK uses your API key to select your project, and device ID and access token to limit its scope to only your device's data. It then returns a `Project` object which exposes other subclasses like `Device` and `Datastore`, and you can go programming your device from there.
 
 ```cpp
-#include <Apollo.h>
+#include <Grandeur.h>
 
 Project myProject;
 
 void setup() {
   // You can initialize device configurations like this.
-  myProject = apollo.init(YourDeviceID, YourDeviceToken);
+  myProject = grandeur.init(YourDeviceID, YourDeviceToken);
 }
 
 void loop() {}
@@ -127,7 +127,7 @@ void loop() {}
 // Initializes the SDK's configurations and returns Project reference.
 ```
 
-As soon as you call `apollo.init()`, the SDK uses the configurations to start trying to connect with the your project on the Cloud. But it cannot reach Grandeur Cloud if the device is not already connected to a WiFi.
+As soon as you call `grandeur.init()`, the SDK uses the configurations to start trying to connect with the your project on Grandeur. But it cannot reach Grandeur if the device is not already connected to a WiFi.
 
 ### Handling the WiFi
 
@@ -140,7 +140,7 @@ You can use a WiFi library corresponding to your microcontroller to handle your 
 Here we illustrate how to handle your ESP8266's WiFi.
 
 ```cpp
-#include <Apollo.h>
+#include <Grandeur.h>
 #include <ESP8266WiFi.h>
 
 Project myProject;
@@ -161,7 +161,7 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   // You can initialize device configurations like this.
-  myProject = apollo.init(YourApiKey, YourDeviceToken);
+  myProject = grandeur.init(YourApiKey, YourDeviceToken);
 }
 
 void loop() {
@@ -186,7 +186,7 @@ The `Callback` function is a special type of function that accepts a `JSONObject
 Here's how you can handle the connection event:
 
 ```cpp
-#include <Apollo.h>
+#include <Grandeur.h>
 #include <ESP8266WiFi.h>
 
 Project myProject;
@@ -203,15 +203,15 @@ void setupWiFi(void) {
 }
 
 void connectionCallback(bool status) {
-  // This method handles the events related to device's connection with the Cloud.
+  // This method handles the events related to device's connection with Grandeur.
   switch(status) {
     case CONNECTED:
       // If the connection event occurred.
-      Serial.println("Device Connected to the Cloud!\n");
+      Serial.println("Device Connected to Grandeur!\n");
       break;
     case DISCONNECTED:
       // If the disconnection event occurred.
-      Serial.println("Device Disconnected from the Cloud!\n");
+      Serial.println("Device Disconnected from Grandeur!\n");
       break;
   }
 }
@@ -221,7 +221,7 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   // You can initialize device configurations like this.
-  myProject = apollo.init(YourApiKey, YourDeviceToken);
+  myProject = grandeur.init(YourApiKey, YourDeviceToken);
   // Setting up listener for device's connection event
   myProject.onConnection(connectionCallback);
 }
@@ -232,21 +232,21 @@ void loop() {
 }
 
 // **RESULT**
-// Prints "Device Connected to the Cloud!\n" when device gets connected to the cloud.
-// And prints "Device Disconnected from the Cloud!\n" when device's connection from
+// Prints "Device Connected to Grandeur!\n" when device gets connected to the cloud.
+// And prints "Device Disconnected from Grandeur!\n" when device's connection from
 // the cloud breaks.
 ```
 
 ### Fetching Device Variables and Updating Them
 
-On Grandeur Cloud, we generally store the device data in two containers: **summary** to contain uncontrollable device variables and **parms** to contain controllable device variables. You can get and set both types using the following functions of the `Device` class:
+On Grandeur, we generally store the device data in two containers: **summary** to contain uncontrollable device variables and **parms** to contain controllable device variables. You can get and set both types using the following functions of the `Device` class:
 
 * `myDevice.getSummary()`
 * `myDevice.getParms()`
 * `myDevice.setSummary()`
 * `myDevice.setParms()`
 
-They are all **Async functions** because they communicate with the Cloud through internet. Communication through internet takes some time and we cannot wait, for example, for device's summary variables to arrive from the Cloud -- meanwhile blocking the rest of the device program. So, what we do is, we schedule a function to be called when the summary variables and resume with rest of the device program, forgetting that we ever called `getSummary()`. When the summary variables arrive, the SDK calls our scheduled function, giving us access to summary variables inside that function.
+They are all **Async functions** because they communicate with Grandeur through internet. Communication through internet takes some time and we cannot wait, for example, for device's summary variables to arrive from Grandeur -- meanwhile blocking the rest of the device program. So, what we do is, we schedule a function to be called when the summary variables and resume with rest of the device program, forgetting that we ever called `getSummary()`. When the summary variables arrive, the SDK calls our scheduled function, giving us access to summary variables inside that function.
 
 For now, there's only one type of function that the SDK's Async methods accept: `Callback` which accepts a `JSONObject` as argument and returns nothing aka. `void`.
 
@@ -255,7 +255,7 @@ Read more about **Async functions**, `Callback`, and `JSONObject` [here][the dex
 Here's how we would get and set device's summary and parms:
 
 ```cpp
-#include <Apollo.h>
+#include <Grandeur.h>
 #include <ESP8266WiFi.h>
 
 Project myProject;
@@ -302,7 +302,7 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   // You can initialize device configurations like this.
-  myProject = apollo.init(YourApiKey, YourDeviceToken);
+  myProject = grandeur.init(YourApiKey, YourDeviceToken);
   myDevice = myProject.device(YourDeviceID);
 }
 
@@ -337,12 +337,12 @@ void loop() {
 // printed on the screen.
 ```
 
-### Handling Updates From the Cloud
+### Handling Updates From Grandeur
 
 Device variables are distributed on the cloud in form of **summary** and **parms**. Passing a `Callback` to `onSummary()` and `onParms()` you can set **update handlers** for updates to those variables. Let's do that now:
 
 ```cpp
-#include <Apollo.h>
+#include <Grandeur.h>
 #include <ESP8266WiFi.h>
 
 Project myProject;
@@ -374,7 +374,7 @@ void setup() {
   Serial.begin(9600);
   setupWiFi();
 
-  myProject = apollo.init(YourApiKey, YourDeviceToken);
+  myProject = grandeur.init(YourApiKey, YourDeviceToken);
   myDevice = myProject.device(YourDeviceID);
 
   myDevice.onSummary(summaryUpdatedCallback);
@@ -395,43 +395,43 @@ void loop() {
 
 Here we go through a general example to explain the **Arduino SDK** in action. For a little more broken-down approach, do have a look at [these examples][Examples] as well.
 
-To begin working with the **Arduino SDK**, the very first step is to [create a new project][Grandeur Cloud Dashboard] and [register a new device][Grandeur Cloud Devices] through the [Cloud Dashboard][Grandeur Cloud Dashboard]. Then create a new Arduino sketch in your workspace folder.
+To begin working with the **Arduino SDK**, the very first step is to [create a new project][Grandeur Dashboard] and [register a new device][Grandeur Devices] through the [Cloud Dashboard][Grandeur Dashboard]. Then create a new Arduino sketch in your workspace folder.
 
 ### Create a New Sketch
 
 Create a new folder for your `arduino workspace`, create a `.ino` file in it, and open it with [Arduino IDE][Arduino IDE]. This is the sketch file where you'll write your device's program.
 
-### Include Apollo.h into Your Sketch
+### Include Grandeur.h into Your Sketch
 
 After [cloning the Arduino SDK][installation] and [installing it][Installing an Arduino Library], you can import it into your sketch like this:
 
 ```cpp
-#include <Apollo.h>
+#include <Grandeur.h>
 ```
 
 ### Initialize the SDK's Configurations
 
-**Arduino SDK** takes care of your device's connection with Grandeur Cloud. To use it into your sketch, you need to initialize its configurations first. You can do that using the global object `apollo`. Initializing the SDK returns an object of `ApolloDevice` class which exposes all the SDK's functions.
+**Arduino SDK** takes care of your device's connection with Grandeur. To use it into your sketch, you need to initialize its configurations first. You can do that using the global object `grandeur`. Initializing the SDK returns an object of `GrandeurDevice` class which exposes all the SDK's functions.
 
 ```cpp
-#include <Apollo.h>
+#include <Grandeur.h>
 
 Project myProject;
 Device myDevice;
 
 void setup() {
-  myProject = apollo.init(YourAPIKey, YourToken);
+  myProject = grandeur.init(YourAPIKey, YourToken);
 }
 ```
 
-You can find the API Key on the [settings page][Grandeur Cloud Settings] of your project's dashboard. For the Access Token, you need to pair your device with a user account in your project first. A device can only connect to Grandeur Cloud if it's paired with a user. And only the paired user can access the device's data through its web app. For convenient testing, we have made device pairing function available on the [devices page][Grandeur Cloud Devices] too. You can find your device's ID and pair your device with a user account. If your project has no registered user yet, you can add one easily from the [accounts page][Grandeur Cloud Accounts].
+You can find the API Key on the [settings page][Grandeur Settings] of your project's dashboard. For the Access Token, you need to pair your device with a user account in your project first. A device can only connect to Grandeur if it's paired with a user. And only the paired user can access the device's data through its web app. For convenient testing, we have made device pairing function available on the [devices page][Grandeur Devices] too. You can find your device's ID and pair your device with a user account. If your project has no registered user yet, you can add one easily from the [accounts page][Grandeur Accounts].
 
 ### Handle the device's WiFi
 
 Here we illustrate this with the example of an ESP8266.
 
 ```cpp
-#include <Apollo.h>
+#include <Grandeur.h>
 #include <ESP8266WiFi.h>
 
 Project myProject;
@@ -453,7 +453,7 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   // You can initialize device configurations like this.
-  myProject = apollo.init(YourApiKey, YourDeviceToken);
+  myProject = grandeur.init(YourApiKey, YourDeviceToken);
 }
 
 void loop() {
@@ -467,7 +467,7 @@ void loop() {
 Before doing anything, you need to initialize your device with data from the cloud to keep them both in sync. You can get all the device variables by using `getSummary()` and `getParms()` functions. Here's how you can get the device **state** from the cloud.
 
 ```cpp
-#include <Apollo.h>
+#include <Grandeur.h>
 #include <ESP8266WiFi.h>
 
 Project myProject;
@@ -498,9 +498,9 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   
-  myProject = apollo.init(YourApiKey, YourDeviceToken);
+  myProject = grandeur.init(YourApiKey, YourDeviceToken);
   myDevice = myProject.device(YourDeviceID);
-  // This gets the device's parms variables from the Cloud and passes them to
+  // This gets the device's parms variables from Grandeur and passes them to
   // getParmsCallback() function.
   myDevice.getParms(getParmsCallback);
 }
@@ -517,7 +517,7 @@ Update handlers are the functions which are called when a device variable is upd
 Here's how you can set update handlers in your sketch for the device's state stored in parms.
 
 ```cpp
-#include <Apollo.h>
+#include <Grandeur.h>
 #include <ESP8266WiFi.h>
 
 Project myProject;
@@ -555,12 +555,12 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   
-  myProject = apollo.init(YourApiKey, YourDeviceToken);
+  myProject = grandeur.init(YourApiKey, YourDeviceToken);
   myDevice = myProject.device(YourDeviceID);
-  // This gets the device's parms variables from the Cloud and passes them to
+  // This gets the device's parms variables from Grandeur and passes them to
   // getParmsCallback() function.
   myDevice.getParms(getParmsCallback);
-  // This sets up the update handler for parms. When an update to parms occur on the Cloud,
+  // This sets up the update handler for parms. When an update to parms occur on Grandeur,
   // parmsUpdatedCallback() function is called.
   myDevice.onParmsUpdated(parmsUpdatedCallback);
 }
@@ -576,7 +576,7 @@ void loop() {
 To see the live state of the device on the web app, you need to keep sending the updated state after every few seconds. Since we've stored the device's state in **Parms**, we'll use the `setParms()` function to update the state value.
 
 ```cpp
-#include <Apollo.h>
+#include <Grandeur.h>
 #include <ESP8266WiFi.h>
 
 Project myProject;
@@ -620,12 +620,12 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   
-  myProject = apollo.init(YourApiKey, YourDeviceToken);
+  myProject = grandeur.init(YourApiKey, YourDeviceToken);
   myDevice = myProject.device(YourDeviceID);
-  // This gets the device's parms variables from the Cloud and passes them to
+  // This gets the device's parms variables from Grandeur and passes them to
   // getParmsCallback() function.
   myDevice.getParms(getParmsCallback);
-  // This sets up the update handler for parms. When an update to parms occur on the Cloud,
+  // This sets up the update handler for parms. When an update to parms occur on Grandeur,
   // parmsUpdatedCallback() function is called.
   myDevice.onParmsUpdated(parmsUpdatedCallback);
 }
@@ -634,7 +634,7 @@ void loop() {
   // Parms container to store device's state.
   JSONObject parms;
   parms["state"] = digitalRead(D0);
-  // This sends the updated parms to the Cloud and calls setParmsCallback() when
+  // This sends the updated parms to Grandeur and calls setParmsCallback() when
   // the response from the cloud arrives.
   myDevice.setParms(parms, setParmsCallback);
 
@@ -649,19 +649,19 @@ You can build a web app for your product to control your hardware device over th
 
 ## The Dexterity of Arduino SDK
 
-The Arduino SDK is aimed at providing extremely to-the-point functions, being almost invisible in your device program to make the integration of Grandeur Cloud in your product seamless. Here is what it does under the hood without you paying attention to the most painful things:
+The Arduino SDK is aimed at providing extremely to-the-point functions, being almost invisible in your device program to make the integration of Grandeur in your product seamless. Here is what it does under the hood without you paying attention to the most painful things:
 
-* **Arduino SDK** takes care of your device's connection to [Grandeur Cloud][Grandeur Cloud]. **It can start trying to connect with the Cloud as soon as the device boots or you can manually tell the SDK when to begin.** There's a [`loop()`][loop] function that you place in the Arduino's `loop` whose sole function is to run the SDK. It accepts a **boolean expression as argument** and the SDK runs when the boolean expression evaluates to `true`. So, let's say if you pass the expression `WiFiState == CONNECTED` to it, the SDK would only run when the device's WiFi is connected.
+* **Arduino SDK** takes care of your device's connection to [Grandeur][Grandeur]. **It can start trying to connect with Grandeur as soon as the device boots or you can manually tell the SDK when to begin.** There's a [`loop()`][loop] function that you place in the Arduino's `loop` whose sole function is to run the SDK. It accepts a **boolean expression as argument** and the SDK runs when the boolean expression evaluates to `true`. So, let's say if you pass the expression `WiFiState == CONNECTED` to it, the SDK would only run when the device's WiFi is connected.
 
-* As soon as the WiFi gets connected, **Arduino SDK** begins trying to connect to *[Grandeur Cloud][Grandeur Cloud]* using the **connection credentials** you provide during `apollo.init()`. When it connects, only then does the communication with Grandeur Cloud happen. And if somehow the connection breaks, SDK handles the reconnection and everything resumes right from where it left.
+* As soon as the WiFi gets connected, **Arduino SDK** begins trying to connect to *[Grandeur][Grandeur]* using the **connection credentials** you provide during `grandeur.init()`. When it connects, only then does the communication with Grandeur happen. And if somehow the connection breaks, SDK handles the reconnection and everything resumes right from where it left.
 
 *  **Arduino SDK** exposes the state of your device (`CONNECTED` or `DISCONNECTED`) through [`getState()`][getState] function to let you make your decisions based on that.
 
-* **Arduino SDK** is event-driven. You can set **event handler** for device's connection or disconnection with Grandeur Cloud by using [`onConnection()`][onConnection]. So, when the device connects or disconnects from the cloud, the function passed to `onConnection()` is called.
+* **Arduino SDK** is event-driven. You can set **event handler** for device's connection or disconnection with Grandeur by using [`onConnection()`][onConnection]. So, when the device connects or disconnects from the cloud, the function passed to `onConnection()` is called.
 
 * You can also set **update handlers** for device's summary and parms using [`onSummary()`][onSummary] and [`onParms()`][onParms]. So, when the any of the device variables stored in summary or parms is updated, the function passed to `onSummary()` or `onParmsUpdated()` is called.
 
-* **Async functions** are what make the event-drive of the SDK possible. They do all the same things as regular functions plus one extra. They receive a function parameter which they schedule for later. For example, in the `ApolloDevice` class, all of the following are Async functions:
+* **Async functions** are what make the event-drive of the SDK possible. They do all the same things as regular functions plus one extra. They receive a function parameter which they schedule for later. For example, in the `GrandeurDevice` class, all of the following are Async functions:
   
   * `onConnection(Callback callback)`
   * `onSummary(Callback callback)`
@@ -701,9 +701,9 @@ To see the **Arduino SDK** in action, jump to [Example][Example].
 
 # Grandeur Ecosystem
 
-The purpose of writing this is to give you a glimpse into the thought process and psychologies behind designing the Grandeur Cloud Platform the way it feels now. We believe that the first very important step towards choosing a platform for your product and company is to understand the design language of developers of the platform. So we thought of writing about it in detail. We wanted to document how you can use this platform effectively to make your life as a developer or founder a bit simpler.
+The purpose of writing this is to give you a glimpse into the thought process and psychologies behind designing the Grandeur Platform the way it feels now. We believe that the first very important step towards choosing a platform for your product and company is to understand the design language of developers of the platform. So we thought of writing about it in detail. We wanted to document how you can use this platform effectively to make your life as a developer or founder a bit simpler.
 
-Here we present a case study to help you understand exactly where, how and what Grandeur Cloud can help you with. Then we explain some of the terms and keywords we use to identify and classify things that make abstraction seamless. So here we go.
+Here we present a case study to help you understand exactly where, how and what Grandeur can help you with. Then we explain some of the terms and keywords we use to identify and classify things that make abstraction seamless. So here we go.
 
 ## A Brief Case Study
 
@@ -713,35 +713,35 @@ To resolve the energy efficiency issue of these old ACs, you decided to build an
 
 That's where the problem arose. You are a hardware startup, after all, that builds amazing electronics technology. But here you got to deal with a few more things as well. You have to build your app and figure out how to establish its communication with your hardware. You may decide to hire more engineers. But do you know how much of them will you have to hire? To give you a perspective, you generally need 8+ engineers just to do the server-end, like one to figure out your networking, one to design and manage your database, one to develop your API (the interface layer between your users and devices), about four for building your SDKs (one for each platform android, ios, web, and hardware) and then when you start scaling up a bit, one DevOps engineer. This makes it a package of $8000+ just to figure out the backend of your system and you haven't even validated your product yet. This turns out exhausting for your business. You have hit a concrete wall with no idea what to do about it.
 
-Then one day the sun of fate shown. You came across a platform that goes by the name of Grandeur Cloud. You went through its [website][Grandeur Technologies] and discovered a perfectly fitting solution for all your headaches. You wanted a solution for authentication of your users, it has the Auth feature in it. You needed online file storage to store maybe the profile pictures of your users and other stuff, it comes with a storage builtin. You were in dire need of a scalable out-of-the-box database to store power consumption logs of your device to show your users graphs on their monthly/yearly savings, it provides a cloud datastore service. And the most important of these all, you needed a realtime communication bridge between your hardware and your apps, THANK GOD, its SDKs are available for all the stacks including Arduino, web, and mobile (both android and ios).
+Then one day the sun of fate shown. You came across a platform that goes by the name of Grandeur. You went through its [website][Grandeur Technologies] and discovered a perfectly fitting solution for all your headaches. You wanted a solution for authentication of your users, it has the Auth feature in it. You needed online file storage to store maybe the profile pictures of your users and other stuff, it comes with a storage builtin. You were in dire need of a scalable out-of-the-box database to store power consumption logs of your device to show your users graphs on their monthly/yearly savings, it provides a cloud datastore service. And the most important of these all, you needed a realtime communication bridge between your hardware and your apps, THANK GOD, its SDKs are available for all the stacks including Arduino, web, and mobile (both android and ios).
 
-So here you are giving it a shot. You simply [registered for the platform][Grandeur Cloud], created your first project, downloaded their SDKs and started connecting your devices and apps through Grandeur Cloud. You didn't even have to worry about the security of your users and devices, because the data on Grandeur Cloud is protected under standard security protocols. Each user and device in a project is limited in its scope. All you had to worry about was designing your product core and develop your business logic. And in a matter of weeks, your product was out in people's hands, your apps live on app stores. People loved what you built and you were getting live feedback on it. You could see how many people have paired with your devices. You made an early entry into the market and now adding a dent to the universe.
+So here you are giving it a shot. You simply [registered for the platform][Grandeur], created your first project, downloaded their SDKs and started connecting your devices and apps through Grandeur. You didn't even have to worry about the security of your users and devices, because the data on Grandeur is protected under standard security protocols. Each user and device in a project is limited in its scope. All you had to worry about was designing your product core and develop your business logic. And in a matter of weeks, your product was out in people's hands, your apps live on app stores. People loved what you built and you were getting live feedback on it. You could see how many people have paired with your devices. You made an early entry into the market and now adding a dent to the universe.
 
-By the way, that is the story of team SolDrive. Check out their [website][SolDrive] right now and explore how they are transforming the world with Grandeur Cloud.
+By the way, that is the story of team SolDrive. Check out their [website][SolDrive] right now and explore how they are transforming the world with Grandeur.
 
 ## Concepts
 
-In this subsection, we will explore the Grandeur Cloud platform in detail and see how it pulls it all off. So let's get started.
+In this subsection, we will explore the Grandeur platform in detail and see how it pulls it all off. So let's get started.
 
 ### Project
 
-A project is the first thing you need to create to start working with Grandeur Cloud. A project is like a namespace, a completely isolated network of users and devices, along with separate file storage and a separate datastore. While you can create an unlimited number of projects, but no two projects can interact or share anything with one other.
+A project is the first thing you need to create to start working with Grandeur. A project is like a namespace, a completely isolated network of users and devices, along with separate file storage and a separate datastore. While you can create an unlimited number of projects, but no two projects can interact or share anything with one other.
 
-Each project is identified by a digital signature that we call the API key, just as your identification card or social security number identifies you as a citizen. To connect your apps or hardware to your project's network, this is what you need to provide to the SDKs. The API key is sent with every request to Grandeur Cloud and this is what defines the project of the request. Check out the [SDK][SDK] section to read more about it.
+Each project is identified by a digital signature that we call the API key, just as your identification card or social security number identifies you as a citizen. To connect your apps or hardware to your project's network, this is what you need to provide to the SDKs. The API key is sent with every request to Grandeur and this is what defines the project of the request. Check out the [SDK][SDK] section to read more about it.
 
 > ***NOTE***: Our pricing applies separately to each project. So you get a free tier on every project and pay for each separately for what you consume when you cross your resources limit.
 
 ### SDK
 
-Apollo is the API that exposes Grandeur Cloud to the outside world. Our SDKs utilize this API and map each functionality to a function. We have tried our best to make the integration of our SDKs into your codebase simple. For example, while developing your web app, you simply need to drop in the link of JS SDK CDN in your codebase and you are done. We have developed our SDKs for each platform in coherence with each other so you could work and collaborate everywhere seamlessly.
+Grandeur is the API that exposes Grandeur to the outside world. Our SDKs utilize this API and map each functionality to a function. We have tried our best to make the integration of our SDKs into your codebase simple. For example, while developing your web app, you simply need to drop in the link of JS SDK CDN in your codebase and you are done. We have developed our SDKs for each platform in coherence with each other so you could work and collaborate everywhere seamlessly.
 
-This is how they work: In every SDK, there is a global object aka. `apollo`. You can initialize your configurations (API Key and a couple of more stuff in case of hardware SDK) by calling `apollo.init()`. This returns you a reference to your whole project (in case of your app) or just to your device (in case of hardware because hardware scope is limited to the device itself). In **JS SDK**, you can interact with the authentication API, the device API, the file storage and the datastore API. In the case of **Arduino SDK** your scope is limited to just the device's namespace. Check out the [Authentication and Access][Authentication and Access] section to get more insight into how scope varies across the different platforms (app and hardware).
+This is how they work: In every SDK, there is a global object aka. `grandeur`. You can initialize your configurations (API Key and a couple of more stuff in case of hardware SDK) by calling `grandeur.init()`. This returns you a reference to your whole project (in case of your app) or just to your device (in case of hardware because hardware scope is limited to the device itself). In **JS SDK**, you can interact with the authentication API, the device API, the file storage and the datastore API. In the case of **Arduino SDK** your scope is limited to just the device's namespace. Check out the [Authentication and Access][Authentication and Access] section to get more insight into how scope varies across the different platforms (app and hardware).
 
 ### User and Administrator
 
 This topic is about the relationship between you as an administrator and your users and the access scope of both.
 
-You aka. **the administrator** is an entity that creates, develops and maintains one or more [projects][Project] on Grandeur Cloud. The administrator has full authority over a project's resources (users, devices, files, and data) and can monitor and control all its projects from the [dashboard][Grandeur Cloud Dashboard].
+You aka. **the administrator** is an entity that creates, develops and maintains one or more [projects][Project] on Grandeur. The administrator has full authority over a project's resources (users, devices, files, and data) and can monitor and control all its projects from the [dashboard][Grandeur Dashboard].
 
 A **user** is an entity that uses your product. While you have full control over your project, a user of your product has access to his profile and delegated access limited to its device scope only.
 
@@ -753,7 +753,7 @@ Using just your project's API Key for full delegation is like putting all of you
 
 Devices are the *things* in **Internet of Things** (IoT) around which the IoT product development revolves. Like a user, a device entity has a limited scope of access. But unlike users, you can register new devices only from the dashboard. Read the [Device Registry][Device Registry] section for more on what happens when you register a new device to your project.
 
-On Grandeur Cloud, a device falls under the ownership of the project's administrator. The project's API Key delegates the device pairing authority to the SDK which the user uses to pair with the device. Pairing a device makes it live on Grandeur Cloud and the user gets delegated access to the device's data. But a user cannot delete or modify a device's inherent data because it's not within its scope.
+On Grandeur, a device falls under the ownership of the project's administrator. The project's API Key delegates the device pairing authority to the SDK which the user uses to pair with the device. Pairing a device makes it live on Grandeur and the user gets delegated access to the device's data. But a user cannot delete or modify a device's inherent data because it's not within its scope.
 
 A user can pair with any number of devices but a device can be paired with at the most one user.
 
@@ -764,18 +764,18 @@ The device entity, in the end, defines two things:
 
 This matters a lot because you would never want your neighbor to control your air conditioner (that would be a horrible situation). That's what this entity has been designed for. A user can only interact with devices that are paired with it.
 
-When you pair a device with a user account, an access token is generated for the device. This token is what the device uses to connect to Grandeur Cloud. This token also delegates access of the device namespace to the Arduino SDK. The Arduino SDK takes this access token along with the project's API Key while doing `apollo.init()`. To read about the device's namespace and how the device's data is stored on Grandeur Cloud, have a look at the [Device Registry][Device Registry] section.
+When you pair a device with a user account, an access token is generated for the device. This token is what the device uses to connect to Grandeur. This token also delegates access of the device namespace to the Arduino SDK. The Arduino SDK takes this access token along with the project's API Key while doing `grandeur.init()`. To read about the device's namespace and how the device's data is stored on Grandeur, have a look at the [Device Registry][Device Registry] section.
 
 > ***NOTE***: A user cannot pair with a device that is already paired.
 
 ### Device Registry
 
-The device registry constitutes one of the key elements of Grandeur Cloud. There are two types of approaches you see out there:
+The device registry constitutes one of the key elements of Grandeur. There are two types of approaches you see out there:
 
 * Those which deal with user's authentication only e.g. firebase and
 * Those which employ a device's registry e.g. Google IoT Core, to make sure no unauthorized devices get into your network.
 
-We wanted to combine the best of both worlds. This is why at Grandeur Cloud, not do we just authenticate a device on connection, we also maintain a device's registry for you. See [Authentication and Access][Authentication and Access] section for detail on how a device is authenticated on Grandeur Cloud.
+We wanted to combine the best of both worlds. This is why at Grandeur, not do we just authenticate a device on connection, we also maintain a device's registry for you. See [Authentication and Access][Authentication and Access] section for detail on how a device is authenticated on Grandeur.
 
 When you register a device, you make it available in your project's network. Not just that, a new namespace is created for your device in the device registry. When your device comes online, this is where all of its data is stored, in the form of i) Summary and ii) Parms.
 
@@ -797,21 +797,21 @@ You (as an administrator) create a project and therefore have global access to e
 
 The user scope is wider than the device scope. A user can access its profile, the registry of the devices it's paired to, the files in the project's storage and the data in the project's datastore. When a user logs in, an Auth token is returned. This token along with the API Key, being sent with every request, is what validates the authority of the request.
 
-The device scope is limited to the device's namespace in the device registry. When a user pairs with a device, an access token is returned for the device. This access token along with the API Key is what authenticates the device's connection to Grandeur Cloud.
+The device scope is limited to the device's namespace in the device registry. When a user pairs with a device, an access token is returned for the device. This access token along with the API Key is what authenticates the device's connection to Grandeur.
 
 This is how the global project scope is distributed among the smaller entities and we make sure that everyone gets what they are allowed to access.
 
 ### Networking
 
-Here we write about how the networking works on Grandeur Cloud.
+Here we write about how the networking works on Grandeur.
 
 We work with two communication channels in **Web SDK** i) HTTP based REST API channel and ii) Duplex based realtime API channel. We use the first to do some basic things like authentication or handle big requests like file uploading, while the latter, as its name suggests, for realtime communication like fetching or updating the device's data. The realtime channel is as fast as 200ms RTT. It is based on our custom protocol aka. Duplex. We do not allow any unauthenticated communication over this channel and therefore authenticate a connection over the REST channel first.
 
-In the **Arduino SDK**, we only use the realtime channel. A device cannot establish a connection over this channel unless and until its access token is validated. A device access token is provided while initializing the apollo configurations through `apollo.init()`.
+In the **Arduino SDK**, we only use the realtime channel. A device cannot establish a connection over this channel unless and until its access token is validated. A device access token is provided while initializing the grandeur configurations through `grandeur.init()`.
 
 ### Allowed Origins
 
-This is another amazing topic and somehow related to access delegation in the end. As mentioned in the sections above that you can interact with your project's namespace through the JS SDK by initializing apollo with your API key. This returns an object referring to your project which can be used to interact with its resources including its devices, datastore, and files storage. Putting this much responsibility on just the API key poses a security threat particularly in case of web apps as API Key can easily be stolen. Even though a user needs to log in first before making any request to the cloud, a hacker with having your API key can still cause some serious damage. For example, Registering bogus users to your project or creating a copycat site on your name for phishing to name a few. That's where cross-origin request sharing (CORS) policies come to play.
+This is another amazing topic and somehow related to access delegation in the end. As mentioned in the sections above that you can interact with your project's namespace through the JS SDK by initializing grandeur with your API key. This returns an object referring to your project which can be used to interact with its resources including its devices, datastore, and files storage. Putting this much responsibility on just the API key poses a security threat particularly in case of web apps as API Key can easily be stolen. Even though a user needs to log in first before making any request to the cloud, a hacker with having your API key can still cause some serious damage. For example, Registering bogus users to your project or creating a copycat site on your name for phishing to name a few. That's where cross-origin request sharing (CORS) policies come to play.
 
 So to allow a web app to interact with your project using the Web SDK, you first need to whitelist the domain name your web app uses via the settings page in the dashboard. You cannot even send a request from your localhost without first whitelisting it.
 
@@ -819,15 +819,15 @@ So to allow a web app to interact with your project using the Web SDK, you first
 
 # Documentation
 
-`Project` is the main class and all functionalities originate from it. You get the object of this class when you initialize SDK's configurations using `apollo.init()`. You can safely imagine the object of `Project` class as a reference to your project on Grandeur Cloud.
+`Project` is the main class and all functionalities originate from it. You get the object of this class when you initialize SDK's configurations using `grandeur.init()`. You can safely imagine the object of `Project` class as a reference to your project on Grandeur.
 
-`apollo` is the global object that gets available right away when you include `<Apollo.h>` in your sketch. It has just one purpose and therefore gives you only one function: `apollo.init()`.
+`grandeur` is the global object that gets available right away when you include `<Grandeur.h>` in your sketch. It has just one purpose and therefore gives you only one function: `grandeur.init()`.
 
-> ***Note 2***: You cannot connect with Grandeur Cloud or even with internet without first connecting with the WiFi. Therefore, the examples below are just for reference and you are required to handle your device's WiFi in order for them to work. You can see [these examples][Examples] to get a deeper understanding. They show WiFi handling too. 😉
+> ***Note 2***: You cannot connect with Grandeur or even with internet without first connecting with the WiFi. Therefore, the examples below are just for reference and you are required to handle your device's WiFi in order for them to work. You can see [these examples][Examples] to get a deeper understanding. They show WiFi handling too. 😉
 
 ### init
 
-> apollo.init (deviceID: _String_, apiKey: _String_, token: _String_) : returns _Project_
+> grandeur.init (deviceID: _String_, apiKey: _String_, token: _String_) : returns _Project_
 
 This method initializes SDK's connection configurations: `apiKey` and `authToken`, and returns an object of the `Project` class. `Project` class is the main class that exposes all functions of the SDK.
 
@@ -841,10 +841,10 @@ This method initializes SDK's connection configurations: `apiKey` and `authToken
 #### Example
 
 ```cpp
-// Container for the object of ApolloDevice class.
+// Container for the object of GrandeurDevice class.
 Project myProject;
 void setup() {
-  myProject = apollo.init(YourApiKey, YourToken);
+  myProject = grandeur.init(YourApiKey, YourToken);
 }
 
 // **RESULT**
@@ -854,7 +854,7 @@ void setup() {
 
 ## Project
 
-Project is the main class of the SDK. When SDK connects with the Cloud, this class represents your cloud project. But Arduino SDK's functionality is limited to devices and datastore APIs which are wrapped by their respective classes.
+Project is the main class of the SDK. When SDK connects with Grandeur, this class represents your cloud project. But Arduino SDK's functionality is limited to devices and datastore APIs which are wrapped by their respective classes.
 
 This class exposes the following methods:
 
@@ -862,22 +862,22 @@ This class exposes the following methods:
 
 > isConnected(void): returns _bool_
 
-This method returns true if the SDK is connected with Grandeur Cloud.
+This method returns true if the SDK is connected with Grandeur.
 
 #### Example
 
 ```cpp
 Project myProject;
 void setup() {
-  myProject = apollo.init(YourApiKey, YourToken);
+  myProject = grandeur.init(YourApiKey, YourToken);
 }
 
 void loop() {
   if(!myProject.isConnected()) {
-    Serial.println("Device is not connected with the Cloud!\n");
+    Serial.println("Device is not connected with Grandeur!\n");
   }
   else {
-    Serial.println("Yay! Device has made a successful connection with Grandeur Cloud!\n");
+    Serial.println("Yay! Device has made a successful connection with Grandeur!\n");
   }
 
   myProject.loop(true);
@@ -885,7 +885,7 @@ void loop() {
 
 // **RESULT**
 // In the beginning, isConnected() returns false and the first *if-block* runs.
-// When the SDK is connected with the Cloud, isConnected() returns true running the second
+// When the SDK is connected with Grandeur, isConnected() returns true running the second
 // *if-block*.
 ```
 
@@ -893,13 +893,13 @@ void loop() {
 
 > onConnection (callback : _Callback_) : returns _void_
 
-This method schedules a function to be called when the SDK's connection with Grandeur Cloud is made or broken. The function passed to it as argument is called an **event handler** for it handles events like connection/disconnection with Cloud. Example below illustrates its usage.
+This method schedules a function to be called when the SDK's connection with Grandeur is made or broken. The function passed to it as argument is called an **event handler** for it handles events like connection/disconnection with Cloud. Example below illustrates its usage.
 
 #### Parameters
 
 | Name        | Type             | Description                                                                    |
 |-------------|------------------|--------------------------------------------------------------------------------|
-| callback    | _void (*)(bool)_ | An event handler function for device's connection/disconnection with the Cloud |
+| callback    | _void (*)(bool)_ | An event handler function for device's connection/disconnection with Grandeur |
 
 
 #### Example
@@ -908,21 +908,21 @@ This method schedules a function to be called when the SDK's connection with Gra
 Project myProject;
 
 void connectionCallback(bool status) {
-  // This method handles the events related to device's connection with the Cloud.
+  // This method handles the events related to device's connection with Grandeur.
   switch(status) {
     case CONNECTED:
       // If the connection event occurred.
-      Serial.println("Device Connected to the Cloud!\n");
+      Serial.println("Device Connected to Grandeur!\n");
       break;
     case DISCONNECTED:
       // If the disconnection event occurred.
-      Serial.println("Device Disconnected from the Cloud!\n");
+      Serial.println("Device Disconnected from Grandeur!\n");
       break;
   }
 }
 
 void setup() {
-  myProject = apollo.init(YourApiKey, YourToken);
+  myProject = grandeur.init(YourApiKey, YourToken);
 
   myProject.onConnection(connectionCallback);
 }
@@ -932,8 +932,8 @@ void loop() {
 }
 
 // **RESULT**
-// Prints "Device Connected to the Cloud!" when device makes a successful connection with Grandeur Cloud
-// and "Device Disconnected from the Cloud!" when device breaks connection from Grandeur Cloud.
+// Prints "Device Connected to Grandeur!" when device makes a successful connection with Grandeur
+// and "Device Disconnected from Grandeur!" when device breaks connection from Grandeur.
 ```
 
 ### loop
@@ -950,7 +950,7 @@ It also accepts an argument which we call **valve**. A **valve** is a boolean ex
 ```cpp
 Project myProject;
 void setup() {
-  myProject = apollo.init(YourApiKey, YourToken);
+  myProject = grandeur.init(YourApiKey, YourToken);
 }
 
 void loop() {
@@ -972,7 +972,7 @@ This method returns an object of the **Device** class. Read about **Device** cla
 Project myProject;
 Device myDevice;
 void setup() {
-  myProject = apollo.init(YourApiKey, YourToken);
+  myProject = grandeur.init(YourApiKey, YourToken);
   myDevice = myProject.device(YourDeviceID);
 }
 
@@ -992,7 +992,7 @@ This method returns an object of the **Datastore** class. Datastore class expose
 Project myProject;
 Datastore myDatastore;
 void setup() {
-  myProject = apollo.init(YourApiKey, YourToken);
+  myProject = grandeur.init(YourApiKey, YourToken);
   myDatastore = myProject.datastore();
 }
 
@@ -1002,7 +1002,7 @@ void setup() {
 
 ## Device
 
-Device class exposes the functions of the device API. It generally handles your device's data on Grandeur Cloud like: updating device variables on the Cloud, pulling variables from the Cloud, listening for cloud updates in your device variables, and so on.
+Device class exposes the functions of the device API. It generally handles your device's data on Grandeur like: updating device variables on Grandeur, pulling variables from Grandeur, listening for cloud updates in your device variables, and so on.
 
 It exposes the following functions:
 
@@ -1010,7 +1010,7 @@ It exposes the following functions:
 
 > getSummary (callback: _Callback_) : returns _void_
 
-This method gets device's [summary][summary] from the Cloud.
+This method gets device's [summary][summary] from Grandeur.
 
 #### Parameters
 
@@ -1030,7 +1030,7 @@ void getSummaryCallback(JSONObject result) {
 }
 
 void setup() {
-  myProject = apollo.init(YourApiKey, YourToken);
+  myProject = grandeur.init(YourApiKey, YourToken);
   myDevice = myProject.device(YourDeviceID);
 }
 
@@ -1050,7 +1050,7 @@ void loop() {
 
 > getParms (callback: _Callback_) : returns _void_
 
-This method gets device's [parms][parms] from the Cloud.
+This method gets device's [parms][parms] from Grandeur.
 
 #### Parameters
 
@@ -1070,7 +1070,7 @@ void getParmsCallback(JSONObject result) {
 }
 
 void setup() {
-  myProject = apollo.init(YourApiKey, YourToken);
+  myProject = grandeur.init(YourApiKey, YourToken);
   myDevice = myProject.device(YourDeviceID);
 }
 
@@ -1090,7 +1090,7 @@ void loop() {
 
 > setSummary (summary : _JSONObject_, callback: _Callback_) : returns _void_
 
-This method updates the device's [summary][summary] on the Cloud with new values.
+This method updates the device's [summary][summary] on Grandeur with new values.
 
 #### Parameters
 
@@ -1112,7 +1112,7 @@ void setSummaryCallback(JSONObject result) {
 }
 
 void setup() {
-  myProject = apollo.init(YourApiKey, YourToken);
+  myProject = grandeur.init(YourApiKey, YourToken);
   myDevice = myProject.device(YourDeviceID);
 }
 
@@ -1158,7 +1158,7 @@ void setParmsCallback(JSONObject result) {
 }
 
 void setup() {
-  myProject = apollo.init(YourApiKey, YourToken);
+  myProject = grandeur.init(YourApiKey, YourToken);
   myDevice = myProject.device(YourDeviceID);
 }
 
@@ -1182,7 +1182,7 @@ void loop() {
 
 > onSummary (callback : _Callback_) : returns _void_
 
-This method schedules a function to be called when the summary of the device is updated on Grandeur Cloud.
+This method schedules a function to be called when the summary of the device is updated on Grandeur.
 
 > ***A Tidbit***: *Update is a special type of event* and the function that handles it is called an **update handler**.
 
@@ -1201,7 +1201,7 @@ Project myProject;
 Device myDevice;
 
 void summaryUpdatedCallback(JSONObject result) {
-  // When summary update occurs on the Cloud, this function extracts the updated values of
+  // When summary update occurs on Grandeur, this function extracts the updated values of
   // voltage and current, and sets the corresponding pins.
   Serial.println("Summary update occurred!\n");
   int voltage = updatedSummary["voltage"];
@@ -1211,7 +1211,7 @@ void summaryUpdatedCallback(JSONObject result) {
 }
 
 void setup() {
-  myProject = apollo.init(YourApiKey, YourToken);
+  myProject = grandeur.init(YourApiKey, YourToken);
   myDevice = myProject.device(YourDeviceID);
 
   myDevice.onSummary(summaryUpdatedCallback);
@@ -1226,7 +1226,7 @@ void loop() {
 
 > onParms (callback : _Callback_) : returns _void_
 
-This method schedules a function to be called when the parms of the device are updated on Grandeur Cloud.
+This method schedules a function to be called when the parms of the device are updated on Grandeur.
 
 #### Parameters
 
@@ -1243,7 +1243,7 @@ Project myProject;
 Device myDevice;
 
 void parmsUpdatedCallback(JSONObject updatedParms) {
-  // When parms update occurs on the Cloud, this function extracts the updated value of
+  // When parms update occurs on Grandeur, this function extracts the updated value of
   // state, and sets the corresponding pin.
   Serial.println("Parms update occurred!\n");
   int state = updatedParms["state"];
@@ -1251,7 +1251,7 @@ void parmsUpdatedCallback(JSONObject updatedParms) {
 }
 
 void setup() {
-  myProject = apollo.init(YourApiKey, YourToken);
+  myProject = grandeur.init(YourApiKey, YourToken);
   myDevice = myProject.device(YourDeviceID);
   myDevice.onParms(parmsUpdatedCallback);
 }
@@ -1263,7 +1263,7 @@ void loop() {
 
 ## Datastore
 
-Device class exposes the functions of the device API. It generally handles your device's data on Grandeur Cloud like: updating device variables on the Cloud, pulling variables from the Cloud, listening for cloud updates in your device variables, and so on.
+Device class exposes the functions of the device API. It generally handles your device's data on Grandeur like: updating device variables on Grandeur, pulling variables from Grandeur, listening for cloud updates in your device variables, and so on.
 
 It exposes the following functions:
 
@@ -1271,7 +1271,7 @@ It exposes the following functions:
 
 > insert (documents: _JSONObject_, callback: _Callback_) : returns _void_
 
-This method inserts documents into the Cloud datastore.
+This method inserts documents into Grandeur datastore.
 
 #### Parameters
 
@@ -1295,7 +1295,7 @@ void insertCallback(JSONObject insertionResult) {
 }
 
 void setup() {
-  myProject = apollo.init(YourApiKey, YourToken);
+  myProject = grandeur.init(YourApiKey, YourToken);
   myDatastore = myProject.datastore(YourDeviceID);
 }
 
@@ -1323,7 +1323,7 @@ void loop() {
 
 > search (filter: _JSONObject_, projection: _JSONObject_, pageNumber: _int_, callback: _Callback_) : returns _void_
 
-This method searches for documents in the Cloud datastore based on the `filter` supplied. `Filter` describes what documents to return and `projection` describes what fields to mask/unmask in those documents. Their is a limit on the how many documents can be returned in one query. The documents are divided into pages and you can get subsequent pages by specifying the `pageNumber`.
+This method searches for documents in Grandeur datastore based on the `filter` supplied. `Filter` describes what documents to return and `projection` describes what fields to mask/unmask in those documents. Their is a limit on the how many documents can be returned in one query. The documents are divided into pages and you can get subsequent pages by specifying the `pageNumber`.
 
 #### Parameters
 
@@ -1343,7 +1343,7 @@ Datastore myDatastore;
 void searchCallback(JSONObject searchResult) {
   // This method just prints the documents if the search is successful.
   if(searchResult["code"] == "DATASTORE-DOCUMENTS-FETCHED") {
-    Serial.print("Documents fetched from the Cloud: ");
+    Serial.print("Documents fetched from Grandeur: ");
     Serial.println(searchResult["documents"].length());
     // Printing all the fetched documents.
     for(int i = 0; i < searchResult["documents"].length(); i++) {
@@ -1358,7 +1358,7 @@ void searchCallback(JSONObject searchResult) {
 }
 
 void setup() {
-  myProject = apollo.init(YourApiKey, YourToken);
+  myProject = grandeur.init(YourApiKey, YourToken);
   myDatastore = myProject.datastore(YourDeviceID);
 }
 
@@ -1381,20 +1381,20 @@ Here are some enhancements that we are considering to implement in the SDK. They
 [#4][i4] — Move the error handling inside the SDK. The developer would not have to check the response code to see if the request executed successfully or not. We would do that the native C-way instead: by returning 0 for success and 1, 2, 3 for other error codes. Or we can create some macros like SUCCESS, ERROR etc.
 
 [Grandeur Technologies]: https://grandeur.tech "Grandeur Technologies"
-[Grandeur Cloud]: https://cloud.grandeur.tech "Grandeur Cloud"
-[Grandeur Cloud Sign Up]: https://cloud.grandeur.tech/register "Sign up on Grandeur Cloud"
-[Grandeur Cloud Dashboard]: https://cloud.grandeur.tech/dashboard "Grandeur Cloud Dashboard"
-[Grandeur Cloud Accounts]: https://cloud.grandeur.tech/accounts "Grandeur Cloud Accounts"
-[Grandeur Cloud Devices]: https://cloud.grandeur.tech/devices "Grandeur Cloud Devices"
-[Grandeur Cloud Settings]: https://cloud.grandeur.tech/settings "Grandeur Cloud Settings"
-[Grandeur Cloud Pricing]: https://grandeur.tech/pricing "Pricing"
-[Get Started With Grandeur Cloud]: https://github.com/grandeurtech/grandeurcloud-js-sdk#get-started "Get Started With Grandeur Cloud"
+[Grandeur]: https://cloud.grandeur.tech "Grandeur"
+[Grandeur Sign Up]: https://cloud.grandeur.tech/register "Sign up on Grandeur"
+[Grandeur Dashboard]: https://cloud.grandeur.tech/dashboard "Grandeur Dashboard"
+[Grandeur Accounts]: https://cloud.grandeur.tech/accounts "Grandeur Accounts"
+[Grandeur Devices]: https://cloud.grandeur.tech/devices "Grandeur Devices"
+[Grandeur Settings]: https://cloud.grandeur.tech/settings "Grandeur Settings"
+[Grandeur Pricing]: https://grandeur.tech/pricing "Pricing"
+[Get Started With Grandeur]: https://github.com/grandeurtech/grandeurcloud-js-sdk#get-started "Get Started With Grandeur"
 [An Example Webapp]: https://github.com/grandeurtech/grandeurcloud-js-sdk#example "An Example Webapp"
 [Examples]:  https://github.com/grandeurtech/grandeurcloud-arduino-sdk/tree/master/examples/
 [Arduino IDE]: https://www.arduino.cc/en/main/software "Arduino IDE"
 [Installing an Arduino Library]: https://www.arduino.cc/en/guide/libraries "Installing an Arduino Library"
 
-[Grandeur Cloud Hackster]: https://www.hackster.io/grandeurcloud "Hackster Community"
+[Grandeur Hackster]: https://www.hackster.io/grandeurcloud "Hackster Community"
 
 [Installation]: #installation "Installation"
 [Example]: #example "Arduino SDK Example"
@@ -1422,7 +1422,7 @@ Here are some enhancements that we are considering to implement in the SDK. They
 [access token]: #authentication-and-access "Authentication and Access"
 
 [getState]: #get-state
-[onConnection]: #apollo-connection-event-listener
+[onConnection]: #grandeur-connection-event-listener
 [onSummary]: #onSummary
 [onParms]: #onParms
 [loop]: #loop

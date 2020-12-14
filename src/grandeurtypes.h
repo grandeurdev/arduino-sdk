@@ -1,26 +1,26 @@
 /**
- * @file apollotypes.h
+ * @file grandeurtypes.h
  * @date 24.03.2020
  * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
- * This file is part of the Arduino SDK for Grandeur Cloud.
+ * This file is part of the Arduino SDK for Grandeur.
  *
  */
 
-#include "apollomacros.h"
+#include "grandeurmacros.h"
 #include <cstring>
 #include "Arduino_JSON/Arduino_JSON.h"
 
-#ifndef APOLLOTYPES_H_
-#define APOLLOTYPES_H_
+#ifndef GRANDEURTYPES_H_
+#define GRANDEURTYPES_H_
 
 typedef JSONVar JSONObject;
 typedef void (*Callback)(JSONObject);
 typedef void (*Send)(const char* task, const char* payload, Callback callback);
-typedef long ApolloID;
+typedef long GrandeurID;
 
-// Config class for apollo configurations
+// Config class for grandeur configurations
 class Config {
   public:
     String apiKey;

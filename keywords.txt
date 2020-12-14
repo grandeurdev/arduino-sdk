@@ -1,11 +1,11 @@
 #######################################
-# Syntax Coloring Map For Apollo
+# Syntax Coloring Map For Grandeur
 ####################################### 
 # Class
 #######################################
 
-Apollo	KEYWORD3
-apollo	KEYWORD3
+Grandeur	KEYWORD3
+grandeur	KEYWORD3
 Project	KEYWORD3
 Datastore	KEYWORD3
 Device	KEYWORD3

@@ -4,13 +4,13 @@
  * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
- * This file is part of the Arduino SDK for Grandeur Cloud.
+ * This file is part of the Arduino SDK for Grandeur.
  *
  */
 
 // Including headers
-#include "apollotypes.h"
-#include "apollomacros.h"
+#include "grandeurtypes.h"
+#include "grandeurmacros.h"
 #include "DuplexHandler.h"
 
 #ifndef DEVICE_H_
@@ -32,7 +32,7 @@ class Device {
     void setSummary(JSONObject summary, Callback callback);
     void setParms(JSONObject parms, Callback callback);
 
-    // Listeners for events from the Cloud
+    // Listeners for events from Grandeur
     void onSummary(Callback callback);
     void onParms(Callback callback);
 };

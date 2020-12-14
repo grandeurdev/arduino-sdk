@@ -1,14 +1,14 @@
 /**
- * @file apollotypes.cpp
+ * @file grandeurtypes.cpp
  * @date 24.03.2020
  * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
- * This file is part of the Arduino SDK for Grandeur Cloud.
+ * This file is part of the Arduino SDK for Grandeur.
  *
  */
 
-#include <apollotypes.h>
+#include <grandeurtypes.h>
 #include "Arduino.h"
 
 Config::Config(String apiKey, String token) {

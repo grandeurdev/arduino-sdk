@@ -4,9 +4,9 @@
  * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
- * This file is part of the Arduino SDK for Grandeur Cloud.
+ * This file is part of the Arduino SDK for Grandeur.
  *
- * Apollo.h is used for device's communication to Grandeur Cloud.
+ * Grandeur.h is used for device's communication to Grandeur.
  * ESP8266WiFi.h is used for handling device's WiFi.
  * 
  * Dash listening is for one-way listening.
@@ -15,7 +15,7 @@
  * caring about how your device responds to your commands.
 */
 
-#include <Apollo.h>
+#include <Grandeur.h>
 #include <ESP8266WiFi.h>
 
 // Device's connection configurations
@@ -42,15 +42,15 @@ void setup() {
   Serial.begin(9600);
   // This sets up the device WiFi.
   setupWiFi();
-  // This initializes the SDK's configurations and returns a new object of ApolloDevice class.
-  myProject = apollo.init(apiKey, token);
+  // This initializes the SDK's configurations and returns a new object of GrandeurDevice class.
+  myProject = grandeur.init(apiKey, token);
   // Getting object of Device class.
   myDevice = myProject.device(deviceID);
   // This schedules the connectionCallback() function to be called when connection with the cloud
   // is made/broken.
   myProject.onConnection(connectionCallback);
   // This schedules parmsUpdatedCallback() function to be called when variable stored
-  // in device's parms are changed on the Cloud.
+  // in device's parms are changed on Grandeur.
   myDevice.onParms(parmsUpdatedCallback);
 }
 

@@ -4,16 +4,16 @@
  * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
- * This file is part of the Arduino SDK for Grandeur Cloud.
+ * This file is part of the Arduino SDK for Grandeur.
  *
- * Apollo.h is used for device's communication to Grandeur Cloud.
+ * Grandeur.h is used for device's communication to Grandeur.
  * WiFi.h is used for handling device's WiFi.
  * 
  * This example illustrates the insertion of data into the datastore.
  * It would be useful in logging data on the cloud to visualize it in form of tables or graphs.
 */
 
-#include <Apollo.h>
+#include <Grandeur.h>
 #include <WiFi.h>
 
 // Device's connection configurations
@@ -38,8 +38,8 @@ void setup() {
   Serial.begin(9600);
   // This sets up the device WiFi.
   setupWiFi();
-  // This initializes the SDK's configurations and returns a reference to my project on the Cloud.
-  myProject = apollo.init(apiKey, token);
+  // This initializes the SDK's configurations and returns a reference to my project on Grandeur.
+  myProject = grandeur.init(apiKey, token);
   // Getting object of Datastore class.
   myDatastore = myProject.datastore();
   // This schedules the connectionCallback() function to be called when connection with the cloud
@@ -99,7 +99,7 @@ void connectionCallback(bool status) {
       // To do that, we get device parms from the cloud and set the *state pin* to the
       // value of *state* in those parms.
       Serial.println("Device is connected to the cloud.");
-      Serial.println("Logging voltage to the Cloud...");
+      Serial.println("Logging voltage to Grandeur...");
       break;
     case DISCONNECTED:
       Serial.println("Device is disconnected from the cloud.");
@@ -110,7 +110,7 @@ void connectionCallback(bool status) {
 void insertCallback(JSONObject insertResult) {
   // This function prints if the logs were successfully inserted into the datastore or not.
   if(insertResult["code"] == "DATASTORE-DOCUMENTS-INSERTED") {
-    Serial.println("Voltage is successfully logged to the Cloud.");
+    Serial.println("Voltage is successfully logged to Grandeur.");
     return;
   }
   // If insertion is not successful.

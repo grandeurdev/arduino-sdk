@@ -4,7 +4,7 @@
  * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
- * This file is part of the Arduino SDK for Grandeur Cloud.
+ * This file is part of the Arduino SDK for Grandeur.
  *
  */
 
@@ -42,7 +42,7 @@ void DuplexHandler::init(void) {
   // Scheduling reconnect every 5 seconds if it disconnects
   client.setReconnectInterval(5000);
   // Opening up the connection
-  client.beginSSL(APOLLO_URL, APOLLO_PORT, _query, APOLLO_FINGERPRINT, "node");
+  client.beginSSL(GRANDEUR_URL, GRANDEUR_PORT, _query, GRANDEUR_FINGERPRINT, "node");
   char tokenArray[_token.length() + 1];
   _token.toCharArray(tokenArray, _token.length() + 1);
   client.setAuthorization(tokenArray);
@@ -60,7 +60,7 @@ void DuplexHandler::loop(bool valve) {
   if(valve) {
     // If valve is true => valve is open
     if(millis() - millisCounterForPing >= PING_INTERVAL) {
-        // Ping Apollo if PING_INTERVAL milliseconds have passed
+        // Ping Grandeur if PING_INTERVAL milliseconds have passed
         millisCounterForPing = millis();
         ping();
     }
@@ -75,7 +75,7 @@ void DuplexHandler::send(const char* task, const char* payload, Callback callbac
     return ;
   }
   char packet[PACKET_SIZE];
-  ApolloID packetID = millis();
+  GrandeurID packetID = millis();
   // Saving callback to eventsTable
   _eventsTable.insert(task, packetID, callback);
   // Formatting the packet
@@ -95,7 +95,7 @@ void DuplexHandler::subscribe(short event, const char* payload, Callback updateH
 void DuplexHandler::ping() {
   if(_status == CONNECTED) {
     char packet[PING_PACKET_SIZE];
-    ApolloID packetID = millis();
+    GrandeurID packetID = millis();
     // Saving callback to eventsTable
     _eventsTable.insert("ping", packetID, [](JSONObject feed) {});
     // Formatting the packet
@@ -136,7 +136,7 @@ void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length) {
       if (JSON.typeof(messageObject) == "undefined") {
         // Just for internal errors of Arduino_JSON
         // if the parsing fails.
-        DEBUG_APOLLO("Parsing input failed!");
+        DEBUG_GRANDEUR("Parsing input failed!");
         return;
       }
       if(messageObject["header"]["task"] == "update") {
@@ -153,7 +153,7 @@ void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length) {
       // Fetching event callback function from the events Table
       Callback callback = DuplexHandler::_eventsTable.findAndRemove(
         (const char*) messageObject["header"]["task"],
-        (ApolloID) messageObject["header"]["id"]
+        (GrandeurID) messageObject["header"]["id"]
       );
       if(!callback) {
         return;

@@ -1,29 +1,29 @@
 /**
- * @file apollomacros.h
+ * @file grandeurmacros.h
  * @date 24.03.2020
  * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
- * This file is part of the Arduino SDK for Grandeur Cloud.
+ * This file is part of the Arduino SDK for Grandeur.
  *
  */
 
 // Connection macros
-#define APOLLO_URL "api.grandeur.tech"
-#define APOLLO_PORT 443
-#define APOLLO_FINGERPRINT ""
+#define GRANDEUR_URL "api.grandeur.tech"
+#define GRANDEUR_PORT 443
+#define GRANDEUR_FINGERPRINT ""
 
 // Debugging macros
 #define DEBUG_PORT Serial
 
 #ifdef DEBUG_PORT
-#define DEBUG_APOLLO(...) DEBUG_PORT.printf(__VA_ARGS__)
+#define DEBUG_GRANDEUR(...) DEBUG_PORT.printf(__VA_ARGS__)
 #else
 //#define DEBUG_DUPLEX(...) os_printf( __VA_ARGS__ )
 #endif
 
-#ifndef DEBUG_APOLLO
-#define DEBUG_APOLLO(...)
+#ifndef DEBUG_GRANDEUR
+#define DEBUG_GRANDEUR(...)
 #endif
 
 // Strings sizes
