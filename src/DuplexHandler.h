@@ -4,14 +4,14 @@
  * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
- * This file is part of the Arduino SDK for Grandeur Cloud.
+ * This file is part of the Arduino SDK for Grandeur.
  *
  */
 
 // Including headers
 #include "EventTable.h"
-#include "apollotypes.h"
-#include "apollomacros.h"
+#include "grandeurtypes.h"
+#include "grandeurmacros.h"
 #include "arduinoWebSockets/WebSocketsClient.h"
 
 #ifndef DUPLEXHANDLER_H_
@@ -43,7 +43,7 @@ class DuplexHandler {
     static void send(const char* task, const char* payload, Callback callback);
     // Function to subscribe to a device topic.
     void subscribe(short event, const char* payload, Callback updateHandler);
-    // Function to schedule an event handler for connection with the Cloud
+    // Function to schedule an event handler for connection with Grandeur
     void onConnectionEvent(void connectionEventHandler(bool));
     
     // Getter for connection state

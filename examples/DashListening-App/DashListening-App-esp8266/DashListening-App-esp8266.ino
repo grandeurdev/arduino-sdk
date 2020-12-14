@@ -4,9 +4,9 @@
  * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
- * This file is part of the Arduino SDK for Grandeur Cloud.
+ * This file is part of the Arduino SDK for Grandeur.
  *
- * Apollo.h is used for device's communication to Grandeur Cloud.
+ * Grandeur.h is used for device's communication to Grandeur.
  * ESP8266WiFi.h is used for handling device's WiFi.
  * 
  * Dash listening is for one-way listening.
@@ -15,7 +15,7 @@
  * behaving in terms of their energy units consumed for example.
 */
 
-#include <Apollo.h>
+#include <Grandeur.h>
 #include <ESP8266WiFi.h>
 
 // Device's connection configurations
@@ -46,7 +46,7 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   // This initializes the SDK's configurations and returns a new object of Project class.
-  myProject = apollo.init(apiKey, token);
+  myProject = grandeur.init(apiKey, token);
   // Getting object of Device class.
   myDevice = myProject.device(deviceID);
   // This schedules the connectionCallback() function to be called when connection with the cloud
@@ -56,7 +56,7 @@ void setup() {
 
 void loop() {
   // In this loop() function, after every five seconds, we send the updated values of our
-  // device's voltage and state to the Cloud.
+  // device's voltage and state to Grandeur.
   if(myProject.isConnected()) {
     if(millis() - current >= 5000) {
       // This if-condition makes sure that the code inside this block runs only after
@@ -65,15 +65,15 @@ void loop() {
       Serial.println("Setting Summary");
       JSONObject summary;
       summary["voltage"] = analogRead(voltagePin);
-      // This updates the summary of our device on the Cloud and schedules summarySetCallback()
-      // function to be called when the Cloud responds with the SUMMARY UPDATED message.
+      // This updates the summary of our device on Grandeur and schedules summarySetCallback()
+      // function to be called when Grandeur responds with the SUMMARY UPDATED message.
       myDevice.setSummary(summary, summarySetCallback);
 
       Serial.println("Setting Parms");
       JSONObject parms;
       parms["state"] = digitalRead(statePin);
-      // This updates the parms of our device on the Cloud and schedules parmsSetCallback()
-      // function to be called when the Cloud responds with the PARMS UPDATED message.
+      // This updates the parms of our device on Grandeur and schedules parmsSetCallback()
+      // function to be called when Grandeur responds with the PARMS UPDATED message.
       myDevice.setParms(parms, parmsSetCallback);
 
       // This updates the millis counter for

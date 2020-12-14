@@ -1,10 +1,10 @@
 /**
- * @file Apollo.h
+ * @file Grandeur.h
  * @date 20.03.2020
  * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
- * This file is part of the Arduino SDK for Grandeur Cloud.
+ * This file is part of the Arduino SDK for Grandeur.
  *
  */
 
@@ -13,10 +13,10 @@
 #include "Datastore.h"
 #include "DuplexHandler.h"
 
-#ifndef APOLLO_H_
-#define APOLLO_H_
+#ifndef GRANDEUR_H_
+#define GRANDEUR_H_
 
-class Apollo;
+class Grandeur;
 
 class Project {
   // Class for handling a complete project
@@ -35,17 +35,17 @@ class Project {
     // This method runs the SDK.
     void loop(bool valve);
 
-    friend class Apollo;
+    friend class Grandeur;
 };
 
-class Apollo {
+class Grandeur {
   private:
     Config _config;
   public:
-    Apollo();
+    Grandeur();
     Project init(String apiKey, String token);
 };
 
-extern Apollo apollo;
+extern Grandeur grandeur;
 
 #endif

@@ -4,20 +4,20 @@
  * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
- * This file is part of the Arduino SDK for Grandeur Cloud.
+ * This file is part of the Arduino SDK for Grandeur.
  *
  */
 
 #include <cstdlib>
 #include <string>
-#include "apollotypes.h"
+#include "grandeurtypes.h"
 
 #ifndef EVENTTABLE_H_
 #define EVENTTABLE_H_
 
 /*TYPEDEFS*/
 // EventID
-typedef ApolloID EventID;
+typedef GrandeurID EventID;
 //EventData
 typedef Callback EventData;
 // Event table data

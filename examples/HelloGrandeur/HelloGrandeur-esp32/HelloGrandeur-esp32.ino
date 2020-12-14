@@ -4,15 +4,15 @@
  * @author Grandeur Technologies
  *
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
- * This file is part of the Arduino SDK for Grandeur Cloud.
+ * This file is part of the Arduino SDK for Grandeur.
  *
- * Apollo.h is used for device's communication to Grandeur Cloud.
+ * Grandeur.h is used for device's communication to Grandeur.
  * WiFi.h is used for handling device's WiFi.
  * 
- * This example is the HELLO WORLD of Grandeur Cloud.
+ * This example is the HELLO WORLD of Grandeur.
 */
 
-#include <Apollo.h>
+#include <Grandeur.h>
 #include <WiFi.h>
 
 // Device's connection configurations
@@ -34,19 +34,19 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   // This initializes the SDK's configurations and returns a new object of Project class.
-  myProject = apollo.init(apiKey, token);
+  myProject = grandeur.init(apiKey, token);
   // Getting object of Device class
   myDevice = myProject.device(deviceID);
-  Serial.printf("\nDevice %s is saying hello to Grandeur Cloud using API Key %s and Access Token %s.\n", deviceID.c_str(), apiKey.c_str(), token.c_str());
+  Serial.printf("\nDevice %s is saying hello to Grandeur using API Key %s and Access Token %s.\n", deviceID.c_str(), apiKey.c_str(), token.c_str());
 }
 
 void loop() {
   if(myProject.isConnected()) {
-    // When the device's connection with Grandeur Cloud is established, this if-block runs.
-    Serial.println("\nDevice has made a successful connection with the Cloud!");
-    Serial.println("Grandeur Cloud says hi. Grandeur Cloud will now respond to your commands...");
-    Serial.println("Try saving your device state to the Cloud and then retrieving it back.");
-    Serial.println("Visit https://grandeur.tech/docs to learn how!");
+    // When the device's connection with Grandeur is established, this if-block runs.
+    Serial.println("\nDevice has made a successful connection with Grandeur!");
+    Serial.println("Grandeur says hi. Grandeur will now respond to your commands...");
+    Serial.println("Try saving your device state to Grandeur and then retrieving it back.");
+    Serial.println("Visit https://github.com/grandeurtech/arduino-sdk to learn how!");
     Serial.println("Also checkout other examples: \n- DashListening-Device \n- DashListening-App \n- CrossListening.\n");
   }
   // This runs the SDK only when the WiFi is connected.
