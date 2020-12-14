@@ -1388,9 +1388,9 @@ Here are some enhancements that we are considering to implement in the SDK. They
 [Grandeur Devices]: https://cloud.grandeur.tech/devices "Grandeur Devices"
 [Grandeur Settings]: https://cloud.grandeur.tech/settings "Grandeur Settings"
 [Grandeur Pricing]: https://grandeur.tech/pricing "Pricing"
-[Get Started With Grandeur]: https://github.com/grandeurtech/grandeurcloud-js-sdk#get-started "Get Started With Grandeur"
-[An Example Webapp]: https://github.com/grandeurtech/grandeurcloud-js-sdk#example "An Example Webapp"
-[Examples]:  https://github.com/grandeurtech/grandeurcloud-arduino-sdk/tree/master/examples/
+[Get Started With Grandeur]: https://github.com/grandeurtech/js-sdk#get-started "Get Started With Grandeur"
+[An Example Webapp]: https://github.com/grandeurtech/js-sdk#example "An Example Webapp"
+[Examples]:  https://github.com/grandeurtech/arduino-sdk/tree/master/examples/
 [Arduino IDE]: https://www.arduino.cc/en/main/software "Arduino IDE"
 [Installing an Arduino Library]: https://www.arduino.cc/en/guide/libraries "Installing an Arduino Library"
 
@@ -1410,7 +1410,7 @@ Here are some enhancements that we are considering to implement in the SDK. They
 [Device Registry]: #device-registry "Device Registry"
 
 [Get Started with Arduino SDK]: #get-started "Get Started with Arduino SDK"
-[Arduino SDK]: https://github.com/grandeurtech/grandeurcloud-arduino-sdk "Arduino SDK"
+[Arduino SDK]: https://github.com/grandeurtech/arduino-sdk "Arduino SDK"
 [project]: #project "Project"
 [summary]: #device-registry "Summary"
 [parms]: #device-registry "Parms"
@@ -1429,4 +1429,4 @@ Here are some enhancements that we are considering to implement in the SDK. They
 
 [Using Millis Instead of Delay]: https://www.norwegiancreations.com/2017/09/arduino-tutorial-using-millis-instead-of-delay/ "Using millis() instead of delay()"
 
-[i4]: https://github.com/grandeurtech/grandeurcloud-arduino-sdk/issues/4
+[i4]: https://github.com/grandeurtech/arduino-sdk/issues/4
