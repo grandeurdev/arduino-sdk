@@ -14,7 +14,7 @@
 /* VARIABLE INITIALIZATIONS */
 WebSocketsClient client;
 unsigned long millisCounterForPing = 0;
-const char* subscriptionTopics[] = {"deviceSummary", "deviceParms"};
+const char* subscriptionTopics[] = {"deviceData"};
 size_t sendQueueSize = 0;
 SendData* sendQueue[SENDQUEUE_SIZE] = {};
 short DuplexHandler::_status = DISCONNECTED;

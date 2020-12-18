@@ -96,8 +96,8 @@ void connectionCallback(bool status) {
   switch(status) {
     case CONNECTED:
       // On successful connection with the cloud, we initialize the device's *state*.
-      // To do that, we get device parms from the cloud and set the *state pin* to the
-      // value of *state* in those parms.
+      // To do that, we get device data from the cloud and set the *state pin* to the
+      // value of *state* in those data.
       Serial.println("Device is connected to the cloud.");
       Serial.println("Logging voltage to Grandeur...");
       break;

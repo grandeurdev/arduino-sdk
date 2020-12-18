@@ -6,7 +6,7 @@
  * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
  * This file is part of the Arduino SDK for Grandeur.
  *
- * Grandeur.h is used for device's communication to Grandeur.
+ * Grandeur.h is used for device's communication with Grandeur.
  * ESP8266WiFi.h is used for handling device's WiFi.
  * 
  * Dash listening is for one-way listening.
@@ -36,22 +36,22 @@ int statePin = D0;
 void setupWiFi(void);
 void connectionCallback(bool state);
 void initializeState(JSONObject getResult);
-void parmsUpdatedCallback(JSONObject updatedParms);
+void stateUpdatedCallback(JSONObject updatedData);
 
 void setup() {
   Serial.begin(9600);
   // This sets up the device WiFi.
   setupWiFi();
-  // This initializes the SDK's configurations and returns a new object of GrandeurDevice class.
+  // This initializes the SDK's configurations and returns reference to your project.
   myProject = grandeur.init(apiKey, token);
-  // Getting object of Device class.
+  // Getting reference to your device.
   myDevice = myProject.device(deviceID);
-  // This schedules the connectionCallback() function to be called when connection with the cloud
+  // This schedules the connectionCallback() function to be called when connection with Grandeur
   // is made/broken.
   myProject.onConnection(connectionCallback);
-  // This schedules parmsUpdatedCallback() function to be called when variable stored
-  // in device's parms are changed on Grandeur.
-  myDevice.onParms(parmsUpdatedCallback);
+  // This schedules stateUpdatedCallback() function to be called when device state is changed on
+  // Grandeur.
+  myDevice.on("state", stateUpdatedCallback);
 }
 
 void loop() {
@@ -82,35 +82,36 @@ void setupWiFi(void) {
 void connectionCallback(bool status) {
   switch(status) {
     case CONNECTED:
-      // On successful connection with the cloud, we initialize the device's *state*.
-      // To do that, we get device parms from the cloud and set the *state pin* to the
-      // value of *state* in those parms.
-      Serial.println("Device is connected to the cloud.");
-      myDevice.getParms(initializeState);
-      Serial.println("Listening for parms update from the cloud...");
+      // On successful connection with Grandeur, we initialize the device's *state*.
+      // To do that, we get device state from Grandeur and set the *state pin* to its
+      // value.
+      Serial.println("Device is connected with Grandeur.");
+      myDevice.get("state", initializeState);
+      Serial.println("Listening for data update from Grandeur...");
       break;
     case DISCONNECTED:
-      Serial.println("Device is disconnected from the cloud.");
+      Serial.println("Device's connection with Grandeur is broken.");
       break;
   }
 }
 
 void initializeState(JSONObject getResult) {
-  // This function sets the *state pin* to the *state value* that we received in parms
-  // from the cloud.
-  if(getResult["code"] == "DEVICE-PARMS-FETCHED") {
-    int state = getResult["deviceParms"]["state"];
+  // This function sets the *state pin* to the *state value* that we received in data
+  // from Grandeur.
+  if(getResult["code"] == "DEVICE-DATA-FETCHED") {
+    int state = getResult["data"];
+    Serial.printf("State is: %d\n", state);
     digitalWrite(statePin, state);
     return;
   }
-  // If the parms could not be fetched.
-  Serial.println("Failed to Fetch Parms");
+  // If the data could not be fetched.
+  Serial.println("Failed to Fetch Data");
   return;
 }
 
-void parmsUpdatedCallback(JSONObject updatedParms) {
-  // This function gets the *updated state* from the device parms and set the *state pin*
-  // with *state value*.
-  Serial.printf("Updated State is: %d\n", (bool) updatedParms["state"]);
-  digitalWrite(statePin, (bool) updatedParms["state"]); 
+void stateUpdatedCallback(JSONObject updatedData) {
+  // This function gets the *updated state* from the device data and sets the *state pin*
+  // to its value.
+  Serial.printf("Updated State is: %d\n", (int) updatedData["state"]);
+  digitalWrite(statePin, (int) updatedData["state"]); 
 }

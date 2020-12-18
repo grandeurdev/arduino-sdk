@@ -13,8 +13,8 @@
 
 const char* routes[T_S] =
   {"ping", "/topic/subscribe", "/topic/unsubscribe", "/topics/unsubscribe",
-  "/device/summary/get", "/device/parms/get", "/device/summary/set", "/device/parms/set",
-  "/datastore/insert", "/datastore/delete", "/datastore/update", "/datastore/pipeline"};
+  "/device/data/get", "/device/data/set", "/datastore/insert", "/datastore/delete",
+  "/datastore/update", "/datastore/pipeline"};
 
 EventTableEntry::EventTableEntry(EventTableKey k, EventTableData v) {
   this->k= k;

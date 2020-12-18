@@ -9,12 +9,12 @@
  */
 
 // Connection macros
-#define GRANDEUR_URL "api.grandeur.tech"
-#define GRANDEUR_PORT 443
+#define GRANDEUR_URL "192.168.10.5"
+#define GRANDEUR_PORT 8000
 #define GRANDEUR_FINGERPRINT ""
 
 // Debugging macros
-#define DEBUG_PORT Serial
+// #define DEBUG_PORT Serial
 
 #ifdef DEBUG_PORT
 #define DEBUG_GRANDEUR(...) DEBUG_PORT.printf(__VA_ARGS__)
@@ -43,6 +43,5 @@
 #define CONNECTED true
 
 // Indexes for update handler callbacks in subscriptions array
-#define NUMBER_OF_TOPICS 2
-#define SUMMARYUPDATE 0
-#define PARMSUPDATE 1
+#define NUMBER_OF_TOPICS 1
+#define DATAUPDATE 0

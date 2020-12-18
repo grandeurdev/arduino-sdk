@@ -27,14 +27,13 @@ class Device {
     Device();
 
     // Async getter/setter methods
-    void getSummary(Callback callback);
-    void getParms(Callback callback);
-    void setSummary(JSONObject summary, Callback callback);
-    void setParms(JSONObject parms, Callback callback);
-
+    void get(String path, Callback callback);
+    void get(Callback callback);
+    void set(String path, JSONObject data, Callback callback);
+    void set(String path, JSONObject data);
     // Listeners for events from Grandeur
-    void onSummary(Callback callback);
-    void onParms(Callback callback);
+    void on(String path, Callback callback);
+    void on(Callback callback);
 };
 
 #endif
