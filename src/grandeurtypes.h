@@ -15,16 +15,25 @@
 #ifndef GRANDEURTYPES_H_
 #define GRANDEURTYPES_H_
 
+// Include json
 typedef JSONVar JSONObject;
+
+// Define callback
 typedef void (*Callback)(JSONObject);
+
+// Define send function
 typedef void (*Send)(const char* task, const char* payload, Callback callback);
+
+// Define Grandeur ID
 typedef long GrandeurID;
 
-// Config class for grandeur configurations
+// Config class for storing configurations of connection
 class Config {
   public:
     String apiKey;
     String token;
+
+    // Constructor
     Config(String apiKey, String token);
     Config();
 };
@@ -35,6 +44,8 @@ class SendData {
     char task[TASK_SIZE];
     char payload[PACKET_SIZE];
     Callback callback;
+
+    // Constructor
     SendData(
       const char* task,
       const char* payload,

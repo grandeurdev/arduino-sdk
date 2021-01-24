@@ -9,7 +9,7 @@
  */
 
 // Connection macros
-#define GRANDEUR_URL "api.grandeur.tech"
+#define GRANDEUR_URL "trex.dev.api.grandeur.tech"
 #define GRANDEUR_PORT 443
 #define GRANDEUR_FINGERPRINT ""
 
@@ -41,8 +41,3 @@
 // Macros for connection status
 #define DISCONNECTED false
 #define CONNECTED true
-
-// Indexes for update handler callbacks in subscriptions array
-#define NUMBER_OF_TOPICS 2
-#define SUMMARYUPDATE 0
-#define PARMSUPDATE 1

@@ -22,12 +22,15 @@ class Project {
   // Class for handling a complete project
   private:
     DuplexHandler _duplexHandler;
+
   public:
     // Project constructor
     Project();
+
     // Connection related methods
     void onConnection(void connectionCallback(bool));
     bool isConnected(void);
+
     // Instantiator methods - return the objects of their classes
     Device device(String deviceID);
     Datastore datastore(void);
@@ -40,9 +43,14 @@ class Project {
 
 class Grandeur {
   private:
+    // Create new config object
     Config _config;
+    
   public:
+    // Constructor of Grandeur
     Grandeur();
+
+    // Function to init the connection
     Project init(String apiKey, String token);
 };
 
