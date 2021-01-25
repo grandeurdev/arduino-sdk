@@ -19,43 +19,119 @@
 typedef JSONVar JSONObject;
 
 // Define Callback using template
-template <class T>
 class Callback {
 	private:
     // Create a private variable
-		void (*_c)(T);
+		void (*_cJSON)(JSONObject);
+		void (*_cBool)(bool);
+		void (*_cInt)(int);
+		void (*_cLong)(long);
+		void (*_cDouble)(double);
+		void (*_cStr)(const char*);
 
 	public:
     // Default constructor will init the pointer
     Callback() {
       // We will init the context
-      _c = NULL;
+      _cJSON = NULL;
+      _cBool = NULL;
+      _cInt = NULL;
+      _cLong = NULL;
+      _cDouble = NULL;
+      _cStr = NULL;
+    }
+
+    // Constructor to handle null
+    Callback(int c) {
+      // We will init the context
+      _cJSON = NULL;
+      _cBool = NULL;
+      _cInt = NULL;
+      _cLong = NULL;
+      _cDouble = NULL;
+      _cStr = NULL;
     }
     
-		// It will receive an function
-		Callback(void (*c)(T)) {
+		// For json callback
+		Callback(void (*c)(JSONObject)) {
       // We will store it in context
-      _c = c;
+      _cJSON = c;
+    }
+
+    // For bool type callback
+		Callback(void (*c)(bool)) {
+      // We will store it in context
+      _cBool = c;
+    }
+
+    // For int callback
+		Callback(void (*c)(int)) {
+      // We will store it in context
+      _cInt = c;
+    }
+
+    // For long datatype
+		Callback(void (*c)(long)) {
+      // We will store it in context
+      _cLong = c;
+    }
+
+
+    // For double datatype
+		Callback(void (*c)(double)) {
+      // We will store it in context
+      _cDouble = c;
+    }
+
+    // For handling strings
+		Callback(void (*c)(const char*)) {
+      // We will store it in context
+      _cStr = c;
     }
 
 		// Then we will override the function call
     // operator to pass data to callback that we stored
     // in the context
-		void operator()(T data) {
-      // Call the function stored in context
-      _c(data);
+		void operator()(JSONObject data) {
+      // Transfer data to json callback
+      _cJSON(data);
+    }
+
+    void operator()(bool data) {
+      // Transfer it to bool callback
+      _cBool(data);
+    }
+
+    void operator()(int data) {
+      // Transfer data to int callback
+      _cInt(data);
+    }
+
+    void operator()(long data) {
+      // Transfer data to long callback
+      _cLong(data);
+    }
+
+    void operator()(double data) {
+      // Transfer data to double callback
+      _cDouble(data);
+    }
+
+    void operator()(const char* data) {
+      // Transfer data to string callback
+      _cStr(data);
     }
 
     // Override bool operator not
     bool operator!() {
-      // Return true if callback was set
-      if (!_c) return true;
+      // Return true if none of the callbacks are set
+      if (!_cJSON && !_cBool && !_cInt && !_cLong && !_cDouble && !_cStr) return true;
       else return false; 
     }
 };
 
 // Define send function
-typedef void (*Send)(const char* task, const char* payload, Callback<JSONObject> callback);
+typedef void (*Send)(const char* task, const char* payload, Callback callback);
 
 // Define Grandeur ID
 typedef long GrandeurID;
@@ -76,13 +152,13 @@ class SendData {
   public:
     char task[TASK_SIZE];
     char payload[PACKET_SIZE];
-    Callback<JSONObject> callback;
+    Callback callback;
 
     // Constructor
     SendData(
       const char* task,
       const char* payload,
-      Callback<JSONObject> callback
+      Callback callback
     );
 };
 

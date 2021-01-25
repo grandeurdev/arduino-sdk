@@ -28,16 +28,16 @@ class Data {
     Data();
 
     // Async getter/setter methods
-    void get(const char* path, Callback<JSONObject> callback);
-    void set(const char* path, JSONObject data, Callback<JSONObject> callback);
-    void set(const char* path, bool data, Callback<JSONObject> callback);
-    void set(const char* path, int data, Callback<JSONObject> callback);
-    void set(const char* path, long data, Callback<JSONObject> callback);
-    void set(const char* path, double data, Callback<JSONObject> callback);
-    void set(const char* path, const char* data, Callback<JSONObject> callback);
+    void get(const char* path, Callback callback);
+    void set(const char* path, JSONObject data, Callback callback);
+    void set(const char* path, bool data, Callback callback);
+    void set(const char* path, int data, Callback callback);
+    void set(const char* path, long data, Callback callback);
+    void set(const char* path, double data, Callback callback);
+    void set(const char* path, const char* data, Callback callback);
 
     // Sync event handlers
-    void on(const char* path, Callback<JSONObject> callback);
+    void on(const char* path, Callback callback);
 };
 
 #endif

@@ -87,7 +87,7 @@ void DuplexHandler::loop(bool valve) {
   }
 }
 
-void DuplexHandler::send(const char* task, const char* payload, Callback<JSONObject> callback) {
+void DuplexHandler::send(const char* task, const char* payload, Callback callback) {
   // Check connection status
   if(_status != CONNECTED) {
     // Add to queue if not connected
@@ -103,8 +103,8 @@ void DuplexHandler::send(const char* task, const char* payload, Callback<JSONObj
 
   // Saving callback to eventsTable
   _eventsTable.insert(task, packetID, callback);
-  _eventsTable.print();
-  _subscriptions.print();
+  // _eventsTable.print();
+  // _subscriptions.print();
 
   // Formatting the packet
   snprintf(packet, PACKET_SIZE, "{\"header\": {\"id\": %lu, \"task\": \"%s\"}, \"payload\": %s}", packetID, task, payload);
@@ -113,14 +113,14 @@ void DuplexHandler::send(const char* task, const char* payload, Callback<JSONObj
   client.sendTXT(packet);
 }
 
-void DuplexHandler::subscribe(const char* event, const char* payload, Callback<JSONObject> updateHandler) {
+void DuplexHandler::subscribe(const char* event, const char* payload, Callback updateHandler) {
   // Generate an id
   GrandeurID eventID = millis();
 
   // Saving callback to eventsTable
   _subscriptions.insert(event, eventID, updateHandler);
-  _eventsTable.print();
-  _subscriptions.print();
+  // _eventsTable.print();
+  // _subscriptions.print();
 
   // Saving callback in event table with key
   send("/topic/subscribe", payload, NULL);
@@ -183,7 +183,7 @@ void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length) {
       return DuplexHandler::_connectionCallback(DuplexHandler::_status);
 
     case WStype_TEXT:
-      Serial.printf("%s\n", packet);
+      // Serial.printf("%s\n", packet);
 
       // When a duplex message is received.
       JSONObject messageObject = JSON.parse((char*) packet);
@@ -203,8 +203,8 @@ void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length) {
         std::string path((const char*) messageObject["payload"]["path"]);
 
         // Emit the event 
-        DuplexHandler::_subscriptions.emit(event + "/" + path, messageObject["payload"]);
-
+        DuplexHandler::_subscriptions.emit(event + "/" + path, messageObject["payload"]["update"]);
+        
         // Return
         return;
       }
@@ -214,13 +214,13 @@ void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length) {
       }
 
       // Fetching event callback function from the events Table
-      Callback<JSONObject> callback = DuplexHandler::_eventsTable.findAndRemove(
+      Callback callback = DuplexHandler::_eventsTable.findAndRemove(
         (const char*) messageObject["header"]["task"],
         (GrandeurID) messageObject["header"]["id"]
       );
 
-      DuplexHandler::_eventsTable.print();
-      DuplexHandler::_subscriptions.print();
+      // DuplexHandler::_eventsTable.print();
+      // DuplexHandler::_subscriptions.print();
 
       // If not found then simply return
       if(!callback) return;

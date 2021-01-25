@@ -169,6 +169,9 @@ EventData EventTable::findAndRemove(EventKey key, EventID id) {
 }
 
 int EventTable::emit(EventKey key, JSONObject packet) {
+  // Cast packet as per type of packet
+  String type = JSON.typeof_(packet);
+
   // Created a regex
   std::regex pattern("(" + key + ")(.*)");
 
@@ -181,7 +184,29 @@ int EventTable::emit(EventKey key, JSONObject packet) {
     // We will use regex to match the key of the block
     if (std::regex_match(p->key, pattern)) {
       // Then emit packet to callback
-      p->data(packet);
+      if (type == "boolean") {
+        // Cast as boolean
+        p->data((bool) packet);
+      }
+      else if (type == "number") {
+        // Figure out that if it is a double or not
+        if ((double) packet - (int) packet != 0) {
+          // Cast as double
+          p->data((double) packet);
+        }
+        else {
+          // Cast as int for now
+          p->data((int) packet);
+        }
+      }
+      else if (type == "string") {
+        // Cast as string
+        p->data((const char*) packet);
+      }
+      else if (type == "object" || type == "array") {
+        // Cast as object
+        p->data((JSONObject) packet);
+      }
     }
 
     // Keep moving

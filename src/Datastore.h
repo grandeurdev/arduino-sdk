@@ -28,7 +28,7 @@ class Pipeline {
     Pipeline project(JSONObject specs);
     Pipeline group(JSONObject condition, JSONObject fields);
     Pipeline sort(JSONObject specs);
-    void execute(int pageNumber, Callback<JSONObject> executed);
+    void execute(int pageNumber, Callback executed);
 };
 
 class Collection {
@@ -40,10 +40,10 @@ class Collection {
     // Collection constructor
     Collection(String name, DuplexHandler duplexHandler);
     // Methods
-    void insert(JSONObject documents, Callback<JSONObject> inserted);
-    void remove(JSONObject filter, Callback<JSONObject> removed);
-    void update(JSONObject filter, JSONObject update, Callback<JSONObject> updated);
-    void search(JSONObject filter, JSONObject projection, int pageNumber, Callback<JSONObject> searched);
+    void insert(JSONObject documents, Callback inserted);
+    void remove(JSONObject filter, Callback removed);
+    void update(JSONObject filter, JSONObject update, Callback updated);
+    void search(JSONObject filter, JSONObject projection, int pageNumber, Callback searched);
     Pipeline pipeline(void);
 };
 
