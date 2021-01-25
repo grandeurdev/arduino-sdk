@@ -26,7 +26,7 @@ Collection::Collection(String name, DuplexHandler duplexHandler) {
   _duplex = duplexHandler;
 }
 
-void Collection::insert(JSONObject documents, Callback inserted) {
+void Collection::insert(JSONObject documents, Callback<JSONObject> inserted) {
   JSONObject jsonObject;
   char jsonString[PACKET_SIZE];
   
@@ -38,7 +38,7 @@ void Collection::insert(JSONObject documents, Callback inserted) {
   _duplex.send("/datastore/insert", jsonString, inserted);
 }
 
-void Collection::remove(JSONObject filter, Callback removed) {
+void Collection::remove(JSONObject filter, Callback<JSONObject> removed) {
   JSONObject jsonObject;
   char jsonString[PACKET_SIZE];
 
@@ -50,7 +50,7 @@ void Collection::remove(JSONObject filter, Callback removed) {
   _duplex.send("/datastore/delete", jsonString, removed);
 }
 
-void Collection::update(JSONObject filter, JSONObject update, Callback updated) {
+void Collection::update(JSONObject filter, JSONObject update, Callback<JSONObject> updated) {
   JSONObject jsonObject;
   char jsonString[PACKET_SIZE];
 
@@ -63,7 +63,7 @@ void Collection::update(JSONObject filter, JSONObject update, Callback updated) 
   _duplex.send("/datastore/update", jsonString, updated);
 }
 
-void Collection::search(JSONObject filter, JSONObject projection, int pageNumber, Callback searched) {
+void Collection::search(JSONObject filter, JSONObject projection, int pageNumber, Callback<JSONObject> searched) {
   Pipeline searchPipeline = Pipeline(_name, {}, _duplex).match(filter);
   if(projection == undefined) {}
   else {
@@ -116,7 +116,7 @@ Pipeline Pipeline::sort(JSONObject specs) {
   return Pipeline(_collection, _query, _duplex);
 }
 
-void Pipeline::execute(int pageNumber, Callback executed) {
+void Pipeline::execute(int pageNumber, Callback<JSONObject> executed) {
   JSONObject jsonObject;
   char jsonString[PACKET_SIZE];
 

@@ -18,11 +18,44 @@
 // Include json
 typedef JSONVar JSONObject;
 
-// Define callback
-typedef void (*Callback)(JSONObject);
+// Define Callback using template
+template <class T>
+class Callback {
+	private:
+    // Create a private variable
+		void (*_c)(T);
+
+	public:
+    // Default constructor will init the pointer
+    Callback() {
+      // We will init the context
+      _c = NULL;
+    }
+    
+		// It will receive an function
+		Callback(void (*c)(T)) {
+      // We will store it in context
+      _c = c;
+    }
+
+		// Then we will override the function call
+    // operator to pass data to callback that we stored
+    // in the context
+		void operator()(T data) {
+      // Call the function stored in context
+      _c(data);
+    }
+
+    // Override bool operator not
+    bool operator!() {
+      // Return true if callback was set
+      if (!_c) return true;
+      else return false; 
+    }
+};
 
 // Define send function
-typedef void (*Send)(const char* task, const char* payload, Callback callback);
+typedef void (*Send)(const char* task, const char* payload, Callback<JSONObject> callback);
 
 // Define Grandeur ID
 typedef long GrandeurID;
@@ -43,13 +76,13 @@ class SendData {
   public:
     char task[TASK_SIZE];
     char payload[PACKET_SIZE];
-    Callback callback;
+    Callback<JSONObject> callback;
 
     // Constructor
     SendData(
       const char* task,
       const char* payload,
-      Callback callback
+      Callback<JSONObject> callback
     );
 };
 

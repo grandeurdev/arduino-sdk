@@ -18,7 +18,7 @@ Data::Data(String deviceID, DuplexHandler duplexHandler) {
 
 Data::Data() {}
 
-void Data::get(const char* path, Callback callback) {
+void Data::get(const char* path, Callback<JSONObject> callback) {
   // Get data from server
   // Create a new json object
   JSONObject jsonObject;
@@ -39,7 +39,7 @@ void Data::get(const char* path, Callback callback) {
   _duplex.send("/device/data/get", jsonString, callback);
 }
 
-void Data::set(const char* path, JSONObject data, Callback callback) {
+void Data::set(const char* path, JSONObject data, Callback<JSONObject> callback) {
   // Set data to server
   // Create a new json object
   JSONObject jsonObject;
@@ -63,104 +63,7 @@ void Data::set(const char* path, JSONObject data, Callback callback) {
   _duplex.send("/device/data/set", jsonString, callback);
 }
 
-void Data::set(const char* path, bool data, Callback callback) {
-  // Set data to server
-  // Create a new json object
-  JSONObject jsonObject;
-
-  // Create packet
-  char jsonString[PACKET_SIZE];
-
-  // Add device id
-  jsonObject["deviceID"] = _deviceID;
-
-  // Add path 
-  jsonObject["path"] = path;
-
-  // Add data
-  jsonObject["data"] = data;
-
-  // Conver the object to string
-  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
-
-  // Send 
-  _duplex.send("/device/data/set", jsonString, callback);
-}
-
-
-void Data::set(const char* path, int data, Callback callback) {
-  // Set data to server
-  // Create a new json object
-  JSONObject jsonObject;
-
-  // Create packet
-  char jsonString[PACKET_SIZE];
-
-  // Add device id
-  jsonObject["deviceID"] = _deviceID;
-
-  // Add path 
-  jsonObject["path"] = path;
-
-  // Add data
-  jsonObject["data"] = data;
-
-  // Conver the object to string
-  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
-
-  // Send 
-  _duplex.send("/device/data/set", jsonString, callback);
-}
-
-void Data::set(const char* path, long data, Callback callback) {
-  // Set data to server
-  // Create a new json object
-  JSONObject jsonObject;
-
-  // Create packet
-  char jsonString[PACKET_SIZE];
-
-  // Add device id
-  jsonObject["deviceID"] = _deviceID;
-
-  // Add path 
-  jsonObject["path"] = path;
-
-  // Add data
-  jsonObject["data"] = data;
-
-  // Conver the object to string
-  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
-
-  // Send 
-  _duplex.send("/device/data/set", jsonString, callback);
-}
-
-void Data::set(const char* path, double data, Callback callback) {
-  // Set data to server
-  // Create a new json object
-  JSONObject jsonObject;
-
-  // Create packet
-  char jsonString[PACKET_SIZE];
-
-  // Add device id
-  jsonObject["deviceID"] = _deviceID;
-
-  // Add path 
-  jsonObject["path"] = path;
-
-  // Add data
-  jsonObject["data"] = data;
-
-  // Conver the object to string
-  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
-
-  // Send 
-  _duplex.send("/device/data/set", jsonString, callback);
-}
-
-void Data::set(const char* path, const char* data, Callback callback) {
+void Data::set(const char* path, bool data, Callback<JSONObject> callback) {
   // Set data to server
   // Create a new json object
   JSONObject jsonObject;
@@ -185,7 +88,104 @@ void Data::set(const char* path, const char* data, Callback callback) {
 }
 
 
-void Data::on(const char* path, Callback callback) {
+void Data::set(const char* path, int data, Callback<JSONObject> callback) {
+  // Set data to server
+  // Create a new json object
+  JSONObject jsonObject;
+
+  // Create packet
+  char jsonString[PACKET_SIZE];
+
+  // Add device id
+  jsonObject["deviceID"] = _deviceID;
+
+  // Add path 
+  jsonObject["path"] = path;
+
+  // Add data
+  jsonObject["data"] = data;
+
+  // Conver the object to string
+  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
+
+  // Send 
+  _duplex.send("/device/data/set", jsonString, callback);
+}
+
+void Data::set(const char* path, long data, Callback<JSONObject> callback) {
+  // Set data to server
+  // Create a new json object
+  JSONObject jsonObject;
+
+  // Create packet
+  char jsonString[PACKET_SIZE];
+
+  // Add device id
+  jsonObject["deviceID"] = _deviceID;
+
+  // Add path 
+  jsonObject["path"] = path;
+
+  // Add data
+  jsonObject["data"] = data;
+
+  // Conver the object to string
+  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
+
+  // Send 
+  _duplex.send("/device/data/set", jsonString, callback);
+}
+
+void Data::set(const char* path, double data, Callback<JSONObject> callback) {
+  // Set data to server
+  // Create a new json object
+  JSONObject jsonObject;
+
+  // Create packet
+  char jsonString[PACKET_SIZE];
+
+  // Add device id
+  jsonObject["deviceID"] = _deviceID;
+
+  // Add path 
+  jsonObject["path"] = path;
+
+  // Add data
+  jsonObject["data"] = data;
+
+  // Conver the object to string
+  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
+
+  // Send 
+  _duplex.send("/device/data/set", jsonString, callback);
+}
+
+void Data::set(const char* path, const char* data, Callback<JSONObject> callback) {
+  // Set data to server
+  // Create a new json object
+  JSONObject jsonObject;
+
+  // Create packet
+  char jsonString[PACKET_SIZE];
+
+  // Add device id
+  jsonObject["deviceID"] = _deviceID;
+
+  // Add path 
+  jsonObject["path"] = path;
+
+  // Add data
+  jsonObject["data"] = data;
+
+  // Conver the object to string
+  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
+
+  // Send 
+  _duplex.send("/device/data/set", jsonString, callback);
+}
+
+
+void Data::on(const char* path, Callback<JSONObject> callback) {
   // Place an event handler on path update
   // Create a new json object
   JSONObject jsonObject;

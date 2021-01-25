@@ -19,7 +19,7 @@
 typedef GrandeurID EventID;
 
 //EventData
-typedef Callback EventData;
+typedef Callback<JSONObject> EventData;
 
 // Event key
 typedef std::string EventKey;

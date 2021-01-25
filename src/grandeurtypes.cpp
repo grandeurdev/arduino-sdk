@@ -24,7 +24,7 @@ Config::Config() {
 }
 
 // Object which stores the task while it is on queue
-SendData::SendData(const char* task, const char* payload, Callback callback) {
+SendData::SendData(const char* task, const char* payload, Callback<JSONObject> callback) {
   strcpy(this->task, task);
   strcpy(this->payload, payload);
   this->callback = callback;

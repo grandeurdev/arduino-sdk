@@ -87,7 +87,7 @@ void DuplexHandler::loop(bool valve) {
   }
 }
 
-void DuplexHandler::send(const char* task, const char* payload, Callback callback) {
+void DuplexHandler::send(const char* task, const char* payload, Callback<JSONObject> callback) {
   // Check connection status
   if(_status != CONNECTED) {
     // Add to queue if not connected
@@ -113,7 +113,7 @@ void DuplexHandler::send(const char* task, const char* payload, Callback callbac
   client.sendTXT(packet);
 }
 
-void DuplexHandler::subscribe(const char* event, const char* payload, Callback updateHandler) {
+void DuplexHandler::subscribe(const char* event, const char* payload, Callback<JSONObject> updateHandler) {
   // Generate an id
   GrandeurID eventID = millis();
 
@@ -123,7 +123,7 @@ void DuplexHandler::subscribe(const char* event, const char* payload, Callback u
   _subscriptions.print();
 
   // Saving callback in event table with key
-  send("/topic/subscribe", payload, [](JSONObject payload) {});
+  send("/topic/subscribe", payload, NULL);
 }
 
 
@@ -137,7 +137,7 @@ void DuplexHandler::ping() {
     GrandeurID packetID = millis();
 
     // Saving callback to eventsTable
-    _eventsTable.insert("ping", packetID, [](JSONObject feed) {});
+    _eventsTable.insert("ping", packetID, NULL);
 
     // Formatting the packet
     snprintf(packet, PING_PACKET_SIZE, "{\"header\": {\"id\": %lu, \"task\": \"ping\"}}", packetID);
@@ -214,7 +214,7 @@ void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length) {
       }
 
       // Fetching event callback function from the events Table
-      Callback callback = DuplexHandler::_eventsTable.findAndRemove(
+      Callback<JSONObject> callback = DuplexHandler::_eventsTable.findAndRemove(
         (const char*) messageObject["header"]["task"],
         (GrandeurID) messageObject["header"]["id"]
       );

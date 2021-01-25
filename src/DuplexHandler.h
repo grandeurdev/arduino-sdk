@@ -49,10 +49,10 @@ class DuplexHandler {
     void ping();
 
     // Function to send a generic duplex message.
-    static void send(const char* task, const char* payload, Callback callback);
+    static void send(const char* task, const char* payload, Callback<JSONObject> callback);
 
     // Function to subscribe to a device topic.
-    void subscribe(const char* event, const char* payload, Callback updateHandler);
+    void subscribe(const char* event, const char* payload, Callback<JSONObject> updateHandler);
 
     // Function to schedule an event handler for connection with Grandeur
     void onConnectionEvent(void connectionEventHandler(bool));
