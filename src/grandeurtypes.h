@@ -16,125 +16,79 @@
 #define GRANDEURTYPES_H_
 
 // Include json
-typedef JSONVar JSONObject;
+typedef JSONVar Var;
 
 // Define Callback using template
 class Callback {
 	private:
     // Create a private variable
-		void (*_cJSON)(JSONObject);
-		void (*_cBool)(bool);
-		void (*_cInt)(int);
-		void (*_cLong)(long);
-		void (*_cDouble)(double);
-		void (*_cStr)(const char*);
+		void (*_c)(Var);
+    void (*_cWStr)(Var, const char*);
 
 	public:
     // Default constructor will init the pointer
     Callback() {
       // We will init the context
-      _cJSON = NULL;
-      _cBool = NULL;
-      _cInt = NULL;
-      _cLong = NULL;
-      _cDouble = NULL;
-      _cStr = NULL;
+      _c = NULL;
+      _cWStr = NULL;
     }
 
-    // Constructor to handle null
-    Callback(int c) {
+    Callback(int ptr) {
       // We will init the context
-      _cJSON = NULL;
-      _cBool = NULL;
-      _cInt = NULL;
-      _cLong = NULL;
-      _cDouble = NULL;
-      _cStr = NULL;
+      _c = NULL;
+      _cWStr = NULL;
     }
     
 		// For json callback
-		Callback(void (*c)(JSONObject)) {
+		Callback(void (*c)(Var)) {
       // We will store it in context
-      _cJSON = c;
+      _c = c;
     }
 
-    // For bool type callback
-		Callback(void (*c)(bool)) {
+    Callback(void (*c)(Var, const char*)) {
       // We will store it in context
-      _cBool = c;
-    }
-
-    // For int callback
-		Callback(void (*c)(int)) {
-      // We will store it in context
-      _cInt = c;
-    }
-
-    // For long datatype
-		Callback(void (*c)(long)) {
-      // We will store it in context
-      _cLong = c;
-    }
-
-
-    // For double datatype
-		Callback(void (*c)(double)) {
-      // We will store it in context
-      _cDouble = c;
-    }
-
-    // For handling strings
-		Callback(void (*c)(const char*)) {
-      // We will store it in context
-      _cStr = c;
+      _cWStr = c;
     }
 
 		// Then we will override the function call
     // operator to pass data to callback that we stored
     // in the context
-		void operator()(JSONObject data) {
-      // Transfer data to json callback
-      _cJSON(data);
+		void operator()(Var data) {
+      // Transfer data callback
+      _c(data);
     }
 
-    void operator()(bool data) {
-      // Transfer it to bool callback
-      _cBool(data);
-    }
-
-    void operator()(int data) {
-      // Transfer data to int callback
-      _cInt(data);
-    }
-
-    void operator()(long data) {
-      // Transfer data to long callback
-      _cLong(data);
-    }
-
-    void operator()(double data) {
-      // Transfer data to double callback
-      _cDouble(data);
-    }
-
-    void operator()(const char* data) {
-      // Transfer data to string callback
-      _cStr(data);
+    // Overload for with string
+    void operator()(Var data, const char* path) {
+      // Transfer data callback with string
+      _cWStr(data, path);
     }
 
     // Override bool operator not
     bool operator!() {
-      // Return true if none of the callbacks are set
-      if (!_cJSON && !_cBool && !_cInt && !_cLong && !_cDouble && !_cStr) return true;
+      // Return true if the callback is not set
+      if (!_c && !_cWStr) return true;
       else return false; 
     }
 };
 
-// Define send function
-typedef void (*Send)(const char* task, const char* payload, Callback callback);
-
 // Define Grandeur ID
-typedef long GrandeurID;
+typedef long gID;
+
+// EventID
+typedef gID EventID;
+
+//EventData
+typedef Callback EventData;
+
+// Event key
+typedef std::string EventKey;
+
+// Event payload
+typedef std::string EventPayload;
+
+// Event key
+typedef std::string EventKey;
 
 // Config class for storing configurations of connection
 class Config {
@@ -146,20 +100,4 @@ class Config {
     Config(String apiKey, String token);
     Config();
 };
-
-// Class for Send Queue Data
-class SendData {
-  public:
-    char task[TASK_SIZE];
-    char payload[PACKET_SIZE];
-    Callback callback;
-
-    // Constructor
-    SendData(
-      const char* task,
-      const char* payload,
-      Callback callback
-    );
-};
-
 #endif

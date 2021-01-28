@@ -17,45 +17,76 @@
 class Pipeline {
   // Class for a datastore collection
   private:
+    // Dedine collection name
     String _collection;
-    JSONObject _query;
+
+    // Variable to store query
+    Var _query;
+
+    // To store reference of duplex
     DuplexHandler _duplex;
+
   public:
     // Collection constructor
-    Pipeline(String collectionName, JSONObject query, DuplexHandler duplexHandler);
-    // Methods
-    Pipeline match(JSONObject filter);
-    Pipeline project(JSONObject specs);
-    Pipeline group(JSONObject condition, JSONObject fields);
-    Pipeline sort(JSONObject specs);
-    void execute(int pageNumber, Callback executed);
+    Pipeline(String collection, Var query, DuplexHandler duplexHandler);
+
+    // Method to add match stage
+    Pipeline match(Var filter);
+
+    // Function to add project stage
+    Pipeline project(Var specs);
+
+    // Function to add group stage
+    Pipeline group(Var condition, Var fields);
+
+    // Function to add sort stage to query
+    Pipeline sort(Var specs);
+
+    // Execute the query by sending function 
+    void execute(int nPage, Callback executed);
 };
 
 class Collection {
   // Class for a datastore collection
   private:
+    // Define name of collection
     String _name;
+
+    // Store duplex handler reference
     DuplexHandler _duplex;
+
   public:
     // Collection constructor
     Collection(String name, DuplexHandler duplexHandler);
-    // Methods
-    void insert(JSONObject documents, Callback inserted);
-    void remove(JSONObject filter, Callback removed);
-    void update(JSONObject filter, JSONObject update, Callback updated);
-    void search(JSONObject filter, JSONObject projection, int pageNumber, Callback searched);
+
+    // Function to insert document to a collection
+    void insert(Var documents, Callback inserted);
+
+    // Function to remove document from a collection
+    void remove(Var filter, Callback removed);
+
+    // Function to update a document
+    void update(Var filter, Var update, Callback updated);
+
+    // Function to perform a search
+    void search(Var filter, Var projection, int nPage, Callback searched);
+
+    // Constructor
     Pipeline pipeline(void);
 };
 
 class Datastore {
   // Class for handling datastore related functions
   private:
+    // Variable to store duplex reference
     DuplexHandler _duplex;
+
   public:
     // Datastore constructor
     Datastore(DuplexHandler duplexHandler);
     Datastore();
-    // Methods
+
+    // Method to get reference to constructor
     Collection collection(String name);
 };
 

@@ -29,12 +29,7 @@ class Data {
 
     // Async getter/setter methods
     void get(const char* path, Callback callback);
-    void set(const char* path, JSONObject data, Callback callback);
-    void set(const char* path, bool data, Callback callback);
-    void set(const char* path, int data, Callback callback);
-    void set(const char* path, long data, Callback callback);
-    void set(const char* path, double data, Callback callback);
-    void set(const char* path, const char* data, Callback callback);
+    void set(const char* path, Var data, Callback callback);
 
     // Sync event handlers
     void on(const char* path, Callback callback);

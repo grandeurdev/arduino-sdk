@@ -22,10 +22,3 @@ Config::Config() {
   this->apiKey = "";
   this->token = "";
 }
-
-// Object which stores the task while it is on queue
-SendData::SendData(const char* task, const char* payload, Callback callback) {
-  strcpy(this->task, task);
-  strcpy(this->payload, payload);
-  this->callback = callback;
-}

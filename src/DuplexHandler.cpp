@@ -17,15 +17,12 @@ WebSocketsClient client;
 // Init ping counter
 unsigned long millisCounterForPing = 0;
 
-// Define queue size
-size_t sendQueueSize = 0;
-
-// Create an array equal to max send queue size
-SendData* sendQueue[SENDQUEUE_SIZE] = {};
-
 // Init status handler and variable
 short DuplexHandler::_status = DISCONNECTED;
 void (*DuplexHandler::_connectionCallback)(bool) = [](bool connectionEventHandler) {};
+
+// Define a queue
+EventQueue DuplexHandler::_queue;
 
 // Create a new event table and subscriptions
 EventTable DuplexHandler::_eventsTable;
@@ -87,22 +84,48 @@ void DuplexHandler::loop(bool valve) {
   }
 }
 
-void DuplexHandler::send(const char* task, const char* payload, Callback callback) {
+// Define the handle function
+void DuplexHandler::handle(EventID id, EventKey key, EventPayload payload, Callback callback) {
   // Check connection status
   if(_status != CONNECTED) {
-    // Add to queue if not connected
-    sendQueue[sendQueueSize++] = new SendData(task, payload, callback);
     return ;
   }
 
   // Create packet
   char packet[PACKET_SIZE];
 
+  // Saving callback to eventsTable
+  _eventsTable.insert(key, id, callback);
+  // Serial.println("On handle");
+  // _eventsTable.print();
+  // _subscriptions.print();
+
+  // Formatting the packet
+  snprintf(packet, PACKET_SIZE, "{\"header\": {\"id\": %lu, \"task\": \"%s\"}, \"payload\": %s}", id, key.c_str(), payload.c_str());
+  
+  // Sending to server
+  client.sendTXT(packet);
+}
+
+void DuplexHandler::send(const char* task, const char* payload, Callback callback) {
   // Generate packet id
-  GrandeurID packetID = millis();
+  gID packetID = micros();
+
+  // Check connection status
+  if(_status != CONNECTED) {
+    // Append the packet to queue
+    _queue.push(packetID, task, payload, callback);
+    // Serial.println("Stack to queue");
+    // _queue.print();
+    return ;
+  }
+
+  // Create packet
+  char packet[PACKET_SIZE];
 
   // Saving callback to eventsTable
   _eventsTable.insert(task, packetID, callback);
+  // Serial.println("On send");
   // _eventsTable.print();
   // _subscriptions.print();
 
@@ -115,17 +138,17 @@ void DuplexHandler::send(const char* task, const char* payload, Callback callbac
 
 void DuplexHandler::subscribe(const char* event, const char* payload, Callback updateHandler) {
   // Generate an id
-  GrandeurID eventID = millis();
+  gID eventID = micros();
 
   // Saving callback to eventsTable
   _subscriptions.insert(event, eventID, updateHandler);
+  // Serial.println("On subscribe");
   // _eventsTable.print();
   // _subscriptions.print();
 
   // Saving callback in event table with key
   send("/topic/subscribe", payload, NULL);
 }
-
 
 void DuplexHandler::ping() {
   // Ping handler
@@ -134,7 +157,7 @@ void DuplexHandler::ping() {
     char packet[PING_PACKET_SIZE];
 
     // Create id
-    GrandeurID packetID = millis();
+    gID packetID = millis();
 
     // Saving callback to eventsTable
     _eventsTable.insert("ping", packetID, NULL);
@@ -166,10 +189,10 @@ void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length) {
       // Resetting ping millis counter
       millisCounterForPing = millis();
 
-      // Sending all queued messages
-      for(int i = 0; i < sendQueueSize; i++) {
-        DuplexHandler::send(sendQueue[i]->task, sendQueue[i]->payload, sendQueue[i]->callback);
-      }
+      // Handle the queued events
+      DuplexHandler::_queue.forEach(DuplexHandler::handle);
+
+      // Then send 
       return ;
 
     case WStype_DISCONNECTED:
@@ -186,7 +209,7 @@ void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length) {
       // Serial.printf("%s\n", packet);
 
       // When a duplex message is received.
-      JSONObject messageObject = JSON.parse((char*) packet);
+      Var messageObject = JSON.parse((char*) packet);
 
       // Handle parsing errors
       if (JSON.typeof(messageObject) == "undefined") {
@@ -203,7 +226,7 @@ void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length) {
         std::string path((const char*) messageObject["payload"]["path"]);
 
         // Emit the event 
-        DuplexHandler::_subscriptions.emit(event + "/" + path, messageObject["payload"]["update"]);
+        DuplexHandler::_subscriptions.emit(event + "/" + path, messageObject["payload"]["update"], messageObject["payload"]["path"]);
         
         // Return
         return;
@@ -216,14 +239,22 @@ void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length) {
       // Fetching event callback function from the events Table
       Callback callback = DuplexHandler::_eventsTable.findAndRemove(
         (const char*) messageObject["header"]["task"],
-        (GrandeurID) messageObject["header"]["id"]
+        (gID) messageObject["header"]["id"]
       );
 
+      
+      // Serial.println("On message");
       // DuplexHandler::_eventsTable.print();
       // DuplexHandler::_subscriptions.print();
 
       // If not found then simply return
       if(!callback) return;
+
+      // Remove the packet if it was queued
+      // because the ack has been received
+      DuplexHandler::_queue.remove((long) messageObject["header"]["id"]);
+      // Serial.println("On remove");
+      // DuplexHandler::_queue.print();
 
       // Or otherwise resolve the event
       return callback(messageObject["payload"]);

@@ -32,9 +32,6 @@
 #define PING_PACKET_SIZE 64
 #define TASK_SIZE 32
 
-// Send Queue Size
-#define SENDQUEUE_SIZE 16
-
 // Ping interval in milliseconds
 #define PING_INTERVAL 25000
 

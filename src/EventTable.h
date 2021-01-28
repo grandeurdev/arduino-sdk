@@ -15,15 +15,6 @@
 #ifndef EVENTTABLE_H_
 #define EVENTTABLE_H_
 
-// EventID
-typedef GrandeurID EventID;
-
-//EventData
-typedef Callback EventData;
-
-// Event key
-typedef std::string EventKey;
-
 // Event table entry is the block which represents
 // an event
 class EventTableEntry {
@@ -57,7 +48,7 @@ class EventTable {
     EventData findAndRemove(EventKey key, EventID id);
 
     // Method to send some data to all callbacks at a key
-    int emit(EventKey key, JSONObject packet);
+    int emit(EventKey key, Var packet, const char* path);
 
     // Print table entreis
     void print();

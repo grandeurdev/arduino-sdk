@@ -10,6 +10,7 @@
 
 // Including headers
 #include "EventTable.h"
+#include "EventQueue.h"
 #include "grandeurtypes.h"
 #include "grandeurmacros.h"
 #include "arduinoWebSockets/WebSocketsClient.h"
@@ -28,6 +29,9 @@ class DuplexHandler {
     // Connection state variable
     static short _status;
 
+    // Event Queue
+    static EventQueue _queue;
+
     // Events Table
     static EventTable _eventsTable;
 
@@ -36,6 +40,9 @@ class DuplexHandler {
     
     // Container for connection callback
     static void (*_connectionCallback)(bool);
+
+    // Define function to handle the queued events
+    static void handle(EventID id, EventKey key, EventPayload payload, Callback callback);
 
   public:
     // Constructor

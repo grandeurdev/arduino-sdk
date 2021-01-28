@@ -28,7 +28,6 @@ EventTable::EventTable() {
 }
 
 int EventTable::insert(EventKey key, EventID id, EventData data) {
-
   // If bucket is empty,
   if(table == NULL) {
     // creating the first entry
@@ -168,45 +167,20 @@ EventData EventTable::findAndRemove(EventKey key, EventID id) {
   return data;
 }
 
-int EventTable::emit(EventKey key, JSONObject packet) {
-  // Cast packet as per type of packet
-  String type = JSON.typeof_(packet);
-
-  // Created a regex
-  std::regex pattern("(" + key + ")(.*)");
-
+int EventTable::emit(EventKey key, Var packet, const char* path) {
   // If the bucket is not empty,
   // getting ready for traversing the chain
   EventTableEntry* p = table;
 
   // While not the end has reached 
   while (p != NULL) {
+    // Define pattern
+    std::regex pattern("(" + p->key + ")(.*)");
+
     // We will use regex to match the key of the block
-    if (std::regex_match(p->key, pattern)) {
+    if (std::regex_match(key, pattern)) {
       // Then emit packet to callback
-      if (type == "boolean") {
-        // Cast as boolean
-        p->data((bool) packet);
-      }
-      else if (type == "number") {
-        // Figure out that if it is a double or not
-        if ((double) packet - (int) packet != 0) {
-          // Cast as double
-          p->data((double) packet);
-        }
-        else {
-          // Cast as int for now
-          p->data((int) packet);
-        }
-      }
-      else if (type == "string") {
-        // Cast as string
-        p->data((const char*) packet);
-      }
-      else if (type == "object" || type == "array") {
-        // Cast as object
-        p->data((JSONObject) packet);
-      }
+      p->data(packet, path);
     }
 
     // Keep moving

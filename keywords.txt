@@ -16,7 +16,7 @@ Data KEYWORD3
 #######################################
 
 Callback	KEYWORD1
-JSONObject	KEYWORD1
+Var	KEYWORD1
 #######################################
 # Methods and Functions 
 #######################################
