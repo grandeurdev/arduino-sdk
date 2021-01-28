@@ -9,7 +9,8 @@
  */
 
 // Including headers
-#include "EventTable.h"
+#include <functional>
+#include "EventEmitter/EventEmitter.h"
 #include "grandeurtypes.h"
 #include "grandeurmacros.h"
 #include "arduinoWebSockets/WebSocketsClient.h"
@@ -24,27 +25,36 @@ class DuplexHandler {
     // Connection token
     String _token;
     // Connection state variable
-    static short _status;
+    bool _status;
     // Events Table
-    static EventTable _eventsTable;
+    EventEmitter<JSONObject> _tasks;
     // Subscription Array for update handler functions
-    static Callback _subscriptions[4];
-    
+    EventEmitter<JSONObject> _subscriptions;
     // Container for connection callback
-    static void (*_connectionCallback)(bool);
+    void (*_connectionCallback)(bool);
+    // Queue to store packets
+    //JSONObject _queue[10];
+    // List of subscribable events
+    const char* _events[1] = {"data"};
+
+    WebSocketsClient _client;
+    void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length);
+
+    //void handle(void);
+    //void flush(void);
 
   public:
-    DuplexHandler(Config config);
     DuplexHandler();
-    void init(void);
+    void init(Config config);
     // Ping function to keep connection alive.
     void ping();
     // Function to send a generic duplex message.
-    static void send(const char* task, const char* payload, Callback callback);
+    void send(const char* task, const char* payload, Callback callback);
     // Function to subscribe to a device topic.
-    void subscribe(short event, const char* payload, Callback updateHandler);
+    std::function<void(void)> subscribe(const char* topic, String path, const char* payload, Callback updateHandler);
     // Function to schedule an event handler for connection with Grandeur
-    void onConnectionEvent(void connectionEventHandler(bool));
+    void onConnectionEvent(void connectionCallback(bool));
+    void clearConnectionCallback(void);
     
     // Getter for connection state
     short getStatus(void);
@@ -52,7 +62,7 @@ class DuplexHandler {
     // This runs duplex
     void loop(bool valve);
 
-    friend void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length);
+    //friend void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length);
 
 };
 

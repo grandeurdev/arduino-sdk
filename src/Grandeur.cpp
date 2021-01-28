@@ -15,34 +15,40 @@ Grandeur grandeur;
 
 Grandeur::Grandeur() {}
 
-Project Grandeur::init(String apiKey, String token) {
-  // Setting config
-  _config = {apiKey, token};
-  // Creating a new project reference.
-  Project project;
-  // Duplex handles the realtime connection with the project.
-  project._duplexHandler = DuplexHandler(_config);
-  // Starting Duplex.
-  project._duplexHandler.init();
-  return project;
+Project::Project() {
+  Project::_device = Device(&_duplexHandler);
+  Project::_datastore = Datastore(_duplexHandler);
 }
 
-Project::Project() {}
+Project& Grandeur::init(String apiKey, String token) {
+  // Setting config
+  _config = {apiKey, token};
+  // Starting Duplex.
+  _project._duplexHandler.init(_config);
+  // Returning project reference
+  return _project;
+}
 
-void Project::onConnection(void connectionCallback(bool)) {
+Project& Project::onConnection(void connectionCallback(bool)) {
   _duplexHandler.onConnectionEvent(connectionCallback);
+  return *this;
+}
+
+void Project::clearConnectionCallback(void) {
+  return _duplexHandler.clearConnectionCallback();
 }
 
 bool Project::isConnected(void) {
-  return _duplexHandler.getStatus() == CONNECTED;
+  return (_duplexHandler.getStatus() == CONNECTED);
 }
 
-Device Project::device(String deviceID) {
-  return Device(deviceID, _duplexHandler);
+Device& Project::device(String deviceID) {
+  _device.init(deviceID);
+  return _device;
 }
 
-Datastore Project::datastore(void) {
-  return Datastore(_duplexHandler);
+Datastore& Project::datastore(void) {
+  return _datastore;
 }
 
 void Project::loop(bool valve) {

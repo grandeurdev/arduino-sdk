@@ -10,12 +10,18 @@
 
 #include "Device.h"
 
-Device::Device(String deviceID, DuplexHandler duplexHandler) {
-  _duplex = duplexHandler;
-  _deviceID = deviceID;
+Device::Device() {
+  _deviceID = "";
 }
 
-Device::Device() {}
+Device::Device(DuplexHandler* duplexHandler) {
+  _duplex = duplexHandler;
+  _deviceID = "";
+}
+
+void Device::init(String deviceID) {
+  _deviceID = deviceID;
+}
 
 void Device::get(String path, Callback callback) {
   JSONObject jsonObject;
@@ -23,7 +29,7 @@ void Device::get(String path, Callback callback) {
   jsonObject["deviceID"] = _deviceID;
   jsonObject["path"] = path;
   JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
-  _duplex.send("/device/data/get", jsonString, callback);
+  _duplex->send("/device/data/get", jsonString, callback);
 }
 
 void Device::get(Callback callback) {
@@ -31,7 +37,7 @@ void Device::get(Callback callback) {
   char jsonString[PACKET_SIZE];
   jsonObject["deviceID"] = _deviceID;
   JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
-  _duplex.send("/device/data/get", jsonString, callback);
+  _duplex->send("/device/data/get", jsonString, callback);
 }
 
 void Device::set(String path, JSONObject data, Callback callback) {
@@ -41,7 +47,7 @@ void Device::set(String path, JSONObject data, Callback callback) {
   jsonObject["path"] = path;
   jsonObject["data"] = data;
   JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
-  _duplex.send("/device/data/set", jsonString, callback);
+  _duplex->send("/device/data/set", jsonString, callback);
 }
 
 void Device::set(String path, JSONObject data) {
@@ -51,24 +57,24 @@ void Device::set(String path, JSONObject data) {
   jsonObject["path"] = path;
   jsonObject["data"] = data;
   JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
-  _duplex.send("/device/data/set", jsonString, [](){});
+  _duplex->send("/device/data/set", jsonString, [](JSONObject json){});
 }
 
 void Device::on(String path, Callback updateHandler) {
   JSONObject jsonObject;
   char jsonString[PACKET_SIZE];
   jsonObject["deviceID"] = _deviceID;
-  jsonObject["event"] = "deviceData";
+  jsonObject["event"] = "data";
   jsonObject["path"] = path;
   JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
-  _duplex.subscribe(DATAUPDATE, jsonString, updateHandler);
+  _duplex->subscribe((const char*) jsonObject["event"], path, jsonString, updateHandler);
 }
 
 void Device::on(Callback updateHandler) {
   JSONObject jsonObject;
   char jsonString[PACKET_SIZE];
   jsonObject["deviceID"] = _deviceID;
-  jsonObject["event"] = "deviceData";
+  jsonObject["event"] = "data";
   JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
-  _duplex.subscribe(DATAUPDATE, jsonString, updateHandler);
+  _duplex->subscribe((const char*) jsonObject["event"], "", jsonString, updateHandler);
 }

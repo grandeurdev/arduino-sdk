@@ -19,14 +19,16 @@
 class Device {
   // Class for handling device related functions
   private:
-    DuplexHandler _duplex;
+    DuplexHandler* _duplex;
     String _deviceID;
   public:
     // Device constructor
-    Device(String deviceID, DuplexHandler duplexHandler);
+    Device(DuplexHandler* duplexHandler);
     Device();
 
-    // Async getter/setter methods
+    void init(String deviceID);
+
+    // Async data getter/setter methods
     void get(String path, Callback callback);
     void get(Callback callback);
     void set(String path, JSONObject data, Callback callback);

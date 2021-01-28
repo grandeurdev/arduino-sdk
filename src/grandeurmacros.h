@@ -9,17 +9,22 @@
  */
 
 // Connection macros
-#define GRANDEUR_URL "192.168.10.5"
+#define GRANDEUR_URL "192.168.10.18"
 #define GRANDEUR_PORT 8000
 #define GRANDEUR_FINGERPRINT ""
 
 // Debugging macros
 // #define DEBUG_PORT Serial
-
+#define GRANDEUR_DEBUG_PORT Serial
 #ifdef DEBUG_PORT
-#define DEBUG_GRANDEUR(...) DEBUG_PORT.printf(__VA_ARGS__)
+#define GRANDEUR_DEBUG_PORT DEBUG_PORT
+#endif
+
+#ifdef GRANDEUR_DEBUG_PORT
+#define DEBUG_GRANDEUR(format, args...) \
+    GRANDEUR_DEBUG_PORT.printf(("[GRANDEUR-DEBUG] " + String(format)).c_str(), ##args)
 #else
-//#define DEBUG_DUPLEX(...) os_printf( __VA_ARGS__ )
+//#define DEBUG_GRANDEUR(format, args...) os_printf(("[GRANDEUR-DEBUG] " + String(format)).c_str(), ##args)
 #endif
 
 #ifndef DEBUG_GRANDEUR
@@ -31,6 +36,7 @@
 #define PACKET_SIZE 512
 #define PING_PACKET_SIZE 64
 #define TASK_SIZE 32
+#define TOPIC_SIZE 64
 
 // Send Queue Size
 #define SENDQUEUE_SIZE 16

@@ -21,16 +21,20 @@ class Grandeur;
 class Project {
   // Class for handling a complete project
   private:
+    // Duplex handles the realtime connection with the project.
     DuplexHandler _duplexHandler;
+    Device _device;
+    Datastore _datastore;
   public:
     // Project constructor
     Project();
     // Connection related methods
-    void onConnection(void connectionCallback(bool));
+    Project& onConnection(void connectionCallback(bool));
+    void clearConnectionCallback(void);
     bool isConnected(void);
     // Instantiator methods - return the objects of their classes
-    Device device(String deviceID);
-    Datastore datastore(void);
+    Device& device(String deviceID);
+    Datastore& datastore(void);
 
     // This method runs the SDK.
     void loop(bool valve);
@@ -41,9 +45,10 @@ class Project {
 class Grandeur {
   private:
     Config _config;
+    Project _project;
   public:
     Grandeur();
-    Project init(String apiKey, String token);
+    Project& init(String apiKey, String token);
 };
 
 extern Grandeur grandeur;

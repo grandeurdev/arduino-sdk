@@ -10,46 +10,33 @@
 
 #include "DuplexHandler.h"
 #include "arduinoWebSockets/WebSockets.h"
+#include <regex>
 
 /* VARIABLE INITIALIZATIONS */
-WebSocketsClient client;
+const char* routes[10] =
+  {"ping", "/topic/subscribe", "/topic/unsubscribe", "/topics/unsubscribe",
+  "/device/data/get", "/device/data/set", "/datastore/insert", "/datastore/delete",
+  "/datastore/update", "/datastore/pipeline"};
+
+//WebSocketsClient client;
 unsigned long millisCounterForPing = 0;
-const char* subscriptionTopics[] = {"deviceData"};
 size_t sendQueueSize = 0;
 SendData* sendQueue[SENDQUEUE_SIZE] = {};
-short DuplexHandler::_status = DISCONNECTED;
-void (*DuplexHandler::_connectionCallback)(bool) = [](bool connectionEventHandler) {};
 
-EventTable DuplexHandler::_eventsTable;
-Callback DuplexHandler::_subscriptions[4] = {};
-
-/* EVENT HANDLER FUNCTIONS */
-void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length);
-
-DuplexHandler::DuplexHandler(Config config) {
-  _query = "/?type=device&apiKey=" + config.apiKey;
-  _token = config.token;
+void unsubscribeTopic(EventEmitter<JSONObject>* subs, DuplexHandler* duplex, const char* event, String path, const char* payload) {
+  subs->off(String(event) + "." + path);
+  duplex->send("/topic/unsubscribe", payload, [](JSONObject payload) {});
 }
 
-DuplexHandler::DuplexHandler() {
-  _query = "/?type=device";
-  _token = "";
+DuplexHandler::DuplexHandler() : _query("/?type=device"), _token(""), _status(DISCONNECTED),
+  _connectionCallback([](bool status) {}) {}
+
+void DuplexHandler::onConnectionEvent(void connectionCallback(bool)) {
+  _connectionCallback = connectionCallback;
 }
 
-void DuplexHandler::init(void) {
-  // Setting up event handler
-  client.onEvent(&duplexEventHandler);
-  // Scheduling reconnect every 5 seconds if it disconnects
-  client.setReconnectInterval(5000);
-  // Opening up the connection
-  client.beginSSL(GRANDEUR_URL, GRANDEUR_PORT, _query, GRANDEUR_FINGERPRINT, "node");
-  char tokenArray[_token.length() + 1];
-  _token.toCharArray(tokenArray, _token.length() + 1);
-  client.setAuthorization(tokenArray);
-}
-
-void DuplexHandler::onConnectionEvent(void connectionEventHandler(bool)) {
-  _connectionCallback = connectionEventHandler;
+void DuplexHandler::clearConnectionCallback(void) {
+  _connectionCallback = [](bool status) {};
 }
 
 short DuplexHandler::getStatus() {
@@ -65,7 +52,7 @@ void DuplexHandler::loop(bool valve) {
         ping();
     }
     // Running duplex loop
-    client.loop();
+    _client.loop();
   }
 }
 
@@ -74,20 +61,26 @@ void DuplexHandler::send(const char* task, const char* payload, Callback callbac
     sendQueue[sendQueueSize++] = new SendData(task, payload, callback);
     return ;
   }
+  
+  DEBUG_GRANDEUR("Sending: %s.\n", payload);
+  
   char packet[PACKET_SIZE];
   GrandeurID packetID = millis();
-  // Saving callback to eventsTable
-  _eventsTable.insert(task, packetID, callback);
+  // Attaching an event listener
+  _tasks.once(String(packetID), callback);
   // Formatting the packet
-  snprintf(packet, PACKET_SIZE, "{\"header\": {\"id\": %lu, \"task\": \"%s\"}, \"payload\": %s}", packetID, task, payload);
+  snprintf(packet, PACKET_SIZE, "{\"header\": {\"id\": \"%ul\", \"task\": \"%s\"}, \"payload\": %s}", packetID, task, payload);  
   // Sending to server
-  client.sendTXT(packet);
+  _client.sendTXT(packet);
 }
 
-void DuplexHandler::subscribe(short event, const char* payload, Callback updateHandler) {
+std::function<void(void)> DuplexHandler::subscribe(const char* event, String path, const char* payload, Callback updateHandler) {
   // Saving updateHandler callback to subscriptions Array
-  _subscriptions[event] = updateHandler;
+  String topic = String(event) + "." + path;
+  _subscriptions.on(topic, updateHandler);
   send("/topic/subscribe", payload, [](JSONObject payload) {});
+
+  return std::bind(unsubscribeTopic, &_subscriptions, this, event, path, payload);
 }
 
 /** This function pings the cloud to keep the connection alive.
@@ -97,38 +90,38 @@ void DuplexHandler::ping() {
     char packet[PING_PACKET_SIZE];
     GrandeurID packetID = millis();
     // Saving callback to eventsTable
-    _eventsTable.insert("ping", packetID, [](JSONObject feed) {});
+    _tasks.once(String(packetID), [](JSONObject payload) {});
     // Formatting the packet
-    snprintf(packet, PING_PACKET_SIZE, "{\"header\": {\"id\": %lu, \"task\": \"ping\"}}", packetID);
+    snprintf(packet, PING_PACKET_SIZE, "{\"header\": {\"id\": \"%lu\", \"task\": \"ping\"}}", packetID);
     // Sending to server
-    client.sendTXT(packet);
+    _client.sendTXT(packet);
   }
 }
 
-/** This function handles all the cloud events.
+/** This function handles all the duplex events.
  * @param eventType: The type of event that has occurred.
  * @param packet: The packet corresponding to the event.
  * @param length: The size of the @param packet.
 */
-void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length) {
-  JSONObject updateObject;
+void DuplexHandler::duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length) {
   switch(eventType) {
     case WStype_CONNECTED:
       // When duplex connection opens
-      DuplexHandler::_status = CONNECTED;
-      DuplexHandler::_connectionCallback(DuplexHandler::_status);
+      _status = CONNECTED;
+      _connectionCallback(_status);
       // Resetting ping millis counter
       millisCounterForPing = millis();
       // Sending all queued messages
       for(int i = 0; i < sendQueueSize; i++) {
-        DuplexHandler::send(sendQueue[i]->task, sendQueue[i]->payload, sendQueue[i]->callback);
+        send(sendQueue[i]->task, sendQueue[i]->payload, sendQueue[i]->callback);
       }
       return ;
 
     case WStype_DISCONNECTED:
       // When duplex connection closes
-      DuplexHandler::_status = DISCONNECTED;
-      return DuplexHandler::_connectionCallback(DuplexHandler::_status);
+      _status = DISCONNECTED;
+      _connectionCallback(_status);
+      return ;
 
     case WStype_TEXT:
       // When a duplex message is received.
@@ -139,26 +132,51 @@ void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length) {
         DEBUG_GRANDEUR("Parsing input failed!");
         return;
       }
-      if(messageObject["header"]["task"] == "update") {
+      String task = String((const char*) messageObject["header"]["task"]);
+      if(task == "update") {
         for(int i = 0; i < NUMBER_OF_TOPICS; i++) {
-          if(messageObject["payload"]["event"] == subscriptionTopics[i]) {
-            DuplexHandler::_subscriptions[i](messageObject["payload"]["update"]);
-            return ;
+          if(_events[i] == messageObject["payload"]["event"]) {
+            String topic = messageObject["payload"]["event"] + "." +
+                                  messageObject["payload"]["path"];
+
+            String* events = _subscriptions.getEventIds();
+            unsigned int nEvents = _subscriptions.getNListeners();
+
+            if(messageObject["payload"]["event"] == "data") {
+              for(int i = 0; i < nEvents; i++) {
+                if(std::regex_match(topic.c_str(), std::regex(events[i].c_str())))
+                  _subscriptions.emit(events[i], messageObject["payload"]["update"]);
+              }
+              return;
+            }
+
+            for(int i = 0; i < nEvents; i++) {
+              if(topic == events[i]) {
+                _subscriptions.emit(events[i], messageObject["payload"]["update"]);
+              }
+            }
+            return;
           }
         }
       }
-      else if(messageObject["header"]["task"] == "unpair") {
-        return ;
-      }
-      // Fetching event callback function from the events Table
-      Callback callback = DuplexHandler::_eventsTable.findAndRemove(
-        (const char*) messageObject["header"]["task"],
-        (GrandeurID) messageObject["header"]["id"]
-      );
-      if(!callback) {
-        return;
-      }
-      return callback(messageObject["payload"]);
+      if(task == "unpair") return;
+      _tasks.emit(task, messageObject["payload"]);
+      return;
   }
 }
 
+void DuplexHandler::init(Config config) {
+  _query = "/?type=device&apiKey=" + config.apiKey;
+  _token = config.token;
+  // Setting up event handler
+  _client.onEvent([=](WStype_t eventType, uint8_t* packet, size_t length) {
+    duplexEventHandler(eventType, packet, length);
+  });
+  // Scheduling reconnect every 5 seconds if it disconnects
+  _client.setReconnectInterval(5000);
+  // Opening up the connection
+  _client.beginSSL(GRANDEUR_URL, GRANDEUR_PORT, _query, GRANDEUR_FINGERPRINT, "node");
+  char tokenArray[_token.length() + 1];
+  _token.toCharArray(tokenArray, _token.length() + 1);
+  _client.setAuthorization(tokenArray);
+}
