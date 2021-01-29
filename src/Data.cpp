@@ -11,6 +11,40 @@
 #include "Data.h"
 
 // Constructors
+Event::Event(String deviceID, DuplexHandler duplexHandler, gID id, String path) {
+  _duplex = duplexHandler;
+  _deviceID = deviceID;
+  _id = id;
+  _path = path;
+}
+
+Event::Event() {}
+
+void Event::clear() {
+  // Clear an event handler on path
+  // Create a new json object
+  Var jsonObject;
+
+  // Create packet
+  char jsonString[PACKET_SIZE];
+
+  // Add device id
+  jsonObject["deviceID"] = _deviceID;
+
+  // Add path 
+  jsonObject["path"] = _path;
+
+  // Add data
+  jsonObject["event"] = "data";
+
+  // Conver the object to string
+  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
+
+  // Send 
+  _duplex.unsubscribe(_id, jsonString);
+}
+
+// Constructors
 Data::Data(String deviceID, DuplexHandler duplexHandler) {
   _duplex = duplexHandler;
   _deviceID = deviceID;
@@ -63,7 +97,7 @@ void Data::set(const char* path, Var data, Callback callback) {
   _duplex.send("/device/data/set", jsonString, callback);
 }
 
-void Data::on(const char* path, Callback callback) {
+Event Data::on(const char* path, Callback callback) {
   // Place an event handler on path update
   // Create a new json object
   Var jsonObject;
@@ -90,5 +124,8 @@ void Data::on(const char* path, Callback callback) {
   std::string event = "data/" + p;
 
   // Send 
-  _duplex.subscribe(event.c_str(), jsonString, callback);
+  gID packetID = _duplex.subscribe(event.c_str(), jsonString, callback);
+
+  // Return an event
+  return Event(_deviceID, _duplex, packetID, path);
 }

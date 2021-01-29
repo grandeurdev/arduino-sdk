@@ -42,10 +42,10 @@ class EventTable {
     int insert(EventKey key, EventID id, EventData data);
 
     // Method to remove an entry from the table
-    int remove(EventKey key, EventID id);
+    int remove(EventID id);
 
     // Method to find and remove an entry from the hashtable
-    EventData findAndRemove(EventKey key, EventID id);
+    EventData findAndRemove(EventID id);
 
     // Method to send some data to all callbacks at a key
     int emit(EventKey key, Var packet, const char* path);

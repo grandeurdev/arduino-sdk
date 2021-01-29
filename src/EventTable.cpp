@@ -71,7 +71,7 @@ int EventTable::insert(EventKey key, EventID id, EventData data) {
   return 0;
 }
 
-int EventTable::remove(EventKey key, EventID id) {
+int EventTable::remove(EventID id) {
   // Check if bucket is empty
   if(table == NULL) {
     // which means the entry does not exist
@@ -118,7 +118,7 @@ int EventTable::remove(EventKey key, EventID id) {
   return 0;
 }
 
-EventData EventTable::findAndRemove(EventKey key, EventID id) {
+EventData EventTable::findAndRemove(EventID id) {
   // Check if bucket is empty
   if(table == NULL) {
     // which means the entry does not exist

@@ -135,7 +135,7 @@ void EventQueue::print() {
   // While not the end
   while (p != NULL) {
     // Print the id
-    Serial.printf("%s\n", p->key.c_str());
+    Serial.printf("%s %d\n", p->key.c_str(), p->id);
 
     p = p->next;
   }

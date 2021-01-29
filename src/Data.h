@@ -16,6 +16,23 @@
 #ifndef DATA_H_
 #define DATA_H_
 
+class Event {
+  // Class will help in clearing an event
+  private:
+    DuplexHandler _duplex;
+    String _deviceID;
+    gID _id;
+    String _path;
+
+  public:
+    // Event constructor
+    Event(String deviceID, DuplexHandler duplexHandler, gID id, String path);
+    Event();
+
+    // Clear method
+    void clear();
+};
+
 class Data {
   // Class for handling device related functions
   private:
@@ -32,7 +49,7 @@ class Data {
     void set(const char* path, Var data, Callback callback);
 
     // Sync event handlers
-    void on(const char* path, Callback callback);
+    Event on(const char* path, Callback callback);
 };
 
 #endif

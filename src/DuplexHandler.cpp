@@ -96,7 +96,6 @@ void DuplexHandler::handle(EventID id, EventKey key, EventPayload payload, Callb
 
   // Saving callback to eventsTable
   _eventsTable.insert(key, id, callback);
-  // Serial.println("On handle");
   // _eventsTable.print();
   // _subscriptions.print();
 
@@ -115,7 +114,6 @@ void DuplexHandler::send(const char* task, const char* payload, Callback callbac
   if(_status != CONNECTED) {
     // Append the packet to queue
     _queue.push(packetID, task, payload, callback);
-    // Serial.println("Stack to queue");
     // _queue.print();
     return ;
   }
@@ -125,7 +123,6 @@ void DuplexHandler::send(const char* task, const char* payload, Callback callbac
 
   // Saving callback to eventsTable
   _eventsTable.insert(task, packetID, callback);
-  // Serial.println("On send");
   // _eventsTable.print();
   // _subscriptions.print();
 
@@ -136,18 +133,83 @@ void DuplexHandler::send(const char* task, const char* payload, Callback callbac
   client.sendTXT(packet);
 }
 
-void DuplexHandler::subscribe(const char* event, const char* payload, Callback updateHandler) {
+void DuplexHandler::unsubscribe(gID id, const char* payload) {
   // Generate an id
-  gID eventID = micros();
+  gID packetID = micros();
 
-  // Saving callback to eventsTable
-  _subscriptions.insert(event, eventID, updateHandler);
-  // Serial.println("On subscribe");
+  // Remove callback from subscriptions table
+  _subscriptions.remove(id);
   // _eventsTable.print();
   // _subscriptions.print();
 
-  // Saving callback in event table with key
-  send("/topic/subscribe", payload, NULL);
+  // Push unsub to queue
+  _queue.push(packetID, "/topic/unsubscribe", payload, NULL);
+
+  // and remove subscription packet from queue
+  _queue.remove(id);
+  // _queue.print();
+  
+  // Check connection status
+  if(_status != CONNECTED) {
+    // Don't proceed if we aren't
+    return ;
+  }
+
+  // Create packet
+  char packet[PACKET_SIZE];
+
+  // Saving callback to eventsTable
+  _eventsTable.insert("/topic/unsubscribe", packetID, NULL);
+  // _eventsTable.print();
+  // _subscriptions.print();
+
+  // Formatting the packet
+  snprintf(packet, PACKET_SIZE, "{\"header\": {\"id\": %lu, \"task\": \"%s\"}, \"payload\": %s}", packetID, "/topic/unsubscribe", payload);
+  
+  // Sending to server
+  client.sendTXT(packet);
+}
+
+gID DuplexHandler::subscribe(const char* event, const char* payload, Callback updateHandler) {
+  // Generate an id
+  gID packetID = micros();
+
+  // Saving callback to subscriptions Table
+  _subscriptions.insert(event, packetID, updateHandler);
+  // _eventsTable.print();
+  // _subscriptions.print();
+
+  // Append the packet to queue because in case of queue
+  // the packet will always be queue either we are connected
+  // or disconnected
+  // This is being done to handle case where we were connected
+  // the subscribed to some events and got disconnected
+  _queue.push(packetID, "/topic/subscribe", payload, NULL);
+  // _queue.print();
+  
+  // Check connection status
+  if(_status != CONNECTED) {
+    // Don't proceed if we aren't
+    // but return packet id
+    return packetID;
+  }
+
+  // Create packet
+  char packet[PACKET_SIZE];
+
+  // Saving callback to eventsTable
+  _eventsTable.insert("/topic/subscribe", packetID, NULL);
+  // _eventsTable.print();
+  // _subscriptions.print();
+
+  // Formatting the packet
+  snprintf(packet, PACKET_SIZE, "{\"header\": {\"id\": %lu, \"task\": \"%s\"}, \"payload\": %s}", packetID, "/topic/subscribe", payload);
+  
+  // Sending to server
+  client.sendTXT(packet);
+
+  // Return packet id
+  return packetID;
 }
 
 void DuplexHandler::ping() {
@@ -240,24 +302,22 @@ void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length) {
       }
 
       // Fetching event callback function from the events Table
-      Callback callback = DuplexHandler::_eventsTable.findAndRemove(
-        (const char*) messageObject["header"]["task"],
-        (gID) messageObject["header"]["id"]
-      );
-
+      Callback callback = DuplexHandler::_eventsTable.findAndRemove((gID) messageObject["header"]["id"]);
       
-      // Serial.println("On message");
       // DuplexHandler::_eventsTable.print();
       // DuplexHandler::_subscriptions.print();
 
-      // If not found then simply return
-      if(!callback) return;
-
       // Remove the packet if it was queued
       // because the ack has been received
-      DuplexHandler::_queue.remove((long) messageObject["header"]["id"]);
-      // Serial.println("On remove");
-      // DuplexHandler::_queue.print();
+      if (messageObject["header"]["task"] == "/topic/subscribe");
+      else {
+        // but if it is not of subscribe type
+        DuplexHandler::_queue.remove((long) messageObject["header"]["id"]);
+        // DuplexHandler::_queue.print();
+      }
+
+      // If not found then simply return
+      if(!callback) return;
 
       // Or otherwise resolve the event
       return callback(messageObject["payload"]);
