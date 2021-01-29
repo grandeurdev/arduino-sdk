@@ -9,7 +9,7 @@
  */
 
 // Connection macros
-#define GRANDEUR_URL "192.168.10.18"
+#define GRANDEUR_URL "192.168.10.3"
 #define GRANDEUR_PORT 8000
 #define GRANDEUR_FINGERPRINT ""
 

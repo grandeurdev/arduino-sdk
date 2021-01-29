@@ -197,9 +197,9 @@
 
 // moves all Header strings to Flash (~300 Byte)
 #ifdef WEBSOCKETS_SAVE_RAM
-#define WEBSOCKETS_STRING(var) F(var)
+#define WEBSOCKETS_STRING(Var) F(Var)
 #else
-#define WEBSOCKETS_STRING(var) var
+#define WEBSOCKETS_STRING(Var) Var
 #endif
 
 typedef enum {
@@ -339,6 +339,6 @@ class WebSockets {
 };
 
 #ifndef UNUSED
-#define UNUSED(var) (void)(var)
+#define UNUSED(Var) (void)(Var)
 #endif
 #endif /* WEBSOCKETS_H_ */

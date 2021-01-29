@@ -244,9 +244,9 @@ You can get and set device variables using the `get()`/`set()` functions on the 
 
 They are all **Async functions** because they communicate with Grandeur through internet. Communications through internet take some time to reach and arrive from Grandeur and we cannot wait, for example, for device's variables to arrive from Grandeur — meanwhile blocking the rest of the device program. So, what we do is, we schedule a function to be called when the data variables and resume with rest of the device program, forgetting that we ever called `get()`. When the data variables arrive, the SDK calls our scheduled function, giving us access to data variables inside that function.
 
-For now, there's only one type of function that the SDK's Async methods accept: `Callback` which accepts a `JSONObject` as argument and returns nothing aka. `void`.
+For now, there's only one type of function that the SDK's Async methods accept: `Callback` which accepts a `Var` as argument and returns nothing aka. `void`.
 
-Read more about **Async functions**, `Callback`, and `JSONObject` [here][the dexterity of arduino sdk].
+Read more about **Async functions**, `Callback`, and `Var` [here][the dexterity of arduino sdk].
 
 Here's how we would get and set device variables:
 
@@ -268,18 +268,18 @@ void setupWiFi(void) {
   Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid.c_str(), passphrase.c_str());
 }
 
-void stateGetCallback(JSONObject result) {
+void stateGetCallback(Var result) {
   // This function prints the variables stored in data and sets device pins.
   Serial.printf("State: %d\n", (int) result["deviceData"]["state"]);
   digitalWrite(D0, (int) result["deviceData"]["state"]);
 }
 
-void voltageSetCallback(JSONObject result) {
+void voltageSetCallback(Var result) {
   // This function prints the updated values of voltage.
   Serial.printf("Updated Voltage: %d\n", (int) result["update"]["voltage"]);
 }
 
-void currentSetCallback(JSONObject result) {
+void currentSetCallback(Var result) {
   // This function prints the updated values of current.
   Serial.printf("Updated Current: %d\n", (int) result["update"]["current"]);
 }
@@ -338,7 +338,7 @@ void setupWiFi(void) {
   Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid.c_str(), passphrase.c_str());
 }
 
-void stateUpdatedCallback(JSONObject result) {
+void stateUpdatedCallback(Var result) {
   // This function prints the updated values of state.
   Serial.printf("Updated State: %s\n", (int) updatedData["state"]);
 }
@@ -455,7 +455,7 @@ void setupWiFi(void) {
   Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid.c_str(), passphrase.c_str());
 }
 
-void getStateCallback(JSONObject data) {
+void getStateCallback(Var data) {
   if(payload["code"] == "DEVICE-DATA-FETCHED") {
     int state = payload["deviceData"]["state"];
     // You can set a digital pin here with the state value
@@ -505,7 +505,7 @@ void setupWiFi(void) {
   Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid.c_str(), passphrase.c_str());
 }
 
-void getStateCallback(JSONObject result) {
+void getStateCallback(Var result) {
   if(result["code"] == "DEVICE-DATA-FETCHED") {
     int state = (int) result["deviceData"]["state"];
     // You can set a digital pin here with the state value
@@ -514,7 +514,7 @@ void getStateCallback(JSONObject result) {
   }
 }
 
-void stateUpdatedCallback(JSONObject updatedData) {
+void stateUpdatedCallback(Var updatedData) {
   int newState = (int) updatedData["state"];
   // You can set a digital pin here with the newState value
   // to switch the hardware connected to it ON/OFF.
@@ -564,7 +564,7 @@ void setupWiFi(void) {
   Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid.c_str(), passphrase.c_str());
 }
 
-void getStateCallback(JSONObject result) {
+void getStateCallback(Var result) {
   if(result["code"] == "DEVICE-DATA-FETCHED") {
     int state = (int) result["deviceData"]["state"];
     // You can set a digital pin here with the state value
@@ -573,14 +573,14 @@ void getStateCallback(JSONObject result) {
   }
 }
 
-void stateUpdatedCallback(JSONObject updatedData) {
+void stateUpdatedCallback(Var updatedData) {
   int newState = (int) updatedData["state"];
   // You can set a digital pin here with the newState value
   // to switch the hardware connected to it ON/OFF.
   digitalWrite(D0, newState);
 }
 
-void setStateCallback(JSONObject result) {
+void setStateCallback(Var result) {
   if(result["code"] == "DEVICE-DATA-UPDATED") {
     Serial.printf("State is updated to: %d\n", (int) payload["update"]["state"]);
   }
@@ -603,7 +603,7 @@ void setup() {
 
 void loop() {
   // Data container to store device's state.
-  JSONObject data;
+  Var data;
   int state = digitalRead(D0);
   // This sends the updated state to Grandeur and calls setStateCallback() when
   // Grandeur confirms the update success.
@@ -637,20 +637,20 @@ The Arduino SDK is aimed at providing extremely to-the-point functions, being al
   * `onConnection(void connectionCallback(bool))`
   * `on(String path, Callback callback)`
   * `get(String path, Callback callback)`
-  * `set(String path, JSONObject data, Callback callback)`
+  * `set(String path, Var data, Callback callback)`
 
   `get()` for example, requests Grandeur for a device variable and schedules the `callback` function for when the data arrive, because obviously, they don't arrive instantaneously; there is always some latency involved in web communications.
 
 * There is a special type of function defined in **Arduino SDK** as [`Callback`][callback]. It's nothing but a regular function of the form:
   ```cpp
-  void callback(JSONObject result) {}
+  void callback(Var result) {}
   ```
   For now, it is the only function type that the Async functions of SDK accept as argument.
 
-* [`JSONObject`][jsonobject] is a special variable type which acts like a container for other variables, just like a javascript object or a C++ map. You can store variables in it as key-value pairs. This what data and data are — container for other variables aka. `JSONObject`s.
+* [`Var`][jsonobject] is a special variable type which acts like a container for other variables, just like a javascript object or a C++ map. You can store variables in it as key-value pairs. This what data and data are — container for other variables aka. `Var`s.
 
 ```cpp
-JSONObject data;
+Var data;
 data["foo"] = "This is foo";
 data["bar"] = true;
 data["foobar"]["foo"] = "This is foo inside foobar";
@@ -996,7 +996,7 @@ If no path is provided, `get` returns all device variables.
 Project myProject;
 Device myDevice;
 
-void getCallback(JSONObject result) {
+void getCallback(Var result) {
   // This method just prints *voltage* variable from the device's data.
   Serial.println(result["data"]["voltage"]);
 }
@@ -1031,7 +1031,7 @@ This method updates the device's [variables][data] on Grandeur with new values.
 | Name        | Type          | Description                                                  |
 |-------------|---------------|--------------------------------------------------------------|
 | path        | _String_      | Path of the variable to be updated                           |
-| data        | _JSONObject_  | A JSONObject containing the data to be stored in the variable|
+| data        | _JSONObject_  | A Var containing the data to be stored in the variable|
 | callback    | _Callback_    | A function to be called when set response is received        |
 
 If no callback is provided, the variable is updated without calling calling a callback on update success.
@@ -1042,7 +1042,7 @@ If no callback is provided, the variable is updated without calling calling a ca
 Project myProject;
 Device myDevice;
 
-void setCallback(JSONObject result) {
+void setCallback(Var result) {
   // This method prints new value of the device *voltage*.
   Serial.println(result["update"]["voltage"]);
 }
@@ -1053,8 +1053,8 @@ void setup() {
 }
 
 void loop() {
-  // A JSONObject container to store data variables.
-  JSONObject data;
+  // A Var container to store data variables.
+  Var data;
   int voltage = analogRead(A0);
   // This sets the data on every loop and calls setCallback() function when its
   // response from Grandeur is received.
@@ -1095,7 +1095,7 @@ If no path is provided, `on` listens to all the device variables.
 Project myProject;
 Device myDevice;
 
-void voltageUpdatedCallback(JSONObject updatedData) {
+void voltageUpdatedCallback(Var updatedData) {
   // When voltage update occurs on Grandeur, this function extracts its updated values
   // and sets the corresponding pin.
   Serial.println("Voltage update occurred!\n");
@@ -1140,7 +1140,7 @@ This method inserts documents into Grandeur datastore.
 Project myProject;
 Datastore myDatastore;
 
-void insertCallback(JSONObject insertionResult) {
+void insertCallback(Var insertionResult) {
   // This method just prints if the insertion is successful or not.
   if(insertionResult["code"] == "DATASTORE-DOCUMENTS-INSERTED") {
     Serial.println("Insertion successful.");
@@ -1155,7 +1155,7 @@ void setup() {
 
 void loop() {
   // This inserts a document containing voltage and current readings in datastore on every loop.
-  JSONObject docs;
+  Var docs;
   // Adding voltage and current readings to the first document of docs array.
   // In JSON, the docs array looks like this:
   // [{"voltage": analogRead(A0), "current": analogRead(A1)}]
@@ -1194,7 +1194,7 @@ This method searches for documents in Grandeur datastore based on the `filter` s
 Project myProject;
 Datastore myDatastore;
 
-void searchCallback(JSONObject searchResult) {
+void searchCallback(Var searchResult) {
   // This method just prints the documents if the search is successful.
   if(searchResult["code"] == "DATASTORE-DOCUMENTS-FETCHED") {
     Serial.print("Documents fetched from Grandeur: ");

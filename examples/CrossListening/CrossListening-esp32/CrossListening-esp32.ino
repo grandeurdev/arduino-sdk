@@ -38,9 +38,9 @@ int voltagePin = 2;
 void WiFiEventCallback(WiFiEvent_t event);
 void setupWiFi(void);
 void connectionCallback(bool state);
-void initializeState(JSONObject getResult);
-void stateUpdatedCallback(JSONObject updatedData);
-void voltageSetCallback(JSONObject setResult);
+void initializeState(Var getResult);
+void stateUpdatedCallback(Var updatedData);
+void voltageSetCallback(Var setResult);
 
 
 void setup() {
@@ -129,7 +129,7 @@ void connectionCallback(bool status) {
   }
 }
 
-void initializeState(JSONObject getResult) {
+void initializeState(Var getResult) {
   // This function sets the *state pin* to the *state value* that we received in data
   // from Grandeur.
   if(getResult["code"] == "DEVICE-DATA-FETCHED") {
@@ -143,14 +143,14 @@ void initializeState(JSONObject getResult) {
   return;
 }
 
-void stateUpdatedCallback(JSONObject updatedData) {
+void stateUpdatedCallback(Var updatedData) {
   // This function gets the *updated state* from Grandeur and set the *state pin*
   // with its value.
   Serial.printf("Updated State is: %d\n", (int) updatedData["state"]);
   digitalWrite(statePin, (int) updatedData["state"]); 
 }
 
-void voltageSetCallback(JSONObject setResult) {
+void voltageSetCallback(Var setResult) {
   if(setResult["code"] == "DEVICE-DATA-UPDATED") {
     Serial.printf("Voltage is updated to: %d\n", (int) setResult["update"]["voltage"]);
     

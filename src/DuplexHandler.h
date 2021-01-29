@@ -27,13 +27,13 @@ class DuplexHandler {
     // Connection state variable
     bool _status;
     // Events Table
-    EventEmitter<JSONObject> _tasks;
+    EventEmitter<Var> _tasks;
     // Subscription Array for update handler functions
-    EventEmitter<JSONObject> _subscriptions;
+    EventEmitter<Var> _subscriptions;
     // Container for connection callback
     void (*_connectionCallback)(bool);
     // Queue to store packets
-    //JSONObject _queue[10];
+    //Var _queue[10];
     // List of subscribable events
     const char* _events[1] = {"data"};
 

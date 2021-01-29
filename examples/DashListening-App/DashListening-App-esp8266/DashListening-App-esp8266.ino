@@ -36,8 +36,8 @@ int voltagePin = A0;
 // Function prototypes
 void setupWiFi(void);
 void connectionCallback(bool state);
-void initializeState(JSONObject getResult);
-void voltageSetCallback(JSONObject setResult);
+void initializeState(Var getResult);
+void voltageSetCallback(Var setResult);
 
 void setup() {
   Serial.begin(9600);
@@ -111,7 +111,7 @@ void connectionCallback(bool status) {
   }
 }
 
-void initializeState(JSONObject getResult) {
+void initializeState(Var getResult) {
   // This function sets the *state pin* to the *state value* that we received in data
   // from Grandeur.
   if(getResult["code"] == "DEVICE-DATA-FETCHED") {
@@ -125,7 +125,7 @@ void initializeState(JSONObject getResult) {
   return;
 }
 
-void voltageSetCallback(JSONObject setResult) {
+void voltageSetCallback(Var setResult) {
   if(setResult["code"] == "DEVICE-DATA-UPDATED") {
     Serial.printf("Voltage is updated to: %d\n", (int) setResult["update"]["voltage"]);
     

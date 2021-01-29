@@ -15,8 +15,8 @@
 #ifndef GRANDEURTYPES_H_
 #define GRANDEURTYPES_H_
 
-typedef JSONVar JSONObject;
-typedef void (*Callback)(JSONObject);
+typedef JSONVar Var;
+typedef void (*Callback)(Var);
 typedef void (*Send)(const char* task, const char* payload, Callback callback);
 typedef long GrandeurID;
 

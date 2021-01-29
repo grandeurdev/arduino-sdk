@@ -33,7 +33,7 @@ unsigned long current = millis();
 // Function prototypes
 void setupWiFi(void);
 void connectionCallback(bool status);
-void searchCallback(JSONObject payload);
+void searchCallback(Var payload);
 
 void setup() {
   Serial.begin(9600);
@@ -100,7 +100,7 @@ void connectionCallback(bool status) {
   }
 }
 
-void searchCallback(JSONObject searchResult) {
+void searchCallback(Var searchResult) {
   // This function prints if the datastore search for the docs was successfully or not.
   if(searchResult["code"] == "DATASTORE-DOCUMENTS-FETCHED") {
     Serial.print("Documents fetched from Grandeur: ");

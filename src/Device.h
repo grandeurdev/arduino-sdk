@@ -31,8 +31,8 @@ class Device {
     // Async data getter/setter methods
     void get(String path, Callback callback);
     void get(Callback callback);
-    void set(String path, JSONObject data, Callback callback);
-    void set(String path, JSONObject data);
+    void set(String path, Var data, Callback callback);
+    void set(String path, Var data);
     // Listeners for events from Grandeur
     void on(String path, Callback callback);
     void on(Callback callback);

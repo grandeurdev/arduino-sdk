@@ -23,9 +23,9 @@ unsigned long millisCounterForPing = 0;
 size_t sendQueueSize = 0;
 SendData* sendQueue[SENDQUEUE_SIZE] = {};
 
-void unsubscribeTopic(EventEmitter<JSONObject>* subs, DuplexHandler* duplex, const char* event, String path, const char* payload) {
+void unsubscribeTopic(EventEmitter<Var>* subs, DuplexHandler* duplex, const char* event, String path, const char* payload) {
   subs->off(String(event) + "." + path);
-  duplex->send("/topic/unsubscribe", payload, [](JSONObject payload) {});
+  duplex->send("/topic/unsubscribe", payload, [](Var payload) {});
 }
 
 DuplexHandler::DuplexHandler() : _query("/?type=device"), _token(""), _status(DISCONNECTED),
@@ -78,7 +78,7 @@ std::function<void(void)> DuplexHandler::subscribe(const char* event, String pat
   // Saving updateHandler callback to subscriptions Array
   String topic = String(event) + "." + path;
   _subscriptions.on(topic, updateHandler);
-  send("/topic/subscribe", payload, [](JSONObject payload) {});
+  send("/topic/subscribe", payload, [](Var payload) {});
 
   return std::bind(unsubscribeTopic, &_subscriptions, this, event, path, payload);
 }
@@ -90,7 +90,7 @@ void DuplexHandler::ping() {
     char packet[PING_PACKET_SIZE];
     GrandeurID packetID = millis();
     // Saving callback to eventsTable
-    _tasks.once(String(packetID), [](JSONObject payload) {});
+    _tasks.once(String(packetID), [](Var payload) {});
     // Formatting the packet
     snprintf(packet, PING_PACKET_SIZE, "{\"header\": {\"id\": \"%lu\", \"task\": \"ping\"}}", packetID);
     // Sending to server
@@ -125,7 +125,7 @@ void DuplexHandler::duplexEventHandler(WStype_t eventType, uint8_t* packet, size
 
     case WStype_TEXT:
       // When a duplex message is received.
-      JSONObject messageObject = JSON.parse((char*) packet);
+      Var messageObject = JSON.parse((char*) packet);
       if (JSON.typeof(messageObject) == "undefined") {
         // Just for internal errors of Arduino_JSON
         // if the parsing fails.

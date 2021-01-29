@@ -18,16 +18,16 @@ class Pipeline {
   // Class for a datastore collection
   private:
     String _collection;
-    JSONObject _query;
+    Var _query;
     DuplexHandler _duplex;
   public:
     // Collection constructor
-    Pipeline(String collectionName, JSONObject query, DuplexHandler duplexHandler);
+    Pipeline(String collectionName, Var query, DuplexHandler duplexHandler);
     // Methods
-    Pipeline match(JSONObject filter);
-    Pipeline project(JSONObject specs);
-    Pipeline group(JSONObject condition, JSONObject fields);
-    Pipeline sort(JSONObject specs);
+    Pipeline match(Var filter);
+    Pipeline project(Var specs);
+    Pipeline group(Var condition, Var fields);
+    Pipeline sort(Var specs);
     void execute(int pageNumber, Callback executed);
 };
 
@@ -40,10 +40,10 @@ class Collection {
     // Collection constructor
     Collection(String name, DuplexHandler duplexHandler);
     // Methods
-    void insert(JSONObject documents, Callback inserted);
-    void remove(JSONObject filter, Callback removed);
-    void update(JSONObject filter, JSONObject update, Callback updated);
-    void search(JSONObject filter, JSONObject projection, int pageNumber, Callback searched);
+    void insert(Var documents, Callback inserted);
+    void remove(Var filter, Callback removed);
+    void update(Var filter, Var update, Callback updated);
+    void search(Var filter, Var projection, int pageNumber, Callback searched);
     Pipeline pipeline(void);
 };
 

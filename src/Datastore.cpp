@@ -26,8 +26,8 @@ Collection::Collection(String name, DuplexHandler duplexHandler) {
   _duplex = duplexHandler;
 }
 
-void Collection::insert(JSONObject documents, Callback inserted) {
-  JSONObject jsonObject;
+void Collection::insert(Var documents, Callback inserted) {
+  Var jsonObject;
   char jsonString[PACKET_SIZE];
   
   jsonObject["collection"] = _name;
@@ -38,8 +38,8 @@ void Collection::insert(JSONObject documents, Callback inserted) {
   _duplex.send("/datastore/insert", jsonString, inserted);
 }
 
-void Collection::remove(JSONObject filter, Callback removed) {
-  JSONObject jsonObject;
+void Collection::remove(Var filter, Callback removed) {
+  Var jsonObject;
   char jsonString[PACKET_SIZE];
 
   jsonObject["collection"] = _name;
@@ -50,8 +50,8 @@ void Collection::remove(JSONObject filter, Callback removed) {
   _duplex.send("/datastore/delete", jsonString, removed);
 }
 
-void Collection::update(JSONObject filter, JSONObject update, Callback updated) {
-  JSONObject jsonObject;
+void Collection::update(Var filter, Var update, Callback updated) {
+  Var jsonObject;
   char jsonString[PACKET_SIZE];
 
   jsonObject["collection"] = _name;
@@ -63,7 +63,7 @@ void Collection::update(JSONObject filter, JSONObject update, Callback updated) 
   _duplex.send("/datastore/update", jsonString, updated);
 }
 
-void Collection::search(JSONObject filter, JSONObject projection, int pageNumber, Callback searched) {
+void Collection::search(Var filter, Var projection, int pageNumber, Callback searched) {
   Pipeline searchPipeline = Pipeline(_name, {}, _duplex).match(filter);
   if(projection == undefined) {}
   else {
@@ -77,13 +77,13 @@ Pipeline Collection::pipeline(void) {
   return Pipeline(_name, undefined, _duplex);
 }
 
-Pipeline::Pipeline(String collectionName, JSONObject query, DuplexHandler duplexHandler) {
+Pipeline::Pipeline(String collectionName, Var query, DuplexHandler duplexHandler) {
   _collection = collectionName;
   _query = query;
   _duplex = duplexHandler;
 }
 
-Pipeline Pipeline::match(JSONObject filter) {
+Pipeline Pipeline::match(Var filter) {
   int stage = _query.length() + 1;
   _query[stage]["type"] = "match";
   _query[stage]["filter"] = filter;
@@ -91,7 +91,7 @@ Pipeline Pipeline::match(JSONObject filter) {
   return Pipeline(_collection, _query, _duplex);
 }
 
-Pipeline Pipeline::project(JSONObject specs) {
+Pipeline Pipeline::project(Var specs) {
   int stage = _query.length() + 1;
   _query[stage]["type"] = "project";
   _query[stage]["specs"] = specs;
@@ -99,7 +99,7 @@ Pipeline Pipeline::project(JSONObject specs) {
   return Pipeline(_collection, _query, _duplex);
 }
 
-Pipeline Pipeline::group(JSONObject condition, JSONObject fields) {
+Pipeline Pipeline::group(Var condition, Var fields) {
   int stage = _query.length() + 1;
   _query[stage]["type"] = "group";
   _query[stage]["condition"] = condition;
@@ -108,7 +108,7 @@ Pipeline Pipeline::group(JSONObject condition, JSONObject fields) {
   return Pipeline(_collection, _query, _duplex);
 }
 
-Pipeline Pipeline::sort(JSONObject specs) {
+Pipeline Pipeline::sort(Var specs) {
   int stage = _query.length() + 1;
   _query[stage]["type"] = "sort";
   _query[stage]["specs"] = specs;
@@ -117,7 +117,7 @@ Pipeline Pipeline::sort(JSONObject specs) {
 }
 
 void Pipeline::execute(int pageNumber, Callback executed) {
-  JSONObject jsonObject;
+  Var jsonObject;
   char jsonString[PACKET_SIZE];
 
   jsonObject["collection"] = _collection;
