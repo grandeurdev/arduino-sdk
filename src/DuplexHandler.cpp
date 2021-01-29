@@ -225,6 +225,9 @@ void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length) {
         std::string event((const char*) messageObject["payload"]["event"]);
         std::string path((const char*) messageObject["payload"]["path"]);
 
+        // Handle the backward compatibility case
+        if (event == "deviceParms" || event == "deviceSummary") event = "data";
+
         // Emit the event 
         DuplexHandler::_subscriptions.emit(event + "/" + path, messageObject["payload"]["update"], messageObject["payload"]["path"]);
         
