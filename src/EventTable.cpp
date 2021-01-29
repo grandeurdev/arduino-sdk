@@ -168,6 +168,9 @@ EventData EventTable::findAndRemove(EventKey key, EventID id) {
 }
 
 int EventTable::emit(EventKey key, Var packet, const char* path) {
+  // Cast packet as per type of packet
+  String type = JSON.typeof_(packet);
+
   // If the bucket is not empty,
   // getting ready for traversing the chain
   EventTableEntry* p = table;
@@ -180,9 +183,49 @@ int EventTable::emit(EventKey key, Var packet, const char* path) {
     // We will use regex to match the key of the block
     if (std::regex_match(key, pattern)) {
       // Then emit packet to callback
-      p->data(packet, path);
-    }
+      // Check the callback type
+      if (p->data.type() == "object") {
+        // The callback receives an object
+        // so we don't to do the type conversion
+        // Send with casting as Var
+        p->data((Var) packet, path);
+      }
+      else {
+        // Packet was boolean
+        if (type == "boolean") {
+          // Cast as boolean
+          p->data((bool) packet, path);
+          
+        }
 
+        // Packet is number
+        else if (type == "number") {
+          // Figure out that if it is a double or int
+          if ((double) packet - (int) packet != 0)
+            // Cast as double
+            p->data((double) packet, path);
+
+          else 
+            // Cast as int
+            p->data((int) packet, path);
+
+        }
+
+        // Packet was string
+        else if  (type == "string") {
+          // Cast as string
+          p->data((const char*) packet, path);
+
+        }
+
+        // Packet was object or array
+        else if (type == "object" || type == "array") {
+          // Send with casting as Var
+          p->data((Var) packet, path);
+
+        }
+      }
+    }
     // Keep moving
     p = p->next;
   }
