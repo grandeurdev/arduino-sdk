@@ -9,7 +9,7 @@
  */
 
 // Connection macros
-#define GRANDEUR_URL "trex.dev.api.grandeur.tech"
+#define GRANDEUR_URL "api.grandeur.tech"
 #define GRANDEUR_PORT 443
 #define GRANDEUR_FINGERPRINT ""
 
