@@ -33,7 +33,7 @@ unsigned long current = millis();
 // Function prototypes
 void setupWiFi(void);
 void connectionCallback(bool status);
-void searchCallback(JSONObject payload);
+void searchCallback(Var payload);
 
 void setup() {
   Serial.begin(9600);
@@ -43,7 +43,7 @@ void setup() {
   myProject = grandeur.init(apiKey, token);
   // Getting object of Datastore class.
   myDatastore = myProject.datastore();
-  // This schedules the connectionCallback() function to be called when connection with the cloud
+  // This schedules the connectionCallback() function to be called when connection with Grandeur
   // is made/broken.
   myProject.onConnection(connectionCallback);
 }
@@ -88,19 +88,18 @@ void setupWiFi(void) {
 void connectionCallback(bool status) {
   switch(status) {
     case CONNECTED:
-      // On successful connection with the cloud, we initialize the device's *state*.
-      // To do that, we get device parms from the cloud and set the *state pin* to the
-      // value of *state* in those parms.
-      Serial.println("Device is connected to the cloud.");
-      Serial.println("Fetching documents from Grandeur...");
+      // On successful connection with Grandeur, we initialize the device's *state*.
+      // To do that, we set the *state pin* to the value of *state* from Grandeur.
+      Serial.println("Device is connected with Grandeur.");
+      Serial.println("Logging voltage to Grandeur...");
       break;
     case DISCONNECTED:
-      Serial.println("Device is disconnected from the cloud.");
+      Serial.println("Device's connection with Grandeur is broken.");
       break;
   }
 }
 
-void searchCallback(JSONObject searchResult) {
+void searchCallback(Var searchResult) {
   // This function prints if the datastore search for the docs was successfully or not.
   if(searchResult["code"] == "DATASTORE-DOCUMENTS-FETCHED") {
     Serial.print("Documents fetched from Grandeur: ");

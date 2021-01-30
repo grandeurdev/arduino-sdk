@@ -37,9 +37,8 @@ int voltagePin = A0;
 // Function prototypes
 void setupWiFi(void);
 void connectionCallback(bool state);
-void initializeState(JSONObject getResult);
-void summarySetCallback(JSONObject setResult);
-void parmsSetCallback(JSONObject setResult);
+void initializeState(Var getResult);
+void voltageSetCallback(Var setResult);
 
 void setup() {
   Serial.begin(9600);
@@ -49,7 +48,7 @@ void setup() {
   myProject = grandeur.init(apiKey, token);
   // Getting object of Device class.
   myDevice = myProject.device(deviceID);
-  // This schedules the connectionCallback() function to be called when connection with the cloud
+  // This schedules the connectionCallback() function to be called when connection with Grandeur
   // is made/broken.
   myProject.onConnection(connectionCallback);
 }
@@ -62,19 +61,11 @@ void loop() {
       // This if-condition makes sure that the code inside this block runs only after
       // every five seconds.
 
-      Serial.println("Setting Summary");
-      JSONObject summary;
-      summary["voltage"] = analogRead(voltagePin);
-      // This updates the summary of our device on Grandeur and schedules summarySetCallback()
-      // function to be called when Grandeur responds with the SUMMARY UPDATED message.
-      myDevice.setSummary(summary, summarySetCallback);
-
-      Serial.println("Setting Parms");
-      JSONObject parms;
-      parms["state"] = digitalRead(statePin);
-      // This updates the parms of our device on Grandeur and schedules parmsSetCallback()
-      // function to be called when Grandeur responds with the PARMS UPDATED message.
-      myDevice.setParms(parms, parmsSetCallback);
+      Serial.println("Setting Voltage");
+      int voltage = analogRead(voltagePin);
+      // This updates the voltage variable and schedules voltageSetCallback()
+      // function to be called when Grandeur acknowledges the update.
+      myDevice.data().set("voltage", voltage, voltageSetCallback);
 
       // This updates the millis counter for
       // the five seconds scheduler.
@@ -109,58 +100,43 @@ void setupWiFi(void) {
 void connectionCallback(bool state) {
   switch(state) {
     case CONNECTED:
-      // On successful connection with the cloud, we initialize the device's *state*.
-      // To do that, we get device parms from the cloud and set the *state pin* to the value of *state* in those parms.
-      Serial.println("Device is connected to the cloud.");
-      myDevice.getParms(initializeState);
+      // On successful connection with Grandeur, we initialize the device's *state*.
+      // To do that, we set the *state pin* to the value of *state* from Grandeur.
+      Serial.println("Device is connected with Grandeur.");
+      myDevice.data().get("state", initializeState);
 
       // Initializing the millis counter for the five
       // seconds timer.
       current = millis();
       break;
     case DISCONNECTED:
-      Serial.println("Device is disconnected from the cloud.");
+      Serial.println("Device's connection with Grandeur is broken.");
       break;
   }
 }
 
-void initializeState(JSONObject getResult) {
-  // This function sets the *state pin* to the *state value* that we received in parms
-  // from the cloud.
-  if(getResult["code"] == "DEVICE-PARMS-FETCHED") {
-    int state = getResult["deviceParms"]["state"];
+void initializeState(Var getResult) {
+  // This function sets the *state pin* to the *state value*.
+  if(getResult["code"] == "DEVICE-DATA-FETCHED") {
+    int state = getResult["data"];
     digitalWrite(statePin, state);
     return;
   }
-  // If the parms could not be fetched.
-  Serial.println("Failed to Fetch Parms");
+  // If the state could not be fetched.
+  Serial.println("Failed to Fetch State");
   return;
 }
 
-void summarySetCallback(JSONObject setResult) {
-  if(setResult["code"] == "DEVICE-SUMMARY-UPDATED") {
-    Serial.printf("Voltage is updated to: %d\n", (int) setResult["update"]["voltage"]);
+void voltageSetCallback(Var setResult) {
+  if(setResult["code"] == "DEVICE-DATA-UPDATED") {
+    Serial.printf("Voltage is updated to: %d\n", (int) setResult["update"]);
     
     /* You can set some pins or trigger events here which depend on successful
-    ** device summary update.
+    ** voltage update.
     */
     return;
   }
-  // If the summary could not be updated.
-  Serial.println("Failed to Update Summary");
-  return;
-}
-
-void parmsSetCallback(JSONObject setResult) {
-  if(setResult["code"] == "DEVICE-PARMS-UPDATED") {
-    Serial.printf("State is updated to: %d\n", (bool) setResult["update"]["state"]);
-
-    /* You can set some pins or trigger events here which depend on successful
-    ** device parms update.
-    */
-    return;
-  }
-  // If the parms could not be updated.
-  Serial.println("Failed to Update Parms");
+  // If the voltage could not be updated.
+  Serial.println("Failed to Update Voltage");
   return;
 }

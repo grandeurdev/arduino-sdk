@@ -15,49 +15,47 @@
 #ifndef EVENTTABLE_H_
 #define EVENTTABLE_H_
 
-/*TYPEDEFS*/
-// EventID
-typedef GrandeurID EventID;
-//EventData
-typedef Callback EventData;
-// Event table data
-typedef struct {
-  EventID id;
-  EventData data;
-} EventTableData;
-// Event table key
-typedef std::string EventTableKey;
-
-// Event table size
-const int T_S = 16;
-
-// Routes Array
-extern const char* routes[T_S];
-
-// Event table entry
+// Event table entry is the block which represents
+// an event
 class EventTableEntry {
   public:
-    EventTableKey k;
-    EventTableData v;
+    EventKey key;
+    EventID id;
+    EventData data;
     EventTableEntry* next;
-    EventTableEntry(EventTableKey k, EventTableData v);
+
+    // Constructor
+    EventTableEntry(EventKey key, EventID id, EventData data);
 };
 
+// The main class
 class EventTable {
   private:
-    EventTableEntry **t;
+    // Define table 
+    EventTableEntry *table;
+
   public:
-    // Constructor for a hashtable
+    // Constructor for a table
     EventTable();
-    // Hash function for Event Table
-    int hashFunc(EventTableKey k);
+
     // Method to insert an entry into the hashtable
-    int insert(EventTableKey k, EventID id, EventData data);
-    // Method to remove an entry from the hashtable
-    int remove(EventTableKey k, EventID id);
+    int insert(EventKey key, EventID id, EventData data);
+
+    // Method to remove an entry from the table
+    int remove(EventID id);
+
     // Method to find and remove an entry from the hashtable
-    EventData findAndRemove(EventTableKey k, EventID id);
+    EventData findAndRemove(EventID id);
+
+    // Method to send some data to all callbacks at a key
+    int emit(EventKey key, Var packet, const char* path);
+
+    // Print table entreis
     void print();
+
+    // Clear event table entries
+    void clear();
+    
     // Destructor for a hashtable
     ~EventTable();
 };

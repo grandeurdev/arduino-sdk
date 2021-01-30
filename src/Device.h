@@ -12,6 +12,7 @@
 #include "grandeurtypes.h"
 #include "grandeurmacros.h"
 #include "DuplexHandler.h"
+#include "Data.h"
 
 #ifndef DEVICE_H_
 #define DEVICE_H_
@@ -19,22 +20,17 @@
 class Device {
   // Class for handling device related functions
   private:
+    // Store duplex and device id
     DuplexHandler _duplex;
     String _deviceID;
+
   public:
     // Device constructor
     Device(String deviceID, DuplexHandler duplexHandler);
     Device();
 
-    // Async getter/setter methods
-    void getSummary(Callback callback);
-    void getParms(Callback callback);
-    void setSummary(JSONObject summary, Callback callback);
-    void setParms(JSONObject parms, Callback callback);
-
-    // Listeners for events from Grandeur
-    void onSummary(Callback callback);
-    void onParms(Callback callback);
+    // Instantiator methods - return the objects of their classes
+    Data data();
 };
 
 #endif

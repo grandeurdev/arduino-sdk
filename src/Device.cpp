@@ -10,6 +10,7 @@
 
 #include "Device.h"
 
+// Constructor
 Device::Device(String deviceID, DuplexHandler duplexHandler) {
   _duplex = duplexHandler;
   _deviceID = deviceID;
@@ -17,54 +18,8 @@ Device::Device(String deviceID, DuplexHandler duplexHandler) {
 
 Device::Device() {}
 
-void Device::getSummary(Callback callback) {
-  JSONObject jsonObject;
-  char jsonString[PACKET_SIZE];
-  jsonObject["deviceID"] = _deviceID;
-  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
-  _duplex.send("/device/summary/get", jsonString, callback);
-}
-
-void Device::getParms(Callback callback) {
-  JSONObject jsonObject;
-  char jsonString[PACKET_SIZE];
-  jsonObject["deviceID"] = _deviceID;
-  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
-  _duplex.send("/device/parms/get", jsonString, callback);
-}
-
-void Device::setSummary(JSONObject summary, Callback callback) {
-  JSONObject jsonObject;
-  char jsonString[PACKET_SIZE];
-  jsonObject["deviceID"] = _deviceID;
-  jsonObject["summary"] = summary;
-  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
-  _duplex.send("/device/summary/set", jsonString, callback);
-}
-
-void Device::setParms(JSONObject parms, Callback callback) {
-  JSONObject jsonObject;
-  char jsonString[PACKET_SIZE];
-  jsonObject["deviceID"] = _deviceID;
-  jsonObject["parms"] = parms;
-  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
-  _duplex.send("/device/parms/set", jsonString, callback);
-}
-
-void Device::onSummary(Callback updateHandler) {
-  JSONObject jsonObject;
-  char jsonString[PACKET_SIZE];
-  jsonObject["deviceID"] = _deviceID;
-  jsonObject["event"] = "deviceSummary";
-  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
-  _duplex.subscribe(SUMMARYUPDATE, jsonString, updateHandler);
-}
-
-void Device::onParms(Callback updateHandler) {
-  JSONObject jsonObject;
-  char jsonString[PACKET_SIZE];
-  jsonObject["deviceID"] = _deviceID;
-  jsonObject["event"] = "deviceParms";
-  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
-  _duplex.subscribe(PARMSUPDATE, jsonString, updateHandler);
+// Return reference to data
+Data Device::data() {
+  // Return new device class object
+  return Data(_deviceID, _duplex);
 }

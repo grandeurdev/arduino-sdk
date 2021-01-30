@@ -98,7 +98,7 @@ To get a deeper understanding of the core concepts Grandeur is built upon, dive 
 
 ### Inclusion
 
-When you include `<Grandeur.h>` in your sketch, a global object `grandeur` is defined right away which you can use to initialize the SDK's configurations.
+When you include `<Grandeur.h>` in your sketch, a global object `grandeur` is created right away which you can use to initialize the SDK's configurations.
 
 ```cpp
 #include <Grandeur.h>
@@ -109,7 +109,7 @@ When you include `<Grandeur.h>` in your sketch, a global object `grandeur` is de
 
 ### Initialization
 
-Initialization is as simple as calling `grandeur.init()` with your credentials (Device ID, Project's API Key and Device's Access Token). The SDK uses your API key to select your project, and device ID and access token to limit its scope to only your device's data. It then returns a `Project` object which exposes other subclasses like `Device` and `Datastore`, and you can go programming your device from there.
+Initialization is as simple as calling `grandeur.init()` with your credentials (Project's API Key and Device's Access Token). The SDK uses your API key to select your project, and device ID and access token to limit its scope to only your device's data. It then returns a `Project` object which exposes other subclasses like `Device` and `Datastore`, and you can go programming your device from there.
 
 ```cpp
 #include <Grandeur.h>
@@ -118,7 +118,7 @@ Project myProject;
 
 void setup() {
   // You can initialize device configurations like this.
-  myProject = grandeur.init(YourDeviceID, YourDeviceToken);
+  myProject = grandeur.init(YourAPIKey, AccessToken);
 }
 
 void loop() {}
@@ -161,7 +161,7 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   // You can initialize device configurations like this.
-  myProject = grandeur.init(YourApiKey, YourDeviceToken);
+  myProject = grandeur.init(YourApiKey, AccessToken);
 }
 
 void loop() {
@@ -181,7 +181,7 @@ You can see this line in the previous subsection: `myProject.loop(WiFi.status() 
 
 You can also listen on SDK's connection-related events. For example, to run some code when the device makes a successful connection to the cloud or when the device's connection to the cloud breaks, you can wrap that code in a `Callback` function and pass it to `Project`'s `onConnection()` function.
 
-The `Callback` function is a special type of function that accepts a `JSONObject` as a parameter and returns `void`. Read more about `Callback` and `JSONObject` [here][jsonobject].
+The `Callback` function is a special type of function that accepts a `Var` as a parameter and returns `void`. Read more about `Callback` and `Var` [here][var].
 
 Here's how you can handle the connection event:
 
@@ -239,20 +239,13 @@ void loop() {
 
 ### Fetching Device Variables and Updating Them
 
-On Grandeur, we generally store the device data in two containers: **summary** to contain uncontrollable device variables and **parms** to contain controllable device variables. You can get and set both types using the following functions of the `Device` class:
+On Grandeur, a device has a special space where you can store its variables as key-value pairs, for example, a device's voltage or current or its ON/OFF state. Keeping the online copy of device variables updated gives you many advantages. You can see if your device is ON/OFF just by fetching its `state` from Grandeur.
 
-* `myDevice.getSummary()`
-* `myDevice.getParms()`
-* `myDevice.setSummary()`
-* `myDevice.setParms()`
+Both `data().get()` and `data().set()` are **Async functions** because they communicate with Grandeur through internet. Communication through internet takes some time and we cannot wait, for example, for a device variable to arrive from Grandeur — meanwhile blocking the rest of the device program execution. So, what we do is, we schedule a function to be called for the future when the variable arrives and resume with rest of the device program, forgetting that we ever called `data().get()`. When the variable arrives, the SDK calls our scheduled function, giving us access to that variable inside that function.
 
-They are all **Async functions** because they communicate with Grandeur through internet. Communication through internet takes some time and we cannot wait, for example, for device's summary variables to arrive from Grandeur -- meanwhile blocking the rest of the device program. So, what we do is, we schedule a function to be called when the summary variables and resume with rest of the device program, forgetting that we ever called `getSummary()`. When the summary variables arrive, the SDK calls our scheduled function, giving us access to summary variables inside that function.
+Read more about **Async functions**, `Callback`, and `Var` [here][the dexterity of arduino sdk].
 
-For now, there's only one type of function that the SDK's Async methods accept: `Callback` which accepts a `JSONObject` as argument and returns nothing aka. `void`.
-
-Read more about **Async functions**, `Callback`, and `JSONObject` [here][the dexterity of arduino sdk].
-
-Here's how we would get and set device's summary and parms:
+Here's how we would get and set device variables:
 
 ```cpp
 #include <Grandeur.h>
@@ -272,29 +265,15 @@ void setupWiFi(void) {
   Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid.c_str(), passphrase.c_str());
 }
 
-void getSummaryCallback(JSONObject result) {
+void getCallback(Var result) {
   // This function prints the variables stored in summary and sets the device pins.
-  Serial.printf("Voltage: %s\n", (int) result["deviceSummary"]["voltage"]);
-  Serial.printf("Current: %s\n", (int) result["deviceSummary"]["current"]);
-  analogWrite(A0, (int) result["deviceSummary"]["voltage"]);
-  analogWrite(A1, (int) result["deviceSummary"]["current"]);
+  Serial.printf("Voltage: %s\n", (int) result["data"]);
+  analogWrite(A0, (int) result["data"]);
 }
 
-void getParmsCallback(JSONObject result) {
-  // This function prints the variables stored in parms and sets device pins.
-  Serial.printf("State: %s\n", (bool) result["deviceParms"]["state"]);
-  digitalWrite(D0, (bool) result["deviceParms"]["state"]);
-}
-
-void setSummaryCallback(JSONObject result) {
+void setCallback(Var result) {
   // This function prints the updated values of the variables stored in summary.
-  Serial.printf("Updated Voltage: %s\n", (int) result["update"]["voltage"]);
-  Serial.printf("Updated Current: %s\n", (int) result["update"]["current"]);
-}
-
-void setParmsCallback(JSONObject result) {
-  // This function prints the updated values of the variables stored in parms.
-  Serial.printf("Updated State: %s\n", (bool) result["update"]["state"]);
+  Serial.printf("Updated Voltage: %s\n", (int) result["update"]);
 }
 
 void setup() {
@@ -302,26 +281,18 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   // You can initialize device configurations like this.
-  myProject = grandeur.init(YourApiKey, YourDeviceToken);
+  myProject = grandeur.init(YourApiKey, AccessToken);
   myDevice = myProject.device(YourDeviceID);
 }
 
 void loop() {
 
   if(myProject.isConnected()) {
-    // Getting device's summary
-    myDevice.getSummary(getSummaryCallback);
-    // Getting device's parms
-    myDevice.getParms(getParmsCallback);
-    // Updating device's summary
-    JSONObject summary;
-    summary["voltage"] = analogRead(A0);
-    summary["current"] = analogRead(A1);
-    myDevice.setSummary(summary, setSummaryCallback);
-    // Updating device's parms
-    JSONObject parms;
-    parms["state"] = digitalRead(D0);
-    myDevice.setParms(parms, setParmsCallback);
+    // Getting voltage variable
+    myDevice.data().get("voltage", getCallback);
+    // Updating voltage
+    int voltage = analogRead(A0);
+    myDevice.data().set("voltage", voltage, setCallback);
   }
 
   // This runs the SDK when the device WiFi is connected.
@@ -329,17 +300,18 @@ void loop() {
 }
 
 // **RESULT**
-// When the loop() starts, summary and parms are fetched. When they arrive from the cloud, their
-// corresponding callbacks are called which print the variables stored in summary and parms objects
-// and set the corresponding pins.
-// Then the summary and parms are updated with the new values. When their updates complete, their
-// callbacks are called with the updated values of their variables and these updated values are
-// printed on the screen.
+// When the loop() starts, voltage is fetched. When it arrives from the cloud, getCallback is
+// called which prints its value and sets the A0 pin.
+// Then the voltage is updated with the new value from the A0 pin. When the update completes,
+// setCallback is called with the updated values of voltage which is printed.
 ```
 
 ### Handling Updates From Grandeur
 
-Device variables are distributed on the cloud in form of **summary** and **parms**. Passing a `Callback` to `onSummary()` and `onParms()` you can set **update handlers** for updates to those variables. Let's do that now:
+You can not only `get()/set()` but also subscribe to a device variable, which means if an update occurs in that variable at any time, you'll instantly get notified of it.
+To subscribe to a variable, you just need to pass the variable name and a function to `data().on()`. The function you pass to `data().on()` is set as an **update handlers** for that variable, which means the code inside that function will be run whenever that variable is updated.
+
+Let's set an update handler for device voltage now:
 
 ```cpp
 #include <Grandeur.h>
@@ -359,26 +331,19 @@ void setupWiFi(void) {
   Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid.c_str(), passphrase.c_str());
 }
 
-void summaryUpdatedCallback(JSONObject result) {
-  // This function prints the updated values of the variables stored in summary.
-    Serial.printf("Updated Voltage: %s\n", (int) updatedSummary["voltage"]);
-    Serial.printf("Updated Current: %s\n", (int) updatedSummary["current"]);
-}
-
-void parmsUpdatedCallback(JSONObject result) {
-  // This function prints the updated values of the variables stored in parms.
-  Serial.printf("Updated State: %s\n", (int) updatedParms["state"]);
+void voltageUpdatedCallback(int voltage, const char* path) {
+  // This function prints the new value of the voltage variable.
+    Serial.printf("Updated Voltage: %d\n", voltage);
 }
 
 void setup() {
   Serial.begin(9600);
   setupWiFi();
 
-  myProject = grandeur.init(YourApiKey, YourDeviceToken);
+  myProject = grandeur.init(YourApiKey, AccessToken);
   myDevice = myProject.device(YourDeviceID);
 
-  myDevice.onSummary(summaryUpdatedCallback);
-  myDevice.onParms(parmsUpdatedCallback);
+  myDevice.data().on("voltage", voltageUpdatedCallback)
 }
 
 void loop() {
@@ -387,8 +352,8 @@ void loop() {
 }
 
 // **RESULT**
-// Whenever an update in the device's summary or parms occur, the updated values of the
-// variables are printed.
+// Whenever an update in the device's voltage variable occurs, the new value of the
+// voltage is printed to Serial.
 ```
 
 ## Example
@@ -399,7 +364,7 @@ To begin working with the **Arduino SDK**, the very first step is to [create a n
 
 ### Create a New Sketch
 
-Create a new folder for your `arduino workspace`, create a `.ino` file in it, and open it with [Arduino IDE][Arduino IDE]. This is the sketch file where you'll write your device's program.
+Create a new folder for your `arduino workspace`, create a `.ino` file in it with the same name as the folder, and open it with [Arduino IDE][Arduino IDE]. This is the sketch file where you'll write your device's program.
 
 ### Include Grandeur.h into Your Sketch
 
@@ -411,7 +376,7 @@ After [cloning the Arduino SDK][installation] and [installing it][Installing an 
 
 ### Initialize the SDK's Configurations
 
-**Arduino SDK** takes care of your device's connection with Grandeur. To use it into your sketch, you need to initialize its configurations first. You can do that using the global object `grandeur`. Initializing the SDK returns an object of `GrandeurDevice` class which exposes all the SDK's functions.
+**Arduino SDK** takes care of your device's connection with Grandeur. To use it into your sketch, you need to initialize its configurations first. You can do that using the global object `grandeur`. Initializing the SDK returns a reference to object of the `Project` class which exposes all the SDK's functions.
 
 ```cpp
 #include <Grandeur.h>
@@ -424,7 +389,7 @@ void setup() {
 }
 ```
 
-You can find the API Key on the [settings page][Grandeur Settings] of your project's dashboard. For the Access Token, you need to pair your device with a user account in your project first. A device can only connect to Grandeur if it's paired with a user. And only the paired user can access the device's data through its web app. For convenient testing, we have made device pairing function available on the [devices page][Grandeur Devices] too. You can find your device's ID and pair your device with a user account. If your project has no registered user yet, you can add one easily from the [accounts page][Grandeur Accounts].
+You can find the API Key on the [settings page][Grandeur Settings] of your project's dashboard. You get the **Access Token** when you register the device on Grandeur. But a device can only connect to Grandeur if it's paired with a user. And only the paired user has access to the device's data. For convenient testing, we have made device pairing function available on the [devices page][Grandeur Devices] too. You can find your device's ID and pair your device with a user account. If your project has no registered user yet, you can add one easily from the [accounts page][Grandeur Accounts].
 
 ### Handle the device's WiFi
 
@@ -453,7 +418,7 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   // You can initialize device configurations like this.
-  myProject = grandeur.init(YourApiKey, YourDeviceToken);
+  myProject = grandeur.init(YourApiKey, YourToken);
 }
 
 void loop() {
@@ -464,7 +429,7 @@ void loop() {
 
 ### Initialize Your Device
 
-Before doing anything, you need to initialize your device with data from the cloud to keep them both in sync. You can get all the device variables by using `getSummary()` and `getParms()` functions. Here's how you can get the device **state** from the cloud.
+Before doing anything, you need to initialize your device with data from Grandeur to keep them both in sync. You can get all the device variables by using `get()` functions. Here's how you can get the device **state** from the cloud.
 
 ```cpp
 #include <Grandeur.h>
@@ -484,9 +449,9 @@ void setupWiFi(void) {
   Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid.c_str(), passphrase.c_str());
 }
 
-void getParmsCallback(JSONObject parms) {
-  if(payload["code"] == "DEVICE-PARMS-FETCHED") {
-    bool state = (bool) payload["deviceParms"]["state"];
+void getStateCallback(Var result) {
+  if(result["code"] == "DEVICE-DATA-FETCHED") {
+    bool state = result["data"];
     // You can set a digital pin here with the state value
     // to switch the hardware connected to it ON/OFF.
     digitalWrite(D0, state);
@@ -498,11 +463,11 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   
-  myProject = grandeur.init(YourApiKey, YourDeviceToken);
+  myProject = grandeur.init(YourApiKey, YourToken);
   myDevice = myProject.device(YourDeviceID);
-  // This gets the device's parms variables from Grandeur and passes them to
-  // getParmsCallback() function.
-  myDevice.getParms(getParmsCallback);
+  // This gets the device's state variable from Grandeur and passes it to
+  // getStateCallback() function.
+  myDevice.data().get("state", getStateCallback);
 }
 
 void loop() {
@@ -513,8 +478,8 @@ void loop() {
 
 ### Set Update Handlers
 
-Update handlers are the functions which are called when a device variable is updated on the cloud. The update could be from a user or the device itself. Without the handlers, your device would not be notified when a user turns it off from the webapp.
-Here's how you can set update handlers in your sketch for the device's state stored in parms.
+Update handlers are the functions which are called when a device variable is updated. The update could be from a user or the device itself. Without the handlers, your device would not be notified when a user turns it off from the web app.
+Here's how you can set an update handler in your sketch for the device's state.
 
 ```cpp
 #include <Grandeur.h>
@@ -534,20 +499,19 @@ void setupWiFi(void) {
   Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid.c_str(), passphrase.c_str());
 }
 
-void getParmsCallback(JSONObject parms) {
-  if(payload["code"] == "DEVICE-PARMS-FETCHED") {
-    bool state = (bool) payload["deviceParms"]["state"];
+void getStateCallback(Var result) {
+  if(result["code"] == "DEVICE-DATA-FETCHED") {
+    bool state = result["data"];
     // You can set a digital pin here with the state value
     // to switch the hardware connected to it ON/OFF.
     digitalWrite(D0, state);
   }
 }
 
-void parmsUpdatedCallback(JSONObject parms) {
-  bool newState = (bool) updatedParms["state"];
+void stateUpdatedCallback(bool state, const char* path) {
   // You can set a digital pin here with the newState value
   // to switch the hardware connected to it ON/OFF.
-  digitalWrite(D0, newState);
+  digitalWrite(D0, state);
 }
 
 void setup() {
@@ -555,14 +519,14 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   
-  myProject = grandeur.init(YourApiKey, YourDeviceToken);
+  myProject = grandeur.init(YourApiKey, YourToken);
   myDevice = myProject.device(YourDeviceID);
-  // This gets the device's parms variables from Grandeur and passes them to
-  // getParmsCallback() function.
-  myDevice.getParms(getParmsCallback);
-  // This sets up the update handler for parms. When an update to parms occur on Grandeur,
-  // parmsUpdatedCallback() function is called.
-  myDevice.onParmsUpdated(parmsUpdatedCallback);
+  // This gets the device's state variable from Grandeur and passes it to
+  // getStateCallback() function.
+  myDevice.data().get("state", getStateCallback);
+  // This sets up the update handler for state. When an update to state occurs on Grandeur,
+  // stateUpdatedCallback() function is called.
+  myDevice.data().on("state", stateUpdatedCallback);
 }
 
 void loop() {
@@ -573,7 +537,7 @@ void loop() {
 
 ### Update Device Variables
 
-To see the live state of the device on the web app, you need to keep sending the updated state after every few seconds. Since we've stored the device's state in **Parms**, we'll use the `setParms()` function to update the state value.
+To see the live state of the device on the web app, you need to keep sending the updated state after every few seconds. We'll use the `set()` function to update the state value.
 
 ```cpp
 #include <Grandeur.h>
@@ -593,25 +557,24 @@ void setupWiFi(void) {
   Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid.c_str(), passphrase.c_str());
 }
 
-void getParmsCallback(JSONObject parms) {
-  if(payload["code"] == "DEVICE-PARMS-FETCHED") {
-    bool state = (bool) payload["deviceParms"]["state"];
+void getStateCallback(Var result) {
+  if(result["code"] == "DEVICE-DATA-FETCHED") {
+    bool state = result["data"];
     // You can set a digital pin here with the state value
     // to switch the hardware connected to it ON/OFF.
     digitalWrite(D0, state);
   }
 }
 
-void parmsUpdatedCallback(JSONObject parms) {
-  bool newState = (bool) updatedParms["state"];
+void stateUpdatedCallback(bool state, const char* path) {
   // You can set a digital pin here with the newState value
   // to switch the hardware connected to it ON/OFF.
-  digitalWrite(D0, newState);
+  digitalWrite(D0, state);
 }
 
-void setParmsCallback(JSONObject parms) {
-  if(result["code"] == "DEVICE-PARMS-UPDATED") {
-    Serial.printf("State is updated to: %d\n", (bool) payload["update"]["state"]);
+void setStateCallback(Var result) {
+  if(result["code"] == "DEVICE-DATA-UPDATED") {
+    Serial.printf("State is updated to: %d\n", (bool) result["update"]);
   }
 }
 
@@ -620,23 +583,21 @@ void setup() {
   // This sets up the device WiFi.
   setupWiFi();
   
-  myProject = grandeur.init(YourApiKey, YourDeviceToken);
+  myProject = grandeur.init(YourApiKey, YourToken);
   myDevice = myProject.device(YourDeviceID);
-  // This gets the device's parms variables from Grandeur and passes them to
-  // getParmsCallback() function.
-  myDevice.getParms(getParmsCallback);
-  // This sets up the update handler for parms. When an update to parms occur on Grandeur,
-  // parmsUpdatedCallback() function is called.
-  myDevice.onParmsUpdated(parmsUpdatedCallback);
+  // This gets the device's state variable from Grandeur and passes it to
+  // getStateCallback() function.
+  myDevice.data().get("state", getStateCallback);
+  // This sets up the update handler for state. When an update to state occurs on Grandeur,
+  // stateUpdatedCallback() function is called.
+  myDevice.data().on("state", stateUpdatedCallback);
 }
 
 void loop() {
-  // Parms container to store device's state.
-  JSONObject parms;
-  parms["state"] = digitalRead(D0);
-  // This sends the updated parms to Grandeur and calls setParmsCallback() when
-  // the response from the cloud arrives.
-  myDevice.setParms(parms, setParmsCallback);
+  bool state = digitalRead(D0);
+  // This sends the updated state to Grandeur and calls setStateCallback() when
+  // Grandeur acknowledges the update.
+  myDevice.data().set("state", state, setStateCallback);
 
   // This runs the SDK when the device WiFi is connected.
   myProject.loop(WiFi.status() == WL_CONNECTED);
@@ -659,35 +620,26 @@ The Arduino SDK is aimed at providing extremely to-the-point functions, being al
 
 * **Arduino SDK** is event-driven. You can set **event handler** for device's connection or disconnection with Grandeur by using [`onConnection()`][onConnection]. So, when the device connects or disconnects from the cloud, the function passed to `onConnection()` is called.
 
-* You can also set **update handlers** for device's summary and parms using [`onSummary()`][onSummary] and [`onParms()`][onParms]. So, when the any of the device variables stored in summary or parms is updated, the function passed to `onSummary()` or `onParmsUpdated()` is called.
+* You can also set **update handlers** for device variables using [`data().on()`][on] function. So, when any of the device variables is updated, the corresponding function passed to `on()` is called.
 
-* **Async functions** are what make the event-drive of the SDK possible. They do all the same things as regular functions plus one extra. They receive a function parameter which they schedule for later. For example, in the `GrandeurDevice` class, all of the following are Async functions:
+* **Async functions** are what make the event-drive of the SDK possible. They do all the same things as regular functions plus one extra. They receive a function parameter which they schedule for later. For example, all of the following are Async functions:
   
-  * `onConnection(Callback callback)`
-  * `onSummary(Callback callback)`
-  * `onParmsUpdated(Callback callback)`
-  * `getSummary(Callback callback)`
-  * `getParms(Callback callback)`
-  * `setSummary(JSONObject summary, Callback callback)`
-  * `setParms(JSONObject parms, Callback callback)`
+  * `project.onConnection(Callback callback)`
+  * `project.device().data().on(String path, function callback)`
+  * `project.device().data().get(String path, function callback)`
+  * `project.device().data().set(String path, Var data, function callback)`
 
-  `getParms()` for example, requests the cloud for the device's parms and schedules the `callback` function for when the parms arrive, because obviously, they don't arrive instantaneously; there is always some latency involved in web communications.
+  `get()` for example, requests Grandeur for a device variable and schedules the `callback` function for when the variable arrives, because obviously, they don't arrive instantaneously; there is always some latency involved in web communications.
 
-* There is a special type of function defined in **Arduino SDK** as [`Callback`][callback]. It's nothing but a regular function of the form:
-  ```cpp
-  void callback(JSONObject result) {}
-  ```
-  For now, it is the only function type that the Async functions of SDK accept as argument.
-
-* [`JSONObject`][jsonobject] is a special variable type which acts like a container for other variables, just like a javascript object or a C++ map. You can store variables in it as key-value pairs. This what summary and parms are -- container for other variables aka. `JSONObject`s.
+* [`Var`][var] is a special variable type which can take form of any other type including int, double, String, etc, like in those dynamic typed languages like javascript. But it can also act like a container for other variables, like a javascript object or a C++ map, to form JSON. You can store variables in it as key-value pairs. This is device data space is — a container for device variables aka. `Var`.
 
 ```cpp
-JSONObject summary;
-summary["foo"] = "This is foo";
-summary["bar"] = true;
-summary["foobar"]["foo"] = "This is foo inside foobar";
+Var json; // The root
+json["foo"] = "This is foo"; // "foo" key in json
+json["bar"] = true; // "bar" key in json
+json["foobar"]["foo"] = "This is foo inside foobar"; // "foo" key in "foobar" key in json
 
-// In JSON, summary would look like:
+// In JSON, json would look like:
 //  {
 //    "foo": "This is foo",
 //    "bar": true,
@@ -695,6 +647,12 @@ summary["foobar"]["foo"] = "This is foo inside foobar";
 //      "foo": "This is foo inside foobar"
 //    }
 //  }
+
+// You can also store anything in Var.
+Var x = 5;
+x = "hello";
+
+Serial.println(x); // Prints: hello
 ```
 
 To see the **Arduino SDK** in action, jump to [Example][Example].
@@ -819,17 +777,17 @@ So to allow a web app to interact with your project using the Web SDK, you first
 
 # Documentation
 
-`Project` is the main class and all functionalities originate from it. You get the object of this class when you initialize SDK's configurations using `grandeur.init()`. You can safely imagine the object of `Project` class as a reference to your project on Grandeur.
+`Project` is the main class and all functionalities originate from it. You can safely imagine the object of `Project` class as a reference to your project on Grandeur. You get a reference to this object when you initialize SDK's configurations using `grandeur.init()`.
 
 `grandeur` is the global object that gets available right away when you include `<Grandeur.h>` in your sketch. It has just one purpose and therefore gives you only one function: `grandeur.init()`.
 
-> ***Note 2***: You cannot connect with Grandeur or even with internet without first connecting with the WiFi. Therefore, the examples below are just for reference and you are required to handle your device's WiFi in order for them to work. You can see [these examples][Examples] to get a deeper understanding. They show WiFi handling too. 😉
+> ***Note 2***: You cannot connect with Grandeur or even with internet without first connecting with the WiFi. Therefore, the examples below are just for reference and you are required to handle your device's WiFi in order for things to work. You can see [these examples][Examples] to get a deeper understanding. They do WiFi handling too. 😉
 
 ### init
 
-> grandeur.init (deviceID: _String_, apiKey: _String_, token: _String_) : returns _Project_
+> grandeur.init (apiKey: _String_, token: _String_) : returns _Project_
 
-This method initializes SDK's connection configurations: `apiKey` and `authToken`, and returns an object of the `Project` class. `Project` class is the main class that exposes all functions of the SDK.
+This method initializes SDK's connection configurations: `apiKey` and `authToken`, and returns a reference to object of the `Project` class. `Project` class is the main class that exposes all functions of the SDK.
 
 #### Parameters
 
@@ -854,7 +812,7 @@ void setup() {
 
 ## Project
 
-Project is the main class of the SDK. When SDK connects with Grandeur, this class represents your cloud project. But Arduino SDK's functionality is limited to devices and datastore APIs which are wrapped by their respective classes.
+Project is the main class of the SDK. When SDK connects with Grandeur, this class represents your cloud project, tuned down to the device scope. There are only two APIs you can interact with: device and datastore, which are represented by their respective classes.
 
 This class exposes the following methods:
 
@@ -899,7 +857,7 @@ This method schedules a function to be called when the SDK's connection with Gra
 
 | Name        | Type             | Description                                                                    |
 |-------------|------------------|--------------------------------------------------------------------------------|
-| callback    | _void (*)(bool)_ | An event handler function for device's connection/disconnection with Grandeur |
+| callback    | _void (*)(bool)_ | An event handler function for device's connection/disconnection with Grandeur  |
 
 
 #### Example
@@ -964,7 +922,7 @@ void loop() {
 
 > device (deviceID: _String_) : returns _Device_
 
-This method returns an object of the **Device** class. Read about **Device** class [here][Device Class].
+This method returns a reference to object of the **Device** class. Read about **Device** class [here][Device Class].
 
 #### Example
 
@@ -984,7 +942,7 @@ void setup() {
 
 > datastore (void) : returns _Datastore_
 
-This method returns an object of the **Datastore** class. Datastore class exposes the functions of the datastore API which handles your queries to your project's datastore like: logging device variables to the cloud datastore, searching for data, etc.
+This method returns a reference to object of the **Datastore** class. Datastore class exposes the functions of the datastore API which handles your queries to your project's datastore like: logging device variables to the cloud datastore, searching for data, etc.
 
 #### Example
 
@@ -1002,21 +960,22 @@ void setup() {
 
 ## Device
 
-Device class exposes the functions of the device API. It generally handles your device's data on Grandeur like: updating device variables on Grandeur, pulling variables from Grandeur, listening for cloud updates in your device variables, and so on.
+Device class exposes the functions of the device API. Its data function returns a reference to object of `Data` class which represents device's data space. You can use it to update device variables on Grandeur, pulling variables from Grandeur, listening for updates in your device variables, etc.
 
-It exposes the following functions:
+Device's `Data` class exposes the following functions:
 
-### getSummary
+### get
 
-> getSummary (callback: _Callback_) : returns _void_
+> get (path: _String_, callback: _Callback_) : returns _void_
 
-This method gets device's [summary][summary] from Grandeur.
+This method gets a device variable from Grandeur.
 
 #### Parameters
 
 | Name        | Type       | Description                                                  |
 |-------------|------------|--------------------------------------------------------------|
-| callback    | _Callback_ | A function to be called when getSummary response is received |
+| path        | _String_   | Path of the device variable using dot notation            |
+| callback    | _Callback_ | A function to be called when get response is received        |
 
 #### Example
 
@@ -1024,9 +983,9 @@ This method gets device's [summary][summary] from Grandeur.
 Project myProject;
 Device myDevice;
 
-void getSummaryCallback(JSONObject result) {
+void getVoltageCallback(Var result) {
   // This method just prints *voltage* variable from the device's summary.
-  Serial.println(result["summary"]["voltage"]<<"\n");
+  Serial.println(result["data"]<<"\n");
 }
 
 void setup() {
@@ -1037,67 +996,28 @@ void setup() {
 void loop() {
   // This gets the summary on every loop and calls getSummaryCallback() function when its
   // response from the cloud is received.
-  myDevice.getSummary(getSummaryCallback);
+  myDevice.data().get("voltage", getVoltageCallback);
 
   myProject.loop(true);
 }
 
 // **RESULT**
-// Prints the value of the voltage variable stored in the device's summary on every loop.
+// Prints the value of the voltage variable from Grandeur on every loop.
 ```
 
-### getParms
+### set
 
-> getParms (callback: _Callback_) : returns _void_
+> set (path : _String_, data : _any_, callback: _Callback_) : returns _void_
 
-This method gets device's [parms][parms] from Grandeur.
-
-#### Parameters
-
-| Name        | Type       | Description                                                |
-|-------------|------------|------------------------------------------------------------|
-| callback    | _Callback_ | A function to be called when getParms response is received |
-
-#### Example
-
-```cpp
-Project myProject;
-Device myDevice;
-
-void getParmsCallback(JSONObject result) {
-  // This method just prints *state* variable from the device's parms.
-  Serial.println(result["parms"]["state"]<<"\n");
-}
-
-void setup() {
-  myProject = grandeur.init(YourApiKey, YourToken);
-  myDevice = myProject.device(YourDeviceID);
-}
-
-void loop() {
-  // This gets the parms on every loop and calls getParmsCallback() function when its
-  // response from the cloud is received.
-  myDevice.getParms(getParmsCallback);
-
-  myProject.loop(true);
-}
-
-// **RESULT**
-// Prints the value of the state variable stored in the device's parms on every loop.
-```
-
-### setSummary
-
-> setSummary (summary : _JSONObject_, callback: _Callback_) : returns _void_
-
-This method updates the device's [summary][summary] on Grandeur with new values.
+This method updates a device variable on Grandeur with new data.
 
 #### Parameters
 
 | Name        | Type          | Description                                                  |
 |-------------|---------------|--------------------------------------------------------------|
-| summary     | _JSONObject_  | A JSONObject containing the summary variables                |
-| callback    | _Callback_    | A function to be called when setSummary response is received |
+| path        | _String_      | Path of the device variable using dot notation               |
+| data        | _Var_         | New data to store in the variable                            |
+| callback    | _Callback_    | A function to be called when set response is received        |
 
 #### Example
 
@@ -1105,10 +1025,9 @@ This method updates the device's [summary][summary] on Grandeur with new values.
 Project myProject;
 Device myDevice;
 
-void setSummaryCallback(JSONObject result) {
-  // This method prints *voltage* and *current* variables from device's updated summary.
-  Serial.println(result["update"]["voltage"]<<"\n");
-  Serial.println(result["update"]["current"]<<"\n");
+void setVoltageCallback(Var result) {
+  // This method prints *voltage* value after it is updated on Grandeur.
+  Serial.println(result["update"]);
 }
 
 void setup() {
@@ -1117,13 +1036,11 @@ void setup() {
 }
 
 void loop() {
-  // A JSONObject container to store summary variables.
-  JSONObject summary;
-  summary["voltage"] = analogRead(A0);
-  summary["current"] = analogRead(A1);
+  // Reading pin value.
+  int voltage = analogRead(A0);
   // This sets the summary on every loop and calls setSummaryCallback() function when its
   // response from the cloud is received.
-  myDevice.setSummary(summary, setSummaryCallback);
+  myDevice.data().set("voltage", voltage, setVoltageCallback);
 
   myProject.loop(true);
 }
@@ -1133,64 +1050,20 @@ void loop() {
 // variables (voltage and current in our case) on every loop.
 ```
 
-### setParms
+### on
 
-> setParms (parms : _JSONObject_, callback: _Callback_) : returns _void_  
+> on (path: _String_, callback : _Callback_) : returns _void_
 
-Setter method for device's [parms][parms].
-
-#### Parameters
-
-| Name        | Type         | Description                                                     |
-|-------------|--------------|-----------------------------------------------------------------|
-| parms       | _JSONObject_ | A JSONObject containing the summary variables                   |
-| callback    | _Callback_   | A function to be called when setParms response is received      |
-
-#### Example
-
-```cpp
-Project myProject;
-Device myDevice;
-
-void setParmsCallback(JSONObject result) {
-  // This method prints *state* variable from device's updated parms.
-  Serial.println(result["parms"]["state"]<<"\n");
-}
-
-void setup() {
-  myProject = grandeur.init(YourApiKey, YourToken);
-  myDevice = myProject.device(YourDeviceID);
-}
-
-void loop() {
-  // A JSONObject container to store parms variables.
-  JSONObject parms;
-  parms["state"] = digitalRead(D0);
-  // This sets the parms on every loop and calls setParmsCallback() function when its
-  // response from the cloud is received.
-  myDevice.setParms(parms, setParmsCallback);
-
-  myProject.loop(true);
-}
-
-// **RESULT**
-// Setts the parms and prints the updated values of the parms
-// variables (just state in our case) on every loop
-```
-
-### onSummary
-
-> onSummary (callback : _Callback_) : returns _void_
-
-This method schedules a function to be called when the summary of the device is updated on Grandeur.
+This method schedules a function to be called when a device variable changes on Grandeur.
 
 > ***A Tidbit***: *Update is a special type of event* and the function that handles it is called an **update handler**.
 
 #### Parameters
 
-| Name        | Type       | Description                            |
-|-------------|------------|----------------------------------------|
-| callback    | _Callback_ | An update handler for device's summary |
+| Name        | Type       | Description                                    |
+|-------------|------------|------------------------------------------------|
+| path        | _String_   | Path of the device variable using dot notation |
+| callback    | _Callback_ | An update handler for the device variable      |
 
 More on Callback [here][callback].
 
@@ -1200,60 +1073,19 @@ More on Callback [here][callback].
 Project myProject;
 Device myDevice;
 
-void summaryUpdatedCallback(JSONObject result) {
+void voltageUpdatedCallback(Var result) {
   // When summary update occurs on Grandeur, this function extracts the updated values of
   // voltage and current, and sets the corresponding pins.
   Serial.println("Summary update occurred!\n");
   int voltage = updatedSummary["voltage"];
-  int current = updatedSummary["current"];
   digitalWrite(voltage, A0);
-  digitalWrite(current, A1);
 }
 
 void setup() {
   myProject = grandeur.init(YourApiKey, YourToken);
   myDevice = myProject.device(YourDeviceID);
 
-  myDevice.onSummary(summaryUpdatedCallback);
-}
-
-void loop() {
-  myProject.loop(true);
-}
-```
-
-### onParms
-
-> onParms (callback : _Callback_) : returns _void_
-
-This method schedules a function to be called when the parms of the device are updated on Grandeur.
-
-#### Parameters
-
-| Name        | Type       | Description                          |
-|-------------|------------|--------------------------------------|
-| callback    | _Callback_ | An update handler for device's parms |
-
-More on Callback [here][callback].
-
-#### Example
-
-```cpp
-Project myProject;
-Device myDevice;
-
-void parmsUpdatedCallback(JSONObject updatedParms) {
-  // When parms update occurs on Grandeur, this function extracts the updated value of
-  // state, and sets the corresponding pin.
-  Serial.println("Parms update occurred!\n");
-  int state = updatedParms["state"];
-  digitalWrite(D0, state);
-}
-
-void setup() {
-  myProject = grandeur.init(YourApiKey, YourToken);
-  myDevice = myProject.device(YourDeviceID);
-  myDevice.onParms(parmsUpdatedCallback);
+  myDevice.on("voltage", voltageUpdatedCallback);
 }
 
 void loop() {
@@ -1269,7 +1101,7 @@ It exposes the following functions:
 
 ### insert
 
-> insert (documents: _JSONObject_, callback: _Callback_) : returns _void_
+> insert (documents: _Var_, callback: _Callback_) : returns _void_
 
 This method inserts documents into Grandeur datastore.
 
@@ -1277,7 +1109,7 @@ This method inserts documents into Grandeur datastore.
 
 | Name        | Type         | Description                                                              |
 |-------------|--------------|--------------------------------------------------------------------------|
-| documents   | _JSONObject_ | An array of documents (_JSONObject_ s) to be inserted into the datastore |
+| documents   | _Var_ | An array of documents (_Var_ s) to be inserted into the datastore |
 | callback    | _Callback_   | A function to be called when insertion of documents is completed         |
 
 #### Example
@@ -1286,7 +1118,7 @@ This method inserts documents into Grandeur datastore.
 Project myProject;
 Datastore myDatastore;
 
-void insertCallback(JSONObject insertionResult) {
+void insertCallback(Var insertionResult) {
   // This method just prints if the insertion is successful or not.
   if(insertionResult["code"] == "DATASTORE-DOCUMENTS-INSERTED") {
     Serial.println("Insertion successful.");
@@ -1301,7 +1133,7 @@ void setup() {
 
 void loop() {
   // This inserts a document containing voltage and current readings in datastore on every loop.
-  JSONObject docs;
+  Var docs;
   // Adding voltage and current readings to the first document of docs array.
   // In JSON, the docs array looks like this:
   // [{"voltage": analogRead(A0), "current": analogRead(A1)}]
@@ -1321,7 +1153,7 @@ void loop() {
 
 ### search
 
-> search (filter: _JSONObject_, projection: _JSONObject_, pageNumber: _int_, callback: _Callback_) : returns _void_
+> search (filter: _Var_, projection: _Var_, pageNumber: _int_, callback: _Callback_) : returns _void_
 
 This method searches for documents in Grandeur datastore based on the `filter` supplied. `Filter` describes what documents to return and `projection` describes what fields to mask/unmask in those documents. Their is a limit on the how many documents can be returned in one query. The documents are divided into pages and you can get subsequent pages by specifying the `pageNumber`.
 
@@ -1329,8 +1161,8 @@ This method searches for documents in Grandeur datastore based on the `filter` s
 
 | Name        | Type         | Description                                                                                |
 |-------------|--------------|--------------------------------------------------------------------------------------------|
-| filter      | _JSONObject_ | A document that describes the conditions which the documents should satisfy to be returned |
-| projection  | _JSONObject_ | A document that describes what fields to return                                            |
+| filter      | _Var_        | A document that describes the conditions which the documents should satisfy to be returned |
+| projection  | _Var_        | A document that describes what fields to return                                            |
 | pageNumber  | _int_        | Number of the requested page                                                               |
 | callback    | _Callback_   | A function to be called when insertion of documents is completed                           |
 
@@ -1340,7 +1172,7 @@ This method searches for documents in Grandeur datastore based on the `filter` s
 Project myProject;
 Datastore myDatastore;
 
-void searchCallback(JSONObject searchResult) {
+void searchCallback(Var searchResult) {
   // This method just prints the documents if the search is successful.
   if(searchResult["code"] == "DATASTORE-DOCUMENTS-FETCHED") {
     Serial.print("Documents fetched from Grandeur: ");
@@ -1415,7 +1247,7 @@ Here are some enhancements that we are considering to implement in the SDK. They
 [summary]: #device-registry "Summary"
 [parms]: #device-registry "Parms"
 [callback]: #the-dexterity-of-arduino-sdk "The Dexterity of Arduino SDK"
-[jsonobject]: #the-dexterity-of-arduino-sdk "The Dexterity of Arduino SDK"
+[var]: #the-dexterity-of-arduino-sdk "The Dexterity of Arduino SDK"
 [the dexterity of arduino sdk]: #the-dexterity-of-arduino-sdk "The Dexterity of Arduino SDK"
 [models]: #models "Models"
 [apikey]: #project "Project"

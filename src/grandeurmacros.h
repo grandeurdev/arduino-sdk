@@ -32,17 +32,9 @@
 #define PING_PACKET_SIZE 64
 #define TASK_SIZE 32
 
-// Send Queue Size
-#define SENDQUEUE_SIZE 16
-
 // Ping interval in milliseconds
 #define PING_INTERVAL 25000
 
 // Macros for connection status
 #define DISCONNECTED false
 #define CONNECTED true
-
-// Indexes for update handler callbacks in subscriptions array
-#define NUMBER_OF_TOPICS 2
-#define SUMMARYUPDATE 0
-#define PARMSUPDATE 1

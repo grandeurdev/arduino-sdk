@@ -8,167 +8,272 @@
  *
  */
 
+// Inlcude event table
 #include <EventTable.h>
 #include <iostream>
+#include <regex>
 
-const char* routes[T_S] =
-  {"ping", "/topic/subscribe", "/topic/unsubscribe", "/topics/unsubscribe",
-  "/device/summary/get", "/device/parms/get", "/device/summary/set", "/device/parms/set",
-  "/datastore/insert", "/datastore/delete", "/datastore/update", "/datastore/pipeline"};
-
-EventTableEntry::EventTableEntry(EventTableKey k, EventTableData v) {
-  this->k= k;
-  this->v = v;
+// Implement event table block
+EventTableEntry::EventTableEntry(EventKey key, EventID id, EventData data) {
+  this->key = key;
+  this->id = id;
+  this->data = data;
   this->next = NULL;
 }
 
+// Implement event table constructor
 EventTable::EventTable() {
-  t = new EventTableEntry * [T_S];
-  for (int i = 0; i < T_S; i++) {
-    t[i] = NULL;
-  }
+  // Init table as null
+  table = NULL;
 }
 
-int EventTable::hashFunc(EventTableKey k) {
-  for(int i = 0; i < T_S; i++) {
-    if(routes[i] == k) {
-      return i;
-    }
-  }
-  return (T_S - 1);
-}
-
-int EventTable::insert(EventTableKey k, EventID id, EventData data) {
-  int h = hashFunc(k);
-  if(t[h] == NULL) {
-    // If this bucket is empty,
+int EventTable::insert(EventKey key, EventID id, EventData data) {
+  // If bucket is empty,
+  if(table == NULL) {
     // creating the first entry
-    t[h] = new EventTableEntry(k, {id, data});
+    table = new EventTableEntry(key, id, data);
     return 0;
   }
-  if(t[h]->v.id == id) {
+
+  // Otherwise resolve the base case where the starting block id
+  // is duplicate of the new supllied
+  if(table->id == id) {
     // If entry is found in the first element,
     // replacing its data
-    t[h]->v.data = data;
+    table->data = data;
     return 0;
   }
+
   // If the bucket is not empty,
   // getting ready for traversing the chain
-  EventTableEntry* p = t[h];
-  while (p->next != NULL && p->next->v.id != id) {
+  EventTableEntry * p = table;
+
+  // Move to next block while we aren't at the end 
+  while (p->next != NULL) {
+    // or we haven't found a duplicate in next block
+    if (p->next->id == id) break;
+
+    // Keep moving
     p = p->next;
   }
+
+  // When found a duplicate
   if (p->next != NULL) {
-    // If found an index without reaching the end of chain,
+    // Without reaching the end of chain,
     // just replace the data
-    p->next->v.data = data;
+    p->next->data = data;
     return 0;
   }
+
   // If the end of chain is reached,
   // creating a new entry in the chain
-  p->next = new EventTableEntry(k, {id, data});
+  p->next = new EventTableEntry(key, id, data);
   return 0;
 }
 
-int EventTable::remove(EventTableKey k, EventID id) {
-  int h = hashFunc(k);
-  if(t[h] == NULL) {
-    // If this bucket is empty,
+int EventTable::remove(EventID id) {
+  // Check if bucket is empty
+  if(table == NULL) {
     // which means the entry does not exist
     return -1;
   }
-  if(t[h]->v.id == id) {
-    // If entry is found in the first element,
-    // deleting it and pulling the chain backwards
-    EventTableEntry* p = t[h];
-    t[h] = t[h]->next;
+
+  // If the id was found in first block
+  if(table->id == id) {
+    // Pull the chain backwards
+    EventTableEntry* p = table;
+    table = table->next;
+
+    // and delete it
     delete p;
     return 0;
   }
+
   // If the bucket is not empty,
   // getting ready for traversing the chain
-  EventTableEntry* p = t[h];
+  EventTableEntry* p = table;
+
+  // While not the end has reached 
   while (p->next != NULL) {
-    if (p->next->v.id == id)
-      // If element is found,
-      // breaking out of the loop
-      break;
+    // Break if the next block has the id we need
+    if (p->next->id == id) break;
+
+    // Keep moving
     p = p->next;
   }
+
+  // Handle case where we reached the end
   if (p->next == NULL) {
-    // If the end of the chain is reached,
-    // and no element is found
+    // No element is found
     return -1;
   }
+
   // If the element is found
+  // Then pull the chain backward
   EventTableEntry* q = p->next;
   p->next = p->next->next;
+
+  // and delete it
   delete q;
   return 0;
 }
 
-EventData EventTable::findAndRemove(EventTableKey k, EventID id) {
-  int h = hashFunc(k);
-  if(t[h] == NULL) {
-    // If this bucket is empty,
+EventData EventTable::findAndRemove(EventID id) {
+  // Check if bucket is empty
+  if(table == NULL) {
     // which means the entry does not exist
     return NULL;
   }
-  if(t[h]->v.id == id) {
-    // If entry is found in the first element,
-    // copying it, deleting it and pulling the chain backwards
-    EventTableEntry* p = t[h];
-    EventData data = p->v.data;
-    t[h] = t[h]->next;
+
+  // If the id was found in first block
+  if(table->id == id) {
+    // Pull the chain backwards
+    EventTableEntry* p = table;
+    EventData data = p->data;
+    table = table->next;
+
+    // and delete it
     delete p;
     return data;
   }
+
   // If the bucket is not empty,
   // getting ready for traversing the chain
-  EventTableEntry* p = t[h];
+  EventTableEntry* p = table;
+
+  // While not the end has reached 
   while (p->next != NULL) {
-    if (p->next->v.id == id)
-      // If element is found,
-      // breaking out of the loop
-      break;
+    // Break if the next block has the id we need
+    if (p->next->id == id) break;
+
+    // Keep moving
     p = p->next;
   }
+
+  // Handle case where we reached the end
   if (p->next == NULL) {
-    // If the end of the chain is reached,
-    // and no element is found
+    // No element is found
     return NULL;
   }
+
   // If the element is found
-  // copying its data, deleting it and pulling the chain backwards
+  // Then pull the chain backward
   EventTableEntry* q = p->next;
-  EventData data = q->v.data;
+  EventData data = p->data;
   p->next = p->next->next;
+
+  // and delete it
   delete q;
   return data;
 }
 
-/* ONLY FOR PRINTABLE DATA TYPES */
-void EventTable::print() {
-  for(int i = 0; i < T_S; i++) {
-    EventTableEntry* p = t[i];
-    std::cout<<i<<" -> ";
-    while (p != NULL) {
-      std::cout<<p->k<<" : ";
-      std::cout<<p->v.id<< " : ";
-      //std::cout<<p->v.data<<" -> ";
-      p = p->next;
+int EventTable::emit(EventKey key, Var packet, const char* path) {
+  // Cast packet as per type of packet
+  String type = JSON.typeof_(packet);
+
+  // If the bucket is not empty,
+  // getting ready for traversing the chain
+  EventTableEntry* p = table;
+
+  // While not the end has reached 
+  while (p != NULL) {
+    // Define pattern
+    std::regex pattern("(" + p->key + ")(.*)");
+
+    // We will use regex to match the key of the block
+    if (std::regex_match(key, pattern)) {
+      // Then emit packet to callback
+      // Check the callback type
+      if (p->data.type() == "object") {
+        // The callback receives an object
+        // so we don't to do the type conversion
+        // Send with casting as Var
+        p->data((Var) packet, path);
+      }
+      else {
+        // Packet was boolean
+        if (type == "boolean") {
+          // Cast as boolean
+          p->data((bool) packet, path);
+          
+        }
+
+        // Packet is number
+        else if (type == "number") {
+          // Figure out that if it is a double or int
+          if ((double) packet - (int) packet != 0)
+            // Cast as double
+            p->data((double) packet, path);
+
+          else 
+            // Cast as int
+            p->data((int) packet, path);
+
+        }
+
+        // Packet was string
+        else if  (type == "string") {
+          // Cast as string
+          p->data((const char*) packet, path);
+
+        }
+
+        // Packet was object or array
+        else if (type == "object" || type == "array") {
+          // Send with casting as Var
+          p->data((Var) packet, path);
+
+        }
+      }
     }
-    std::cout<<"\n";
+    // Keep moving
+    p = p->next;
   }
+
+  return 0;
+}
+
+void EventTable::print() {
+  // Loop over the event table
+  EventTableEntry* p = table;
+
+  // Print header
+  Serial.printf("\n*******Table*******\n");
+
+  // While not the end
+  while (p != NULL) {
+    // Print the id
+    Serial.printf("%s %d\n", p->key.c_str(), p->id);
+
+    p = p->next;
+  }
+
+  // Print footer
+  Serial.printf("*******************\n");
+}
+
+void EventTable::clear() {
+  // Function to delete all blocks
+  // If the bucket is not empty,
+  // getting ready for traversing the chain
+  EventTableEntry* p = table;
+
+  // While not the end has reached
+  while (p != NULL) {
+    // Copy block address to a pointer
+    EventTableEntry* next = p->next;
+
+    // delete p
+    delete p;
+
+    // Move next
+    p = next;
+  }
+
+  // Mark table as empty
+  table = NULL;
 }
 
 EventTable::~EventTable() {
-  for (int i = 0; i < T_S; i++) {
-    if (t[i] != NULL)
-    for(EventTableEntry* p = t[i]; p != NULL; p = p->next) {
-      delete p;
-      t[i] = NULL;
-    }
-  }
-  delete[] t;
+  clear();
 }
