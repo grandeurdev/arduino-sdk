@@ -46,7 +46,7 @@ class Callback {
     // Function to generate an error
     void error(int type) {
       // Throw error
-      Serial.printf("[CASTING-ERROR] Was expecting %s and received %s\n", mapType(_type).c_str(), mapType(type).c_str());
+      Serial.printf("[TYPE-ERROR] Was expecting %s and received %s\n", mapType(_type).c_str(), mapType(type).c_str());
     }
 
 	public:

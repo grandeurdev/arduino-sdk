@@ -35,8 +35,8 @@ int statePin = D0;
 // Function prototypes
 void setupWiFi(void);
 void connectionCallback(bool state);
-void initializeState(JSONObject getResult);
-void parmsUpdatedCallback(JSONObject updatedParms);
+void initializeState(Var getResult);
+void parmsUpdatedCallback(Var updatedParms);
 
 void setup() {
   Serial.begin(9600);
@@ -95,7 +95,7 @@ void connectionCallback(bool status) {
   }
 }
 
-void initializeState(JSONObject getResult) {
+void initializeState(Var getResult) {
   // This function sets the *state pin* to the *state value* that we received in parms
   // from the cloud.
   if(getResult["code"] == "DEVICE-PARMS-FETCHED") {
@@ -108,7 +108,7 @@ void initializeState(JSONObject getResult) {
   return;
 }
 
-void parmsUpdatedCallback(JSONObject updatedParms) {
+void parmsUpdatedCallback(Var updatedParms) {
   // This function gets the *updated state* from the device parms and set the *state pin*
   // with *state value*.
   Serial.printf("Updated State is: %d\n", (bool) updatedParms["state"]);

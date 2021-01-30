@@ -32,7 +32,7 @@ unsigned long current = millis();
 void WiFiEventCallback(WiFiEvent_t event);
 void setupWiFi(void);
 void connectionCallback(bool status);
-void searchCallback(JSONObject payload);
+void searchCallback(Var payload);
 
 void setup() {
   Serial.begin(9600);
@@ -53,7 +53,7 @@ void loop() {
       // This if-condition makes sure that the code inside this block runs only after
       // every five seconds.
       // This fetches 1st page of all the documents stored in the datastore.
-      JSONObject filter;
+      Var filter;
       filter["voltage"]["$gt"] = 1;
       myDatastore.collection("logs").search(filter, {}, 0, searchCallback);
       // This updates the millis counter for
@@ -108,7 +108,7 @@ void connectionCallback(bool status) {
   }
 }
 
-void searchCallback(JSONObject searchResult) {
+void searchCallback(Var searchResult) {
   // This function prints if the datastore search for the docs was successfully or not.
   if(searchResult["code"] == "DATASTORE-DOCUMENTS-FETCHED") {
     Serial.print("Documents fetched from Grandeur: ");

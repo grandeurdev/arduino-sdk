@@ -33,7 +33,7 @@ unsigned long current = millis();
 // Function prototypes
 void setupWiFi(void);
 void connectionCallback(bool status);
-void insertCallback(JSONObject payload);
+void insertCallback(Var payload);
 
 void setup() {
   Serial.begin(9600);
@@ -53,7 +53,7 @@ void loop() {
     if(millis() - current >= 5000) {
       // This if-condition makes sure that the code inside this block runs only after
       // every five seconds.
-      JSONObject logs;
+      Var logs;
       logs[0]["voltage"] = analogRead(A0);
       myDatastore.collection("logs").insert(logs, insertCallback);
       // This updates the millis counter for
@@ -101,7 +101,7 @@ void connectionCallback(bool status) {
   }
 }
 
-void insertCallback(JSONObject insertResult) {
+void insertCallback(Var insertResult) {
   // This function prints if the logs were successfully inserted into the datastore or not.
   if(insertResult["code"] == "DATASTORE-DOCUMENTS-INSERTED") {
     Serial.println("Voltage is successfully logged to Grandeur.");
