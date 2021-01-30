@@ -35,22 +35,22 @@ void WiFiEventCallback(WiFiEvent_t event);
 void setupWiFi(void);
 void connectionCallback(bool state);
 void initializeState(Var getResult);
-void parmsUpdatedCallback(Var updatedParms);
+void stateUpdatedCallback(bool state, const char* path);
 
 void setup() {
   Serial.begin(9600);
   // This sets up the device WiFi.
   setupWiFi();
-  // This initializes the SDK's configurations and returns a new object of GrandeurDevice class.
+  // This initializes the SDK's configurations and returns a reference to object of the Project class.
   myProject = grandeur.init(apiKey, token);
-  // Getting object of Device class.
+  // Getting reference to object of Device class.
   myDevice = myProject.device(deviceID);
-  // This schedules the connectionCallback() function to be called when connection with the cloud
+  // This schedules the connectionCallback() function to be called when connection with Grandeur
   // is made/broken.
   myProject.onConnection(connectionCallback);
-  // This schedules parmsUpdatedCallback() function to be called when variable stored
-  // in device's parms are changed on Grandeur.
-  myDevice.onParms(parmsUpdatedCallback);
+  // This schedules stateUpdatedCallback() function to be called when state variable
+  // is changed on Grandeur.
+  myDevice.data().on("state", stateUpdatedCallback);
 }
 
 void loop() {
@@ -88,35 +88,32 @@ void setupWiFi(void) {
 void connectionCallback(bool status) {
   switch(status) {
     case CONNECTED:
-      // On successful connection with the cloud, we initialize the device's *state*.
-      // To do that, we get device parms from the cloud and set the *state pin* to the
-      // value of *state* in those parms.
-      Serial.println("Device is connected to the cloud.");
-      myDevice.getParms(initializeState);
-      Serial.println("Listening for parms update from the cloud...");
+      // On successful connection with the cloud, we initialize the device's *state* pin.
+      // To do that, we get state variable from Grandeur and set the *state pin* to its value.
+      Serial.println("Device is connected with Grandeur.");
+      myDevice.data().get("state", initializeState);
+      Serial.println("Listening for update in state...");
       break;
     case DISCONNECTED:
-      Serial.println("Device is disconnected from the cloud.");
+      Serial.println("Device's connection with Grandeur is broken.");
       break;
   }
 }
 
 void initializeState(Var getResult) {
-  // This function sets the *state pin* to the *state value* that we received in parms
-  // from the cloud.
-  if(getResult["code"] == "DEVICE-PARMS-FETCHED") {
-    int state = getResult["deviceParms"]["state"];
+  // This function sets the *state pin* to the *state value* that we received from Grandeur.
+  if(getResult["code"] == "DEVICE-DATA-FETCHED") {
+    int state = getResult["data"];
     digitalWrite(statePin, state);
     return;
   }
-  // If the parms could not be fetched.
-  Serial.println("Failed to Fetch Parms");
+  // If the state could not be fetched.
+  Serial.println("Failed to Fetch State");
   return;
 }
 
-void parmsUpdatedCallback(Var updatedParms) {
-  // This function gets the *updated state* from the device parms and set the *state pin*
-  // with *state value*.
-  Serial.printf("Updated State is: %d\n", (bool) updatedParms["state"]);
-  digitalWrite(statePin, (bool) updatedParms["state"]); 
+void stateUpdatedCallback(bool state, const char* path) {
+  // This function sets the *state pin* to *state value*.
+  Serial.printf("Updated State is: %d\n", state);
+  digitalWrite(statePin, state); 
 }
