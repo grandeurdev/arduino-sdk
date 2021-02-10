@@ -62,10 +62,8 @@ void DuplexHandler::send(const char* task, const char* payload, Callback callbac
     return ;
   }
   
-  DEBUG_GRANDEUR("Sending: %s.\n", payload);
-  
   char packet[PACKET_SIZE];
-  GrandeurID packetID = millis();
+  gId packetID = gid();
   // Attaching an event listener
   _tasks.once(String(packetID), callback);
   // Formatting the packet
@@ -76,7 +74,7 @@ void DuplexHandler::send(const char* task, const char* payload, Callback callbac
 
 std::function<void(void)> DuplexHandler::subscribe(const char* event, String path, const char* payload, Callback updateHandler) {
   // Saving updateHandler callback to subscriptions Array
-  String topic = String(event) + "." + path;
+  String topic = String(event) + "/" + path;
   _subscriptions.on(topic, updateHandler);
   send("/topic/subscribe", payload, [](Var payload) {});
 
@@ -88,7 +86,7 @@ std::function<void(void)> DuplexHandler::subscribe(const char* event, String pat
 void DuplexHandler::ping() {
   if(_status == CONNECTED) {
     char packet[PING_PACKET_SIZE];
-    GrandeurID packetID = millis();
+    gId packetID = gid();
     // Saving callback to eventsTable
     _tasks.once(String(packetID), [](Var payload) {});
     // Formatting the packet

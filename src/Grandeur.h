@@ -39,10 +39,16 @@ class Project {
     // This method runs the SDK.
     void loop(bool valve);
 
+    // Subclasses
+    class Device;
+    class Datastore;
+
     friend class Grandeur;
 };
 
 class Grandeur {
+  public:
+    
   private:
     Config _config;
     Project _project;

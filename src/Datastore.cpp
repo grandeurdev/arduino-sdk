@@ -11,7 +11,7 @@
 // Including headers
 #include "Datastore.h"
 
-Datastore::Datastore(DuplexHandler duplexHandler) {
+Project::Datastore::Datastore(DuplexHandler duplexHandler) {
   _duplex = duplexHandler;
 }
 
@@ -21,12 +21,12 @@ Collection Datastore::collection(String name) {
   return Collection(name, _duplex);
 }
 
-Collection::Collection(String name, DuplexHandler duplexHandler) {
+Project::Datastore::Collection::Collection(String name, DuplexHandler duplexHandler) {
   _name = name;
   _duplex = duplexHandler;
 }
 
-void Collection::insert(Var documents, Callback inserted) {
+void Project::Datastore::Collection::insert(Var documents, Callback inserted) {
   Var jsonObject;
   char jsonString[PACKET_SIZE];
   
@@ -38,7 +38,7 @@ void Collection::insert(Var documents, Callback inserted) {
   _duplex.send("/datastore/insert", jsonString, inserted);
 }
 
-void Collection::remove(Var filter, Callback removed) {
+void Project::Datastore::Collection::remove(Var filter, Callback removed) {
   Var jsonObject;
   char jsonString[PACKET_SIZE];
 
@@ -50,7 +50,7 @@ void Collection::remove(Var filter, Callback removed) {
   _duplex.send("/datastore/delete", jsonString, removed);
 }
 
-void Collection::update(Var filter, Var update, Callback updated) {
+void Project::Datastore::Collection::update(Var filter, Var update, Callback updated) {
   Var jsonObject;
   char jsonString[PACKET_SIZE];
 
@@ -63,7 +63,7 @@ void Collection::update(Var filter, Var update, Callback updated) {
   _duplex.send("/datastore/update", jsonString, updated);
 }
 
-void Collection::search(Var filter, Var projection, int pageNumber, Callback searched) {
+void Project::Datastore::Collection::search(Var filter, Var projection, int pageNumber, Callback searched) {
   Pipeline searchPipeline = Pipeline(_name, {}, _duplex).match(filter);
   if(projection == undefined) {}
   else {
@@ -73,17 +73,17 @@ void Collection::search(Var filter, Var projection, int pageNumber, Callback sea
   return searchPipeline.execute(pageNumber, searched);
 }
 
-Pipeline Collection::pipeline(void) {
+Project::Datastore::Collection::Pipeline Project::Datastore::Collection::pipeline(void) {
   return Pipeline(_name, undefined, _duplex);
 }
 
-Pipeline::Pipeline(String collectionName, Var query, DuplexHandler duplexHandler) {
+Project::Datastore::Collection::Pipeline::Pipeline(String collectionName, Var query, DuplexHandler duplexHandler) {
   _collection = collectionName;
   _query = query;
   _duplex = duplexHandler;
 }
 
-Pipeline Pipeline::match(Var filter) {
+Project::Datastore::Collection::Pipeline Project::Datastore::Collection::Pipeline::match(Var filter) {
   int stage = _query.length() + 1;
   _query[stage]["type"] = "match";
   _query[stage]["filter"] = filter;
@@ -99,7 +99,7 @@ Pipeline Pipeline::project(Var specs) {
   return Pipeline(_collection, _query, _duplex);
 }
 
-Pipeline Pipeline::group(Var condition, Var fields) {
+Project::Datastore::Collection::Pipeline Project::Datastore::Collection::Pipeline::group(Var condition, Var fields) {
   int stage = _query.length() + 1;
   _query[stage]["type"] = "group";
   _query[stage]["condition"] = condition;
@@ -108,7 +108,7 @@ Pipeline Pipeline::group(Var condition, Var fields) {
   return Pipeline(_collection, _query, _duplex);
 }
 
-Pipeline Pipeline::sort(Var specs) {
+Project::Datastore::Collection::Pipeline Project::Datastore::Collection::Pipeline::sort(Var specs) {
   int stage = _query.length() + 1;
   _query[stage]["type"] = "sort";
   _query[stage]["specs"] = specs;
@@ -116,7 +116,7 @@ Pipeline Pipeline::sort(Var specs) {
   return Pipeline(_collection, _query, _duplex);
 }
 
-void Pipeline::execute(int pageNumber, Callback executed) {
+void Project::Datastore::Collection::Pipeline::execute(int pageNumber, Callback executed) {
   Var jsonObject;
   char jsonString[PACKET_SIZE];
 

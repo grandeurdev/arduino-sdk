@@ -16,7 +16,7 @@
 #ifndef DEVICE_H_
 #define DEVICE_H_
 
-class Device {
+class Project::Device {
   // Class for handling device related functions
   private:
     DuplexHandler* _duplex;

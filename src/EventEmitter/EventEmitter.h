@@ -5,11 +5,11 @@
 
 #define MAX_LISTENERS 16
 
-template <class ...T>
+template<typename Id, typename Emitter>
 class EventEmitter {
 private:
   unsigned int nListeners;
-  Listener<T...> *listeners[MAX_LISTENERS];
+  Listener<Id, Emitter> *listeners[MAX_LISTENERS];
 
 public:
   EventEmitter() : nListeners(0) {
@@ -20,29 +20,27 @@ public:
 
   virtual ~EventEmitter() {}
   
-  EventID* getEventIds() {
-    EventID eventIds[nListeners];
+  Id* getIds() {
+    Id ids[nListeners];
     for(unsigned int i = 0; i < nListeners; i++) {
       for (unsigned int j = 0; j < MAX_LISTENERS; j++) {
         if (listeners[j] != NULL) {
-          eventIds[i] = listeners[j]->getEventId();
+          ids[i] = listeners[j]->getId();
         }
       }
     }
-    for(int i = 0; i < nListeners; i++)
-      Serial.println(eventIds[i]);
-    return eventIds;
+    return ids;
   }
 
   unsigned int getNListeners() {
     return nListeners;
   }
 
-  bool on(EventID id, void (*cb)(T... t)) {
+  bool on(Id id, Emitter emitter) {
     if (nListeners < MAX_LISTENERS) {
       for (unsigned int i = 0; i < MAX_LISTENERS; i++) {
         if (listeners[i] == NULL) {
-          listeners[i] = new Listener<T...>(id, cb, false);
+          listeners[i] = new Listener<Id, Emitter>(id, emitter, false);
           nListeners++;
           return true;
         }
@@ -52,11 +50,11 @@ public:
     return false;
   }
 
-  bool once(EventID id, void (*cb)(T... t)) {
+  bool once(Id id, Emitter emitter) {
     if (nListeners < MAX_LISTENERS) {
       for (unsigned int i = 0; i < MAX_LISTENERS; i++) {
         if (listeners[i] == NULL) {
-          listeners[i] = new Listener<T...>(id, cb, true);
+          listeners[i] = new Listener<Id, Emitter>(id, emitter, true);
           nListeners++;
           return true;
         }
@@ -66,12 +64,12 @@ public:
     return false;
   }
 
-  bool off(EventID id) {
+  bool off(Id id) {
     bool removed = false;
     // Traverse the listeners array
     for (unsigned int i = 0; i < MAX_LISTENERS; i++) {
       // Get the listener from its id.
-      if (listeners[i] != NULL && id == listeners[i]->getEventId()) {
+      if (listeners[i] != NULL && id == listeners[i]->getId()) {
         delete listeners[i];
         listeners[i] = NULL;
         nListeners--;
@@ -92,17 +90,19 @@ public:
     }
   }
 
-  void emit(EventID id, T... t) {
+  template<typename ...T> 
+  void emit(Id id, T... args) {
     for (unsigned int i = 0; i < MAX_LISTENERS; i++) {
       // Get the listener from its id.
-      if (listeners[i] != NULL && id == listeners[i]->getEventId()) {
-        listeners[i]->emit(t...);
+      if (listeners[i] != NULL && id == listeners[i]->getId()) {
+        listeners[i]->emit(args...);
         // If the listener is for once, remove it.
         if(listeners[i]->isOnce())
           off(id);
       }
-    }    
+    }
   }
+
 };
 
 #endif /* _EVENT_EMITTER_H_ */

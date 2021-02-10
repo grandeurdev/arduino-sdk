@@ -1,37 +1,39 @@
-#include <Arduino.h>
+#include <cstring>
 
 #ifndef _LISTENER_H_
 #define _LISTENER_H_
 
 //#define MAX_EVENT_STRING_SIZE 64
 
-using EventID = String;
-
-template <class ...T>
+template <typename Id, typename Emitter>
 class Listener {
 private:
-  EventID eventId;
-  void (*callback)(T... t);
-  bool once;
+  Id _id;
+  bool _once;
 
 public:
+  Emitter emit;
+
   Listener();
-  Listener(EventID id, void (*cb)(T... t), bool once) : callback(cb), once(once) {
-    eventId = id;
+  /** Constructor: Defines Id, Emitter and whether a listener is of one-time use
+  */
+  Listener(Id id, Emitter cb, bool once) : _once(once) {
+    _id = id;
+    emit = cb;
   }
 
   ~Listener() {}
 
-  EventID getEventId() {
-    return eventId;
+  /** Returns the listener id
+  */
+  Id getId() {
+    return _id;
   }
 
+  /** Checks if a listener is of one-time use
+  */
   bool isOnce() {
-    return once;
-  }
-
-  void emit(T... t) {
-    callback(t...);
+    return _once;
   }
 };
 

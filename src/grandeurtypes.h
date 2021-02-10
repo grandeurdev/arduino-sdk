@@ -9,16 +9,18 @@
  */
 
 #include "grandeurmacros.h"
+#include "Var.h"
+#include "Callback.h"
 #include <cstring>
 #include "Arduino_JSON/Arduino_JSON.h"
 
 #ifndef GRANDEURTYPES_H_
 #define GRANDEURTYPES_H_
 
-typedef JSONVar Var;
-typedef void (*Callback)(Var);
+#define gid() millis();
+typedef unsigned long gId;
+
 typedef void (*Send)(const char* task, const char* payload, Callback callback);
-typedef long GrandeurID;
 
 // Config class for grandeur configurations
 class Config {

@@ -10,20 +10,20 @@
 
 #include "Device.h"
 
-Device::Device() {
+Project::Device::Device() {
   _deviceID = "";
 }
 
-Device::Device(DuplexHandler* duplexHandler) {
+Project::Device::Device(DuplexHandler* duplexHandler) {
   _duplex = duplexHandler;
   _deviceID = "";
 }
 
-void Device::init(String deviceID) {
+void Project::Device::init(String deviceID) {
   _deviceID = deviceID;
 }
 
-void Device::get(String path, Callback callback) {
+void Project::Device::get(String path, Callback callback) {
   Var jsonObject;
   char jsonString[PACKET_SIZE];
   jsonObject["deviceID"] = _deviceID;
@@ -32,7 +32,7 @@ void Device::get(String path, Callback callback) {
   _duplex->send("/device/data/get", jsonString, callback);
 }
 
-void Device::get(Callback callback) {
+void Project::Device::get(Callback callback) {
   Var jsonObject;
   char jsonString[PACKET_SIZE];
   jsonObject["deviceID"] = _deviceID;
@@ -40,7 +40,7 @@ void Device::get(Callback callback) {
   _duplex->send("/device/data/get", jsonString, callback);
 }
 
-void Device::set(String path, Var data, Callback callback) {
+void Project::Device::set(String path, Var data, Callback callback) {
   Var jsonObject;
   char jsonString[PACKET_SIZE];
   jsonObject["deviceID"] = _deviceID;
@@ -50,7 +50,7 @@ void Device::set(String path, Var data, Callback callback) {
   _duplex->send("/device/data/set", jsonString, callback);
 }
 
-void Device::set(String path, Var data) {
+void Project::Device::set(String path, Var data) {
   Var jsonObject;
   char jsonString[PACKET_SIZE];
   jsonObject["deviceID"] = _deviceID;
@@ -60,7 +60,7 @@ void Device::set(String path, Var data) {
   _duplex->send("/device/data/set", jsonString, [](Var json){});
 }
 
-void Device::on(String path, Callback updateHandler) {
+void Project::Device::on(String path, Callback updateHandler) {
   Var jsonObject;
   char jsonString[PACKET_SIZE];
   jsonObject["deviceID"] = _deviceID;
@@ -70,7 +70,7 @@ void Device::on(String path, Callback updateHandler) {
   _duplex->subscribe((const char*) jsonObject["event"], path, jsonString, updateHandler);
 }
 
-void Device::on(Callback updateHandler) {
+void Project::Device::on(Callback updateHandler) {
   Var jsonObject;
   char jsonString[PACKET_SIZE];
   jsonObject["deviceID"] = _deviceID;
