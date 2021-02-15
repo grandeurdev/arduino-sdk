@@ -10,6 +10,7 @@
 
 #include <cstdlib>
 #include <string>
+#include <functional>
 #include "grandeurtypes.h"
 
 #ifndef EVENTQUEUE_H_
@@ -54,7 +55,7 @@ class EventQueue {
 
     // Method to loop over the elements in queue
     // and return the entry in callback
-    void forEach(void (*callback)(EventID, EventKey, EventPayload, Callback));
+    void forEach(std::function<void(EventID, EventKey, EventPayload, Callback)> callback);
 
     // Function return queue size
     int length();

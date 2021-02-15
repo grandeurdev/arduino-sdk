@@ -1,131 +1,121 @@
 /**
- * @file Device.h
+ * @file Data.h
  * @date 23.01.2021
  * @author Grandeur Technologies
  *
- * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
+ * Copyright (c) 2021 Grandeur Technologies Inc. All rights reserved.
  * This file is part of the Arduino SDK for Grandeur.
  *
  */
 
-#include "Data.h"
+#include "Grandeur.h"
 
-// Constructors
-Event::Event(String deviceID, DuplexHandler duplexHandler, gID id, String path) {
-  _duplex = duplexHandler;
-  _deviceID = deviceID;
-  _id = id;
-  _path = path;
-}
+Grandeur::Project::Device::Event::Event() {}
 
-Event::Event() {}
+Grandeur::Project::Device::Event::Event(
+  String deviceId,
+  DuplexHandler* duplexHandler,
+  gId id,
+  String path
+) : _deviceId(deviceId), _duplex(duplexHandler), _id(id), _path(path) {}
 
-void Event::clear() {
+void Grandeur::Project::Device::Event::clear() {
   // Clear an event handler on path
   // Create a new json object
   Var jsonObject;
-
-  // Create packet
-  char jsonString[PACKET_SIZE];
-
-  // Add device id
-  jsonObject["deviceID"] = _deviceID;
-
-  // Add path 
+  jsonObject["deviceID"] = _deviceId;
   jsonObject["path"] = _path;
-
-  // Add data
   jsonObject["event"] = "data";
 
-  // Conver the object to string
-  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
+  // Creating a string.
+  char jsonString[MESSAGE_SIZE];
+  // Parsing json object to json string.
+  JSON.stringify(jsonObject).toCharArray(jsonString, MESSAGE_SIZE);
 
-  // Send 
-  _duplex.unsubscribe(_id, jsonString);
+  // Unsubscribing from the event.
+  _duplex->unsubscribe(_id, jsonString);
 }
 
-// Constructors
-Data::Data(String deviceID, DuplexHandler duplexHandler) {
-  _duplex = duplexHandler;
-  _deviceID = deviceID;
-}
+Grandeur::Project::Device::Data::Data() {}
 
-Data::Data() {}
+Grandeur::Project::Device::Data::Data(DuplexHandler* duplexHandler, String deviceId)
+: _duplex(duplexHandler), _deviceId(deviceId) {}
 
-void Data::get(const char* path, Callback callback) {
-  // Get data from server
-  // Create a new json object
+void Grandeur::Project::Device::Data::get(const char* path, Callback cb) {
+  // Creating a new json object to store device ID and variable path.
   Var jsonObject;
-
-  // Create packet
-  char jsonString[PACKET_SIZE];
-
-  // Add device id
-  jsonObject["deviceID"] = _deviceID;
-
-  // Add path 
+  jsonObject["deviceID"] = _deviceId;
   jsonObject["path"] = path;
 
-  // Conver the object to string
-  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
+  // Creating a string.
+  char jsonString[MESSAGE_SIZE];
+  // Parsing json object to json string.
+  JSON.stringify(jsonObject).toCharArray(jsonString, MESSAGE_SIZE);
 
-  // Send 
-  _duplex.send("/device/data/get", jsonString, callback);
+  // Sending the packet and scheduling callback.
+  _duplex->send("/device/data/get", jsonString, cb);
 }
 
-void Data::set(const char* path, Var data, Callback callback) {
-  // Set data to server
-  // Create a new json object
+void Grandeur::Project::Device::Data::get(Callback cb) {
+  // Creating a new json object to store device ID.
   Var jsonObject;
+  jsonObject["deviceID"] = _deviceId;
 
-  // Create packet
-  char jsonString[PACKET_SIZE];
+  // Creating a string.
+  char jsonString[MESSAGE_SIZE];
+  // Parsing json object to json string.
+  JSON.stringify(jsonObject).toCharArray(jsonString, MESSAGE_SIZE);
 
-  // Add device id
-  jsonObject["deviceID"] = _deviceID;
+  // Sending the packet and scheduling callback.
+  _duplex->send("/device/data/get", jsonString, cb);
+}
 
-  // Add path 
+void Grandeur::Project::Device::Data::set(const char* path, Var data, Callback cb) {
+  // Creating a new json object to store device ID, variable path, and data to update the variable to.
+  Var jsonObject;
+  jsonObject["deviceID"] = _deviceId;
   jsonObject["path"] = path;
-
-  // Add data
   jsonObject["data"] = data;
 
-  // Conver the object to string
-  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
+  // Creating a string.
+  char jsonString[MESSAGE_SIZE];
+  // Parsing json object to json string.
+  JSON.stringify(jsonObject).toCharArray(jsonString, MESSAGE_SIZE);
 
-  // Send 
-  _duplex.send("/device/data/set", jsonString, callback);
+  // Sending the packet and scheduling callback.
+  _duplex->send("/device/data/set", jsonString, cb);
 }
 
-Event Data::on(const char* path, Callback callback) {
-  // Place an event handler on path update
-  // Create a new json object
+void Grandeur::Project::Device::Data::set(const char* path, Var data) {
+  // Creating a new json object to store device ID, variable path, and data to update the variable to.
   Var jsonObject;
+  jsonObject["deviceID"] = _deviceId;
+  jsonObject["path"] = path;
+  jsonObject["data"] = data;
 
-  // Create packet
-  char jsonString[PACKET_SIZE];
+  // Creating a string.
+  char jsonString[MESSAGE_SIZE];
+  // Parsing json object to json string.
+  JSON.stringify(jsonObject).toCharArray(jsonString, MESSAGE_SIZE);
 
-  // Add device id
-  jsonObject["deviceID"] = _deviceID;
+  // Sending the packet and scheduling callback.
+  _duplex->send("/device/data/set", jsonString, NULL);
+}
 
-  // Add path 
+Grandeur::Project::Device::Event Grandeur::Project::Device::Data::on(const char* path, Callback cb) {
+  // Creating a new json object to store device ID and variable path.
+  Var jsonObject;
+  jsonObject["deviceID"] = _deviceId;
+  jsonObject["event"] = "data";
   jsonObject["path"] = path;
 
-  // Add data
-  jsonObject["event"] = "data";
-
-  // Conver the object to string
-  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
-
-  // Convert path to string
-  std::string p(path);
-
-  // Formulate the event
-  std::string event = "data/" + p;
-
+  // Creating a string.
+  char jsonString[MESSAGE_SIZE];
+  // Parsing json object to json string.
+  JSON.stringify(jsonObject).toCharArray(jsonString, MESSAGE_SIZE);
   // Send 
-  gID packetID = _duplex.subscribe(event.c_str(), jsonString, callback);
+  gId eventId = _duplex->subscribe(("data/" + String(path)).c_str(), jsonString, cb);
 
-  // Return an event
-  return Event(_deviceID, _duplex, packetID, path);
+  // Return the event object to let the user unsubscribe to this event at a later time.
+  return Event(_deviceId, _duplex, eventId, path);
 }

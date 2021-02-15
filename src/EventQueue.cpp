@@ -106,7 +106,7 @@ int EventQueue::remove(EventID id) {
   return 0;
 }
 
-void EventQueue::forEach(void (*callback)(EventID, EventKey, EventPayload, Callback)) {
+void EventQueue::forEach(std::function<void(EventID, EventKey, EventPayload, Callback)> callback) {
   // Loop over the queue
   EventQueueEntry* p = queue;
 

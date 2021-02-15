@@ -8,18 +8,14 @@
  *
  */
 
-#include "Device.h"
+#include "Grandeur.h"
 
-// Constructor
-Device::Device(String deviceID, DuplexHandler duplexHandler) {
-  _duplex = duplexHandler;
-  _deviceID = deviceID;
-}
+Grandeur::Project::Device::Device() {}
 
-Device::Device() {}
+Grandeur::Project::Device::Device(DuplexHandler* duplexHandler, String deviceId)
+: _duplex(duplexHandler), _deviceId(deviceId) {}
 
-// Return reference to data
-Data Device::data() {
-  // Return new device class object
-  return Data(_deviceID, _duplex);
+Grandeur::Project::Device::Data Grandeur::Project::Device::data() {
+  // Returning reference device's data.
+  return Data(_duplex, _deviceId);
 }

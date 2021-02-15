@@ -9,83 +9,75 @@
  */
 
 // Including headers
-#include "Datastore.h"
+#include "Grandeur.h"
 
-Datastore::Datastore(DuplexHandler duplexHandler) {
-  // Store reference to duplex into context
-  _duplex = duplexHandler;
-}
+Grandeur::Project::Datastore::Datastore() {}
 
-Datastore::Datastore() {
-  // Default constructor
-}
+Grandeur::Project::Datastore::Datastore(DuplexHandler* duplexHandler) : _duplex(duplexHandler) {}
 
-Collection Datastore::collection(String name) {
+Grandeur::Project::Datastore::Collection Grandeur::Project::Datastore::collection(String name) {
   // Return a reference to collection object
   return Collection(name, _duplex);
 }
 
-Collection::Collection(String name, DuplexHandler duplexHandler) {
-  // Store name of collection and reference to object
-  _name = name;
-  _duplex = duplexHandler;
-}
+Grandeur::Project::Datastore::Collection::Collection(String name, DuplexHandler* duplexHandler)
+  : _name(name), _duplex(duplexHandler) {}
 
-void Collection::insert(Var documents, Callback inserted) {
+void Grandeur::Project::Datastore::Collection::insert(Var documents, Callback inserted) {
   // Insert documents to datastore
   Var jsonObject;
 
   // Define string
-  char jsonString[PACKET_SIZE];
+  char jsonString[MESSAGE_SIZE];
   
   // Append collection name and documents
   jsonObject["collection"] = _name;
   jsonObject["documents"] = documents;
   
   // Convert to string
-  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
+  JSON.stringify(jsonObject).toCharArray(jsonString, MESSAGE_SIZE);
 
   // Send request to server
-  _duplex.send("/datastore/insert", jsonString, inserted);
+  _duplex->send("/datastore/insert", jsonString, inserted);
 }
 
-void Collection::remove(Var filter, Callback removed) {
+void Grandeur::Project::Datastore::Collection::remove(Var filter, Callback removed) {
   // Remove documents from datastore
   Var jsonObject;
 
   // Define string
-  char jsonString[PACKET_SIZE];
+  char jsonString[MESSAGE_SIZE];
   
   // Append collection name and filter
   jsonObject["collection"] = _name;
   jsonObject["filter"] = filter;
   
   // Convert to string
-  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
+  JSON.stringify(jsonObject).toCharArray(jsonString, MESSAGE_SIZE);
 
   // Send request to server
-  _duplex.send("/datastore/delete", jsonString, removed);
+  _duplex->send("/datastore/delete", jsonString, removed);
 }
 
-void Collection::update(Var filter, Var update, Callback updated) {
+void Grandeur::Project::Datastore::Collection::update(Var filter, Var update, Callback updated) {
   // Update document from datastore
   Var jsonObject;
 
   // Define string
-  char jsonString[PACKET_SIZE];
+  char jsonString[MESSAGE_SIZE];
   
   // Append collection name, filter and update
   jsonObject["collection"] = _name;
   jsonObject["filter"] = filter;
   
   // Convert to string
-  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
+  JSON.stringify(jsonObject).toCharArray(jsonString, MESSAGE_SIZE);
 
   // Send request to server
-  _duplex.send("/datastore/update", jsonString, updated);
+  _duplex->send("/datastore/update", jsonString, updated);
 }
 
-void Collection::search(Var filter, Var projection, int nPage, Callback searched) {
+void Grandeur::Project::Datastore::Collection::search(Var filter, Var projection, int nPage, Callback searched) {
   // Basically it will use pipeline
   Pipeline searchPipeline = Pipeline(_name, {}, _duplex).match(filter);
 
@@ -99,19 +91,18 @@ void Collection::search(Var filter, Var projection, int nPage, Callback searched
   return searchPipeline.execute(nPage, searched);
 }
 
-Pipeline Collection::pipeline(void) {
+Grandeur::Project::Datastore::Collection::Pipeline Grandeur::Project::Datastore::Collection::pipeline(void) {
   // Return a reference to pipeline
   return Pipeline(_name, undefined, _duplex);
 }
 
-Pipeline::Pipeline(String collection, Var query, DuplexHandler duplexHandler) {
-  // Setup the context
-  _collection = collection;
-  _query = query;
-  _duplex = duplexHandler;
-}
+Grandeur::Project::Datastore::Collection::Pipeline::Pipeline(
+  String collection,
+  Var query,
+  DuplexHandler* duplexHandler
+) : _collection(collection), _query(query), _duplex(duplexHandler) {}
 
-Pipeline Pipeline::match(Var filter) {
+Grandeur::Project::Datastore::Collection::Pipeline Grandeur::Project::Datastore::Collection::Pipeline::match(Var filter) {
   // Add match stage to the pipeline
   int stage = _query.length() + 1;
 
@@ -123,7 +114,7 @@ Pipeline Pipeline::match(Var filter) {
   return Pipeline(_collection, _query, _duplex);
 }
 
-Pipeline Pipeline::project(Var specs) {
+Grandeur::Project::Datastore::Collection::Pipeline Grandeur::Project::Datastore::Collection::Pipeline::project(Var specs) {
   // Add project stage to the pipeline
   int stage = _query.length() + 1;
 
@@ -135,7 +126,7 @@ Pipeline Pipeline::project(Var specs) {
   return Pipeline(_collection, _query, _duplex);
 }
 
-Pipeline Pipeline::group(Var condition, Var fields) {
+Grandeur::Project::Datastore::Collection::Pipeline Grandeur::Project::Datastore::Collection::Pipeline::group(Var condition, Var fields) {
   // Add group stage to the pipeline
   int stage = _query.length() + 1;
 
@@ -148,7 +139,7 @@ Pipeline Pipeline::group(Var condition, Var fields) {
   return Pipeline(_collection, _query, _duplex);
 }
 
-Pipeline Pipeline::sort(Var specs) {
+Grandeur::Project::Datastore::Collection::Pipeline Grandeur::Project::Datastore::Collection::Pipeline::sort(Var specs) {
   // Add sort stage to the pipeline
   int stage = _query.length() + 1;
 
@@ -160,12 +151,12 @@ Pipeline Pipeline::sort(Var specs) {
   return Pipeline(_collection, _query, _duplex);
 }
 
-void Pipeline::execute(int nPage, Callback executed) {
+void Grandeur::Project::Datastore::Collection::Pipeline::execute(int nPage, Callback executed) {
   // Define an object
   Var jsonObject;
 
   // Define string
-  char jsonString[PACKET_SIZE];
+  char jsonString[MESSAGE_SIZE];
 
   // Formulate query
   jsonObject["collection"] = _collection;
@@ -173,8 +164,8 @@ void Pipeline::execute(int nPage, Callback executed) {
   jsonObject["nPage"] = nPage;
 
   // Convert query to string
-  JSON.stringify(jsonObject).toCharArray(jsonString, PACKET_SIZE);
+  JSON.stringify(jsonObject).toCharArray(jsonString, MESSAGE_SIZE);
 
   // Send to server
-  _duplex.send("/datastore/pipeline", jsonString, executed);
+  _duplex->send("/datastore/pipeline", jsonString, executed);
 }
