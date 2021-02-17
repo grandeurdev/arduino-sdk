@@ -8,7 +8,7 @@
  *
  */
 
-#include "grandeurmacros.h"
+#include "macros.h"
 #include "Var.h"
 #include "Callback.h"
 
@@ -42,8 +42,20 @@ class Config {
     String token;
 
     // Constructor
-    Config(String apiKey, String token);
-    Config();
+    Config() : apiKey(""), token("") {};
+    Config(String apiKey, String token) : apiKey(apiKey), token(token) {};
+};
+
+// Data structure to store data in Buffer.
+struct BufferEntry {
+  gId id;
+  char message[MESSAGE_SIZE]; // Full packet containing task and payload after being stringified.
+  Callback callback;
+
+  BufferEntry(gId id, const char* message, Callback cb) : id(id) {
+    strcpy(this->message, message);
+    this->callback = cb;
+  }
 };
 
 class Message {

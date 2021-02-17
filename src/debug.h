@@ -1,8 +1,10 @@
 // Debugging macros
 #define DEBUG 0
-#define DEBUG__WEBSOCKETS 0
-#if DEBUG
+#define DEBUG_WS 1
+#if DEBUG || DEBUG_WS
   #define DEBUG_PORT Serial
+#endif /* DEBUG || DEBUG_WS */
+#if DEBUG
   #define DEBUG_GRANDEUR(format, args...) \
       DEBUG_PORT.printf(("[GRANDEUR-DEBUG] " + String(format) + "\n").c_str(), ##args)
   #else

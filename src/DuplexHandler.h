@@ -9,11 +9,11 @@
  */
 
 // Including headers
+#include "types.h"
+#include "macros.h"
 #include "EventEmitter/EventEmitter.h"
-#include "EventQueue.h"
-#include "grandeurtypes.h"
-#include "grandeurmacros.h"
 #include "arduinoWebSockets/WebSocketsClient.h"
+#include <list>
 
 #ifndef DUPLEXHANDLER_H_
 #define DUPLEXHANDLER_H_
@@ -45,11 +45,11 @@ class DuplexHandler {
 
     void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length);
 
-    // Event Queue
-    EventQueue _queue;
+    // Packets buffer
+    std::list<BufferEntry> _buffer;
 
     // Define function to handle the queued events
-    void handle(EventID id, EventKey key, EventPayload payload, Callback callback);
+    void handle(EventID id, const char* message, Callback callback);
 
   public:
     // Constructor

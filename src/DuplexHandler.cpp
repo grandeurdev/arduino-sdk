@@ -72,13 +72,6 @@ void DuplexHandler::send(const char* task, const char* payload, Callback cb) {
   // Generate message id
   gId messageId = gid();
 
-  // Checking connection status
-  if(_status != CONNECTED) {
-    // Append the packet to queue
-    _queue.push(messageId, task, payload, cb);
-    return;
-  }
-
   // Creating new message.
   char message[MESSAGE_SIZE];
   // Adding task.
@@ -88,6 +81,13 @@ void DuplexHandler::send(const char* task, const char* payload, Callback cb) {
   snprintf(message, MESSAGE_SIZE,
         "{\"header\": {\"id\": %lu, \"task\": \"%s\"}, \"payload\": %s}", messageId, task, payload);
   
+  // Checking connection status
+  if(_status != CONNECTED) {
+    // Append the packet to queue
+    _buffer.push_back({messageId, message, cb});
+    return;
+  }
+
   // Sending.
   _client.sendTXT(message);
 }
@@ -98,13 +98,6 @@ gId DuplexHandler::subscribe(const char* topic, const char* payload, Callback up
 
   // Saving callback to subscriptions Table
   _subscriptions.on(String(messageId), updateHandler);
-
-  // Append the packet to queue because in case of queue
-  // the packet will always be queue either we are connected
-  // or disconnected
-  // This is being done to handle case where we were connected
-  // the subscribed to some events and got disconnected
-  _queue.push(messageId, "/topic/subscribe", payload, NULL);
   
   // Check connection status
   if(_status != CONNECTED) {
@@ -124,6 +117,13 @@ gId DuplexHandler::subscribe(const char* topic, const char* payload, Callback up
   // Sending.
   _client.sendTXT(message);
 
+  // Append the packet to queue because in case of queue
+  // the packet will always be queue either we are connected
+  // or disconnected
+  // This is being done to handle case where we were connected
+  // the subscribed to some events and got disconnected
+  _buffer.push_back({messageId, message, NULL});
+
   // Return the message Id
   return messageId;
 }
@@ -135,10 +135,8 @@ void DuplexHandler::unsubscribe(gId id, const char* payload) {
   // Removing event from subscriptions
   _subscriptions.off(String(id));
 
-  // Pushing unsub to queue.
-  _queue.push(messageId, "/topic/unsubscribe", payload, NULL);
   // and remove subscription from queue.
-  _queue.remove(id);
+  _buffer.remove_if([=](BufferEntry entry) { return entry.id == id; });
   
   // Check connection status
   if(_status != CONNECTED) {
@@ -159,27 +157,20 @@ void DuplexHandler::unsubscribe(gId id, const char* payload) {
   
   // Sending.
   _client.sendTXT(message);
+
+  // Pushing unsub to queue.
+  _buffer.push_back({messageId, message, NULL});
 }
 
 // Define the handle function
-void DuplexHandler::handle(EventID id, EventKey key, EventPayload payload, Callback callback) {
+void DuplexHandler::handle(EventID id, const char* message, Callback callback) {
   // Check connection status
   if(_status != CONNECTED) {
     return ;
   }
-
-  // Creating a new message.
-  char message[MESSAGE_SIZE];
-
   // Scheduling task.
   _tasks.once(String(id), callback);
-
-  // Preparing the message.
-  snprintf(message, MESSAGE_SIZE,
-      "{\"header\": {\"id\": %lu, \"task\": \"%s\"}, \"payload\": %s}",
-      id, key.c_str(), payload.c_str());
-  
-  // Sending.
+  // Sending the message.
   _client.sendTXT(message);
 }
 
@@ -209,9 +200,9 @@ void DuplexHandler::duplexEventHandler(WStype_t eventType, uint8_t* packet, size
       millisCounterForPing = millis();
 
       // Handle the queued events
-      _queue.forEach([=](EventID id, EventKey key, EventPayload payload, Callback cb) {
-        handle(id, key, payload, cb);
-      });
+      for(BufferEntry entry : _buffer) {
+        handle(entry.id, entry.message, entry.callback);
+      }
 
       return ;
 
@@ -300,7 +291,9 @@ void DuplexHandler::duplexEventHandler(WStype_t eventType, uint8_t* packet, size
       if (task == "/topic/subscribe");
       else {
         // but if it is not of subscribe type
-        DuplexHandler::_queue.remove((gId) (int) messageObject["header"]["id"]);
+        _buffer.remove_if([=](BufferEntry entry) {
+          return entry.id == ((gId) (int) messageObject["header"]["id"]);
+        });
       }
       return;
   }
