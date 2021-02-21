@@ -47,41 +47,11 @@ class Config {
 };
 
 // Data structure to store data in Buffer.
-struct BufferEntry {
+struct Message {
   gId id;
-  char message[MESSAGE_SIZE]; // Full packet containing task and payload after being stringified.
-  Callback callback;
+  String str; // Full packet containing task and payload after being stringified.
 
-  BufferEntry(gId id, const char* message, Callback cb) : id(id) {
-    strcpy(this->message, message);
-    this->callback = cb;
-  }
+  Message(gId id, String message) : id(id), str(message) {}
 };
 
-class Message {
-  private:
-    class Header {
-      public:
-        gId id;
-        char task[32];
-        Header();
-        Header(gId id, const char* task) : id(id) {
-          strcpy(this->task, (char*) task);
-        };
-    };
-
-  public:
-    Header header;
-    char payload[MESSAGE_SIZE];
-    char str[MESSAGE_SIZE];
-    Message(gId id, const char* task, const char* payload) {
-      this->header.id = id;
-      strcpy(this->header.task, (char*) task);
-      strcpy(this->payload, (char*) payload);
-
-      // Preparing the message.
-      snprintf(str, MESSAGE_SIZE, "{\"header\": {\"id\": %lu, \"task\": \"%s\"}, \"payload\": %s}",
-          header.id, header.task, this->payload);
-    }
-};
 #endif

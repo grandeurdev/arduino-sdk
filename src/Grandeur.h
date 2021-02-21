@@ -139,7 +139,26 @@ class Grandeur::Project::Datastore {
 
     // Class that models a datastore collection.
     class Collection {
+      private:
+        // Stores reference to duplex channel we are connected through to Grandeur.
+        DuplexHandler* _duplex;
+        // Stores name of collection
+        String _name;
+
       public:
+        // Constructor
+        Collection(String name, DuplexHandler* duplexHandler);
+
+        // Inserts documents.
+        void insert(Var documents, Callback inserted);
+        // Removes documents matching the filter.
+        void remove(Var filter, Callback removed);
+        // Updates documents matching the filter.
+        void update(Var filter, Var update, Callback updated);
+        // Performs a search a search on all documents.
+        void search(Var filter, Var projection, int nPage, Callback searched);
+
+        
         // Class that forms a pipeline of datastore collection operations to send them all at once
         // to Grandeur.
         class Pipeline {
@@ -166,26 +185,8 @@ class Grandeur::Project::Datastore {
             // Execute the query by sending function 
             void execute(int nPage, Callback executed);
         };
-      private:
-        // Stores reference to duplex channel we are connected through to Grandeur.
-        DuplexHandler* _duplex;
-        // Stores name of collection
-        String _name;
 
-      public:
-        // Constructor
-        Collection(String name, DuplexHandler* duplexHandler);
-
-        // Inserts documents.
-        void insert(Var documents, Callback inserted);
-        // Removes documents matching the filter.
-        void remove(Var filter, Callback removed);
-        // Updates documents matching the filter.
-        void update(Var filter, Var update, Callback updated);
-        // Performs a search a search on all documents.
-        void search(Var filter, Var projection, int nPage, Callback searched);
-
-        // Constructor
+        // Returns a new query pipeline.
         Pipeline pipeline(void);
     };
     // Gets reference to a particular collection of documents.

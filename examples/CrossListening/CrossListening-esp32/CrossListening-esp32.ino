@@ -40,8 +40,8 @@ int voltagePin = 2;
 void WiFiEventCallback(WiFiEvent_t event);
 void setupWiFi(void);
 void connectionCallback(bool state);
-void initializeState(Var getResult);
-void stateUpdatedCallback(bool state, const char* path);
+void initializeState(const char* code, bool state);
+void stateUpdatedCallback(const char* path, bool state);
 void voltageSetCallback(Var setResult);
 
 void setup() {

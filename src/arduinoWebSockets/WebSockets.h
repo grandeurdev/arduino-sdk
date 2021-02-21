@@ -43,7 +43,7 @@
 #endif
 
 #if DEBUG_WS
-#define DEBUG_ESP_PORT DEBUG_PORT
+#define DEBUG_ESP_PORT Serial
 #endif /* DEBUG */
 #ifndef NODEBUG_WEBSOCKETS
 #ifdef DEBUG_ESP_PORT
