@@ -64,15 +64,14 @@ Message DuplexHandler::prepareMessage(const char* task) {
   return {messageId, JSON.stringify(oMessage)};
 }
 
-Message DuplexHandler::prepareMessage(const char* task, const char* payload) {
+Message DuplexHandler::prepareMessage(const char* task, Var payload) {
   // Generate a new message id.
   gId messageId = gid();
   // Creating new message.
   Var oMessage;
   oMessage["header"]["id"] = messageId;
   oMessage["header"]["task"] = task;
-  Var oPayload = JSON.parse(payload);
-  oMessage["payload"] = oPayload;
+  oMessage["payload"] = payload;
 
   // Preparing message string.
   String message = JSON.stringify(oMessage);
@@ -81,7 +80,7 @@ Message DuplexHandler::prepareMessage(const char* task, const char* payload) {
   return {messageId, message};
 }
 
-void DuplexHandler::sendMessage(gId messageId, const char* message) {
+void DuplexHandler::sendMessage(const char* message) {
   // Returning if channel isn't alive.
   if(_status != CONNECTED) return;
 
@@ -107,12 +106,12 @@ Message DuplexHandler::send(const char* task, Callback cb) {
   }
 
   // Sending message.
-  sendMessage(message.id, message.str.c_str());
+  sendMessage(message.str.c_str());
 
   return {message.id, message.str};
 }
 
-Message DuplexHandler::send(const char* task, const char* payload, Callback cb) {
+Message DuplexHandler::send(const char* task, Var payload, Callback cb) {
   // Preparing a new message.
   Message message = prepareMessage(task, payload);
 
@@ -126,7 +125,7 @@ Message DuplexHandler::send(const char* task, const char* payload, Callback cb) 
   }
 
   // Sending message.
-  sendMessage(message.id, message.str.c_str());
+  sendMessage(message.str.c_str());
 
   return {message.id, message.str};
 }
@@ -138,11 +137,18 @@ void DuplexHandler::receive(Var header, Var payload) {
   const char* code = payload["code"];
   
   // Extracting data.
-  Var data;
+  Var data = null;
   // Response to Get has data in payload["data"].
   if(strcmp(task, "/device/data/get") == 0) data = payload["data"];
   // Response to Set has data in payload["update"].
   else if(strcmp(task, "/device/data/set") == 0) data = payload["update"];
+  // For datastore, we delete code and message from the payload and send the rest.
+  else if(strcmp(task, "/datastore/insert") == 0 || strcmp(task, "/datastore/delete") == 0 ||
+    strcmp(task, "/datastore/update") == 0 || strcmp(task, "/datastore/pipeline") == 0) {
+    data = payload;
+    data["code"] = undefined;
+    data["message"] = undefined;
+  }
 
   DEBUG_GRANDEUR( "Response message:: code: %s, data: %s.", code, JSON.stringify(data).c_str() );
 
@@ -163,6 +169,10 @@ void DuplexHandler::publish(const char* event, const char* path, Var data) {
   // If it's update for device data, emit on the pattern "event/path". So that the listeners
   // subscribing to "event/"" get the update for "event/path" as well.
   if(strcmp(event, "data") == 0) {
+    DEBUG_GRANDEUR("Number of listeners: %d.", _subscriptions.getNListeners());
+    String* events = _subscriptions.eventNames();
+    for(int i = 0; i < _subscriptions.getNListeners(); i++)
+      DEBUG_GRANDEUR("Topic is: %s.", (String(event) + "/" + String(path)).c_str());
     _subscriptions.pEmit( String(event) + "/" + String(path), path, data );
     return;
   }
@@ -172,13 +182,13 @@ void DuplexHandler::publish(const char* event, const char* path, Var data) {
   return;
 }
 
-gId DuplexHandler::subscribe(const char* topic, const char* payload, Callback updateHandler) {
+gId DuplexHandler::subscribe(const char* topic, Var payload, Callback updateHandler) {
   DEBUG_GRANDEUR("Subscribing to topic:: %s.", topic);
 
   // Sending subscription request.
   Message message = send("/topic/subscribe", payload, NULL);
   // Setting update handler.
-  _subscriptions.on(String(message.id), updateHandler);
+  _subscriptions.on(String(topic), updateHandler);
   // Buffer subscription request message regardless of connection/disconnection to handle the case
   // of subscribing, disconnecting, and reconnecting without record of previous subscriptions.
   buffer(message.id, message.str);
@@ -187,13 +197,14 @@ gId DuplexHandler::subscribe(const char* topic, const char* payload, Callback up
   return message.id;
 }
 
-void DuplexHandler::unsubscribe(gId eventId, const char* payload) {
-  DEBUG_GRANDEUR("Unsubscribing from topic:: %s.", payload);
+void DuplexHandler::unsubscribe(const char* topic, gId eventId, Var payload) {
+  DEBUG_GRANDEUR("Unsubscribing from topic:: %s.", JSON.stringify(payload).c_str());
 
   // Sending unsubscription request to Grandeur. and remove subscription request message from buffer for future reconnection.
-  send("/topic/subscribe", payload, NULL);
+  send("/topic/unsubscribe", payload, NULL);
   // Unset the update handler
-  _subscriptions.off(String(eventId));
+  _subscriptions.off(String(topic));
+  // Debuffer the subscription packet.
   debuffer(eventId);
 }
 
@@ -251,7 +262,7 @@ void DuplexHandler::duplexEventHandler(WStype_t eventType, uint8_t* message, siz
         _tasks.emit((gId) header["id"], "", undefined);
       // If it is an update event rather than a task (response message).
       else if(strcmp(task, "update") == 0)
-        publish(payload["event"], payload["path"], payload["data"]);
+        publish(payload["event"], payload["path"], payload["update"]);
       // Otherwise: It's a response message for a task. So we receive it.
       else {
         receive(header, payload);
@@ -277,7 +288,7 @@ void DuplexHandler::flushBuffer() {
   // Iterating through the _buffer sending each message.
   for (std::map<gId, String>::iterator it = _buffer.begin(); it != _buffer.end(); it++) {
     DEBUG_GRANDEUR("Flushing:: Id: %lu, Message: %s.", it->first, it->second.c_str());
-    sendMessage(it->first, it->second.c_str());
+    sendMessage(it->second.c_str());
   }
 }
 

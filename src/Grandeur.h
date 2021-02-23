@@ -81,13 +81,14 @@ class Grandeur::Project::Device {
         // Stores reference to duplex channel we are connected through to Grandeur.
         DuplexHandler* _duplex;
         String _deviceId;
-        gId _id;
+        String _event;
         String _path;
+        gId _id;
 
       public:
         // Constructor
         Event();
-        Event(String deviceId, DuplexHandler* duplexHandler, gId id, String path);
+        Event(DuplexHandler* duplexHandler, String deviceId, String event, String path, gId id);
 
         // Clear method
         void clear();

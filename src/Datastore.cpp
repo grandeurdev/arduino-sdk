@@ -25,56 +25,35 @@ Grandeur::Project::Datastore::Collection::Collection(String name, DuplexHandler*
 
 void Grandeur::Project::Datastore::Collection::insert(Var documents, Callback inserted) {
   // Insert documents to datastore
-  Var jsonObject;
-
-  // Define string
-  char jsonString[MESSAGE_SIZE];
-  
+  Var oPayload;
   // Append collection name and documents
-  jsonObject["collection"] = _name;
-  jsonObject["documents"] = documents;
-  
-  // Convert to string
-  JSON.stringify(jsonObject).toCharArray(jsonString, MESSAGE_SIZE);
+  oPayload["collection"] = _name;
+  oPayload["documents"] = documents;
 
   // Send request to server
-  _duplex->send("/datastore/insert", jsonString, inserted);
+  _duplex->send("/datastore/insert", oPayload, inserted);
 }
 
 void Grandeur::Project::Datastore::Collection::remove(Var filter, Callback removed) {
   // Remove documents from datastore
-  Var jsonObject;
-
-  // Define string
-  char jsonString[MESSAGE_SIZE];
-  
+  Var oPayload;
   // Append collection name and filter
-  jsonObject["collection"] = _name;
-  jsonObject["filter"] = filter;
-  
-  // Convert to string
-  JSON.stringify(jsonObject).toCharArray(jsonString, MESSAGE_SIZE);
+  oPayload["collection"] = _name;
+  oPayload["filter"] = filter;
 
   // Send request to server
-  _duplex->send("/datastore/delete", jsonString, removed);
+  _duplex->send("/datastore/delete", oPayload, removed);
 }
 
 void Grandeur::Project::Datastore::Collection::update(Var filter, Var update, Callback updated) {
   // Update document from datastore
-  Var jsonObject;
-
-  // Define string
-  char jsonString[MESSAGE_SIZE];
-  
+  Var oPayload;
   // Append collection name, filter and update
-  jsonObject["collection"] = _name;
-  jsonObject["filter"] = filter;
-  
-  // Convert to string
-  JSON.stringify(jsonObject).toCharArray(jsonString, MESSAGE_SIZE);
+  oPayload["collection"] = _name;
+  oPayload["filter"] = filter;
 
   // Send request to server
-  _duplex->send("/datastore/update", jsonString, updated);
+  _duplex->send("/datastore/update", oPayload, updated);
 }
 
 void Grandeur::Project::Datastore::Collection::search(Var filter, Var projection, int nPage, Callback searched) {
@@ -153,19 +132,12 @@ Grandeur::Project::Datastore::Collection::Pipeline Grandeur::Project::Datastore:
 
 void Grandeur::Project::Datastore::Collection::Pipeline::execute(int nPage, Callback executed) {
   // Define an object
-  Var jsonObject;
-
-  // Define string
-  char jsonString[MESSAGE_SIZE];
-
+  Var oPayload;
   // Formulate query
-  jsonObject["collection"] = _collection;
-  jsonObject["pipeline"] = _query;
-  jsonObject["nPage"] = nPage;
-
-  // Convert query to string
-  JSON.stringify(jsonObject).toCharArray(jsonString, MESSAGE_SIZE);
+  oPayload["collection"] = _collection;
+  oPayload["pipeline"] = _query;
+  oPayload["nPage"] = nPage;
 
   // Send to server
-  _duplex->send("/datastore/pipeline", jsonString, executed);
+  _duplex->send("/datastore/pipeline", oPayload, executed);
 }

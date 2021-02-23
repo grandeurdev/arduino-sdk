@@ -1,61 +1,71 @@
 /**
  * @file DashListening-Device-esp32.ino
- * @date 24.03.2020
+ * @date 21.02.2021
  * @author Grandeur Technologies
  *
- * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
+ * Copyright (c) 2021 Grandeur Technologies Inc. All rights reserved.
  * This file is part of the Arduino SDK for Grandeur.
  *
- * Grandeur.h is used for device's communication to Grandeur.
+ * Grandeur.h is used for device's communication with Grandeur.
  * WiFi.h is used for handling device's WiFi.
  * 
  * Dash listening is for one-way listening.
  * This example illustrates the use case of a device listening for updates from the app.
  * It would be useful in building an INTERNET SWITCH to help you control your device without
  * caring about how your device responds to your commands.
+ * 
+ * After uploading this sketch to your ESP, go to https://canvas.grandeur.tech and add a button
+ * to control the state variable.
 */
 
 #include <Grandeur.h>
 #include <WiFi.h>
 
-// Device's connection configurations
+// Device's connection configurations:
 String apiKey = "YOUR-PROJECT-APIKEY";
 String deviceID = "YOUR-DEVICE-ID";
 String token = "YOUR-ACCESS-TOKEN";
 const char* ssid = "YOUR-WIFI-SSID";
 const char* passphrase = "YOUR-WIFI-PASSWORD";
 
-// Declaring and initializing other variables
-Project myProject;
-Device myDevice;
+// Handles our 5 second timer in loop().
+unsigned long currentTime = millis();
+// Object of Grandeur project.
+Grandeur::Project project;
+// Device data object to get/set/subscribe to device variables.
+Grandeur::Project::Device::Data data;
+// State pin to set.
 int statePin = 4;
 
-// Function prototypes
+// FUNCTION PROTOTYPES:
+// Handles WiFi connection/disconnection events.
 void WiFiEventCallback(WiFiEvent_t event);
-void setupWiFi(void);
-void connectionCallback(bool state);
-void initializeState(Var getResult);
-void stateUpdatedCallback(bool state, const char* path);
+// Starts the device WiFi.
+void startWiFi(void);
+// Handles Grandeur connection/disconnection events.
+void GrandeurConnectionCallback(bool state);
+// Data get/set/update callback functions:
+void initializeStatePin(const char* code, bool state);
+void setStatePinToNewValue(const char* path, bool state);
 
 void setup() {
   Serial.begin(9600);
-  // This sets up the device WiFi.
-  setupWiFi();
-  // This initializes the SDK's configurations and returns a reference to object of the Project class.
-  myProject = grandeur.init(apiKey, token);
-  // Getting reference to object of Device class.
-  myDevice = myProject.device(deviceID);
-  // This schedules the connectionCallback() function to be called when connection with Grandeur
+  startWiFi();
+  // This initializes the SDK's configurations and returns reference to your project.
+  project = grandeur.init(apiKey, token);
+  // Getting object of your device data.
+  data = project.device(deviceID).data();
+  // This schedules the GrandeurConnectionCallback() function to be called when connection with Grandeur
   // is made/broken.
-  myProject.onConnection(connectionCallback);
-  // This schedules stateUpdatedCallback() function to be called when state variable
-  // is changed on Grandeur.
-  myDevice.data().on("state", stateUpdatedCallback);
+  project.onConnection(GrandeurConnectionCallback);
+  // This schedules setStatePinToNewValue() function to be called when a change in device state occurs
+  // on Grandeur.
+  data.on("state", setStatePinToNewValue);
 }
 
 void loop() {
   // The SDK only runs when the WiFi is connected.
-  myProject.loop(WiFi.status() == WL_CONNECTED);
+  project.loop(WiFi.status() == WL_CONNECTED);
 }
 
 void WiFiEventCallback(WiFiEvent_t event) {
@@ -73,7 +83,7 @@ void WiFiEventCallback(WiFiEvent_t event) {
   }
 }
 
-void setupWiFi(void) {
+void startWiFi(void) {
   // Disconnecting WiFi if it"s already connected
   WiFi.disconnect();
   // Setting it to Station mode which basically scans for nearby WiFi routers
@@ -85,35 +95,41 @@ void setupWiFi(void) {
   Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid, passphrase);
 }
 
-void connectionCallback(bool status) {
+void GrandeurConnectionCallback(bool status) {
   switch(status) {
-    case CONNECTED:
-      // On successful connection with the cloud, we initialize the device's *state* pin.
-      // To do that, we get state variable from Grandeur and set the *state pin* to its value.
+    case CONNECTED: // Expands to true.
       Serial.println("Device is connected with Grandeur.");
-      myDevice.data().get("state", initializeState);
-      Serial.println("Listening for update in state...");
+      // On successful connection with Grandeur, we initialize the device's *state*.
+      // To do that, we get device state from Grandeur and set the *state pin* to its
+      // value.
+      data.get("state", initializeStatePin);
+      Serial.println("Listening for state update from Grandeur...");
+
+      // Initializing the millis counter for the five
+      // seconds timer.
+      currentTime = millis();
       break;
-    case DISCONNECTED:
+    case DISCONNECTED: // Expands to false.
       Serial.println("Device's connection with Grandeur is broken.");
       break;
   }
 }
 
-void initializeState(Var getResult) {
-  // This function sets the *state pin* to the *state value* that we received from Grandeur.
-  if(getResult["code"] == "DEVICE-DATA-FETCHED") {
-    int state = getResult["data"];
+void initializeStatePin(const char* code, bool state) {
+  // This function sets the *state pin* to the *state value* that we received in data
+  // from Grandeur.
+  if(code == "DEVICE-DATA-FETCHED") {
+    Serial.printf("State is: %d\n", state);
     digitalWrite(statePin, state);
     return;
   }
-  // If the state could not be fetched.
+  // If the data could not be fetched.
   Serial.println("Failed to Fetch State");
   return;
 }
 
-void stateUpdatedCallback(bool state, const char* path) {
-  // This function sets the *state pin* to *state value*.
+void setStatePinToNewValue(const char* path, bool state) {
+  // This function sets the *state pin* to state value.
   Serial.printf("Updated State is: %d\n", state);
-  digitalWrite(statePin, state); 
+  digitalWrite(statePin, state);
 }

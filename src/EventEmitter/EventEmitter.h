@@ -7,8 +7,12 @@
 template<typename EventName, typename Emitter>
 class EventEmitter {
 private:
-  // We use map to implement our event emitter.
-  std::multimap<EventName, Listener<Emitter>*> listeners;
+  // We use multimap to implement our event emitter.
+  using ListenersMap = std::multimap<EventName, Listener<Emitter>*>;
+  // We use a vector to store event names uniquely.
+  std::vector<EventName> events;
+
+  ListenersMap listeners;
 
 public:
   EventEmitter() {}
@@ -16,13 +20,8 @@ public:
   virtual ~EventEmitter() {}
   
   EventName* eventNames() {
-    // Using a vector to store event names as we do not know the number of keys.
-    std::vector<EventName> eventNames;
-    // Iterating through the listeners map adding each key to the keys vector.
-    for(typename std::multimap<EventName, Listener<Emitter>>::iterator it = listeners.begin(); it != listeners.end(); it = listeners.upper_bound(it->first))
-      eventNames.push_back(it->first);
     // Returning the array pointer from the vector.
-    return eventNames.data();
+    return events.data();
   }
 
   size_t getNListeners() {
@@ -33,21 +32,25 @@ public:
   void on(EventName eventName, Emitter emitter) {
     // Adding a new reusable listener to listeners map with event name.
     listeners.insert(std::pair<EventName, Listener<Emitter>*>(eventName, new Listener<Emitter>(emitter, false)));
+    events.push_back(eventName);
   }
 
   bool once(EventName eventName, Emitter emitter) {
     // Adding a new nonreusable listener to listeners map with event name.
     listeners.insert(std::pair<EventName, Listener<Emitter>*>(eventName, new Listener<Emitter>(emitter, true)));
+    events.push_back(eventName);
   }
 
-  size_t off(EventName eventName) {
+  void off(EventName eventName) {
     // Erasing listeners with event name from the listeners map and returning the number of them erased.
-    return listeners.erase(eventName);
+    listeners.erase(eventName);
+    events.erase(std::find(events.begin(), events.end(), eventName));
   }
 
   void offAll() {
     // Clearing the listeners map.
     listeners.clear();
+    events.clear();
   }
 
   template<typename ...T>

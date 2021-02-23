@@ -44,9 +44,9 @@ class DuplexHandler {
     void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length);
     // Prepares a message.
     Message prepareMessage(const char* task);
-    Message prepareMessage(const char* task, const char* payload);
+    Message prepareMessage(const char* task, Var payload);
     // Sends a generic duplex message.
-    void sendMessage(gId messageId, const char* message);
+    void sendMessage(const char* message);
     // Receives a message from duplex channel.
     void receive(Var header, Var payload);
     // Handles the update packet.
@@ -68,12 +68,12 @@ class DuplexHandler {
     void init(Config config);
     // Sends a message to duplex channel.
     Message send(const char* task, Callback cb);
-    Message send(const char* task, const char* payload, Callback cb);
+    Message send(const char* task, Var payload, Callback cb);
 
     // Subscribes to a topic.
-    gId subscribe(const char* topic, const char* payload, Callback updateHandler);
+    gId subscribe(const char* topic, Var payload, Callback updateHandler);
     // Unsubscribes from a topic.
-    void unsubscribe(gId eventId, const char* payload);
+    void unsubscribe(const char* topic, gId eventId, Var payload);
 
 
     // Schedules a connection handler function to be called when connection with Grandeur

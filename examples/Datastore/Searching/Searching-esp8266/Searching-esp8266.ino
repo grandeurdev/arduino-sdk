@@ -23,8 +23,8 @@ String ssid = "YOUR-WIFI-SSID";
 String passphrase = "YOUR-WIFI-PASSWORD";
 
 // Declaring and initializing other variables
-Project myProject;
-Datastore myDatastore;
+Grandeur::Project myProject;
+Grandeur::Project::Datastore myDatastore;
 WiFiEventHandler onWiFiConnectedHandler;
 WiFiEventHandler onWiFiDisconnectedHandler;
 int statePin = D0;
@@ -33,7 +33,7 @@ unsigned long current = millis();
 // Function prototypes
 void setupWiFi(void);
 void connectionCallback(bool status);
-void searchCallback(Var payload);
+void searchCallback(const char* code, Var result);
 
 void setup() {
   Serial.begin(9600);
@@ -99,7 +99,7 @@ void connectionCallback(bool status) {
   }
 }
 
-void searchCallback(Var searchResult) {
+void searchCallback(const char* code, Var result) {
   // This function prints if the datastore search for the docs was successfully or not.
   if(searchResult["code"] == "DATASTORE-DOCUMENTS-FETCHED") {
     Serial.print("Documents fetched from Grandeur: ");

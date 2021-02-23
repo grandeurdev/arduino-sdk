@@ -1,9 +1,9 @@
 /**
  * @file DashListening-App-esp8266.ino
- * @date 24.03.2020
+ * @date 21.02.2021
  * @author Grandeur Technologies
  *
- * Copyright (c) 2019 Grandeur Technologies LLP. All rights reserved.
+ * Copyright (c) 2021 Grandeur Technologies Inc. All rights reserved.
  * This file is part of the Arduino SDK for Grandeur.
  *
  * Grandeur.h is used for device's communication to Grandeur.
@@ -13,71 +13,78 @@
  * This example illustrates the use case of an app listening for updates from the device.
  * It would be useful in building a DEVICE MONITOR which would show how your devices are
  * behaving in terms of their energy units consumed for example.
+ * 
+ * After uploading this sketch to your ESP, go to https://canvas.grandeur.tech and add
+ * a display to monitor the voltage variable.
 */
 
 #include <Grandeur.h>
 #include <ESP8266WiFi.h>
 
-// Device's connection configurations
+// Device's connection configurations:
 String apiKey = "YOUR-PROJECT-APIKEY";
 String deviceID = "YOUR-DEVICE-ID";
 String token = "YOUR-ACCESS-TOKEN";
-String ssid = "YOUR-WIFI-SSID";
-String passphrase = "YOUR-WIFI-PASSWORD";
+const char* ssid = "YOUR-WIFI-SSID";
+const char* passphrase = "YOUR-WIFI-PASSWORD";
 
-// Declaring and initializing other variables
-unsigned long current = millis();
-Project myProject;
-Device myDevice;
+// Handles our 5 second timer in loop().
+unsigned long currentTime = millis();
+// Object of Grandeur project.
+Grandeur::Project project;
+// Device data object to get/set/subscribe to device variables.
+Grandeur::Project::Device::Data data;
+// State and voltage pins to set.
+int statePin = 4;
+int voltagePin = 2;
+
+// FUNCTION PROTOTYPES:
+// Handles WiFi connection/disconnection events.
 WiFiEventHandler onWiFiConnectedHandler;
 WiFiEventHandler onWiFiDisconnectedHandler;
-int statePin = D0;
-int voltagePin = A0;
-
-// Function prototypes
-void setupWiFi(void);
-void connectionCallback(bool state);
-void initializeState(Var getResult);
-void voltageSetCallback(Var setResult);
+// Starts the device WiFi.
+void startWiFi(void);
+// Handles Grandeur connection/disconnection events.
+void GrandeurConnectionCallback(bool state);
+// Function to call when acknowledgement for voltage update arrives from Grandeur.
+void afterVoltageIsUpdated(const char* code, int voltage);
 
 void setup() {
   Serial.begin(9600);
-  // This sets up the device WiFi.
-  setupWiFi();
-  // This initializes the SDK's configurations and returns a new object of Project class.
-  myProject = grandeur.init(apiKey, token);
-  // Getting object of Device class.
-  myDevice = myProject.device(deviceID);
-  // This schedules the connectionCallback() function to be called when connection with Grandeur
+  startWiFi();
+  // This initializes the SDK's configurations and returns reference to your project.
+  project = grandeur.init(apiKey, token);
+  // Getting object of your device data.
+  data = project.device(deviceID).data();
+  // This schedules the GrandeurConnectionCallback() function to be called when connection with Grandeur
   // is made/broken.
-  myProject.onConnection(connectionCallback);
+  project.onConnection(GrandeurConnectionCallback);
 }
 
 void loop() {
   // In this loop() function, after every five seconds, we send the updated values of our
-  // device's voltage and state to Grandeur.
-  if(myProject.isConnected()) {
-    if(millis() - current >= 5000) {
+  // device's voltage to Grandeur.
+  if(project.isConnected()) {
+    if(millis() - currentTime >= 5000) {
       // This if-condition makes sure that the code inside this block runs only after
       // every five seconds.
 
       Serial.println("Setting Voltage");
       int voltage = analogRead(voltagePin);
-      // This updates the voltage variable and schedules voltageSetCallback()
-      // function to be called when Grandeur acknowledges the update.
-      myDevice.data().set("voltage", voltage, voltageSetCallback);
+      // This updates the voltage of our device on Grandeur and schedules afterVoltageIsUpdated()
+      // function to be called when Grandeur responds with the DATA UPDATED message.
+      data.set("voltage", voltage, afterVoltageIsUpdated);
 
-      // This updates the millis counter for
-      // the five seconds scheduler.
-      current = millis();
+      // This updates the current time for the five seconds timer.
+      currentTime = millis();
     }
   }
 
   // This runs the SDK only when the WiFi is connected.
-  myProject.loop(WiFi.status() == WL_CONNECTED);
+  project.loop(WiFi.status() == WL_CONNECTED);
 }
 
-void setupWiFi(void) {
+void startWiFi(void) {
   // Disconnecting WiFi if it"s already connected
   WiFi.disconnect();
   // Setting it to Station mode which basically scans for nearby WiFi routers
@@ -97,39 +104,24 @@ void setupWiFi(void) {
   Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid.c_str(), passphrase.c_str());
 }
 
-void connectionCallback(bool state) {
-  switch(state) {
-    case CONNECTED:
-      // On successful connection with Grandeur, we initialize the device's *state*.
-      // To do that, we set the *state pin* to the value of *state* from Grandeur.
+void GrandeurConnectionCallback(bool status) {
+  switch(status) {
+    case CONNECTED: // Expands to true.
       Serial.println("Device is connected with Grandeur.");
-      myDevice.data().get("state", initializeState);
 
       // Initializing the millis counter for the five
       // seconds timer.
-      current = millis();
+      currentTime = millis();
       break;
-    case DISCONNECTED:
+    case DISCONNECTED: // Expands to false.
       Serial.println("Device's connection with Grandeur is broken.");
       break;
   }
 }
 
-void initializeState(Var getResult) {
-  // This function sets the *state pin* to the *state value*.
-  if(getResult["code"] == "DEVICE-DATA-FETCHED") {
-    int state = getResult["data"];
-    digitalWrite(statePin, state);
-    return;
-  }
-  // If the state could not be fetched.
-  Serial.println("Failed to Fetch State");
-  return;
-}
-
-void voltageSetCallback(Var setResult) {
-  if(setResult["code"] == "DEVICE-DATA-UPDATED") {
-    Serial.printf("Voltage is updated to: %d\n", (int) setResult["update"]);
+void afterVoltageIsUpdated(const char* code, int voltage) {
+  if(strcmp(code, "DEVICE-DATA-UPDATED") == 0) {
+    Serial.printf("Voltage is updated to: %d\n", voltage);
     
     /* You can set some pins or trigger events here which depend on successful
     ** voltage update.
