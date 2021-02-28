@@ -169,10 +169,6 @@ void DuplexHandler::publish(const char* event, const char* path, Var data) {
   // If it's update for device data, emit on the pattern "event/path". So that the listeners
   // subscribing to "event/"" get the update for "event/path" as well.
   if(strcmp(event, "data") == 0) {
-    DEBUG_GRANDEUR("Number of listeners: %d.", _subscriptions.getNListeners());
-    String* events = _subscriptions.eventNames();
-    for(int i = 0; i < _subscriptions.getNListeners(); i++)
-      DEBUG_GRANDEUR("Topic is: %s.", (String(event) + "/" + String(path)).c_str());
     _subscriptions.pEmit( String(event) + "/" + String(path), path, data );
     return;
   }

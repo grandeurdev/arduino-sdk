@@ -91,3 +91,16 @@ Grandeur::Project::Device::Event Grandeur::Project::Device::Data::on(const char*
   // Return the event object to let the user unsubscribe to this event at a later time.
   return Event(_duplex, _deviceId, "data", path, eventId);
 }
+
+Grandeur::Project::Device::Event Grandeur::Project::Device::Data::on(Callback cb) {
+  // Prepare the message payload.
+  Var oPayload;
+  oPayload["deviceID"] = _deviceId;
+  oPayload["event"] = "data";
+  
+  // Send 
+  gId eventId = _duplex->subscribe("data/", oPayload, cb);
+
+  // Return the event object to let the user unsubscribe to this event at a later time.
+  return Event(_duplex, _deviceId, "data", "", eventId);
+}

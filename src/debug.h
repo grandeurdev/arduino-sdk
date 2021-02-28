@@ -1,5 +1,5 @@
 // Debugging macros
-#define DEBUG 1
+#define DEBUG 0
 #define DEBUG_WS 0
 #if DEBUG || DEBUG_WS
   #define DEBUG_PORT Serial
