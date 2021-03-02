@@ -74,7 +74,6 @@ public:
     // Searching through all listeners and emitting on those that match.
     for(auto itr = listeners.begin(); itr != listeners.end(); itr++) {
       if(String(eventName).startsWith(itr->first)) {
-        Serial.printf("Emitting on: %s.\n", itr->first.c_str());
         itr->second.emit(args...);
         // If the listener is for once, remove it.
         if(itr->second.isOnce())
