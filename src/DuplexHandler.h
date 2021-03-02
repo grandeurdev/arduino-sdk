@@ -9,71 +9,97 @@
  */
 
 // Including headers
-#include "EventTable.h"
-#include "EventQueue.h"
-#include "grandeurtypes.h"
-#include "grandeurmacros.h"
+#include "types.h"
+#include "macros.h"
+#include "EventEmitter/EventEmitter.h"
 #include "arduinoWebSockets/WebSocketsClient.h"
+#include <map>
 
 #ifndef DUPLEXHANDLER_H_
 #define DUPLEXHANDLER_H_
 
+class Buffer {
+  private:
+    // We use map to implement buffering of messages when duplex channel isn't alive.
+    std::map<gId, String> _buffer;
+  public:
+    // Adds a message to the buffer with id.
+    void push(gId id, String message);
+    // Removes a message from the buffer with id.
+    void remove(gId id);
+    // Calls a callback on each message in the buffer.
+    void forEach(std::function<void(const char*)> callback);
+};
+
+// Class to establish and handle real-time communication channel with Grandeur and send/receive
+// messages on this channel.
 class DuplexHandler {
   private:
-    // Connection query
+    // We make connection with Grandeur over Websockets.
+    // This variable stores information about the websockets connection.
+    WebSocketsClient _client;
+    // Store query and access token to use while establishing the connection with Grandeur.
     String _query;
-
-    // Connection token
     String _token;
-
-    // Connection state variable
-    static short _status;
-
-    // Event Queue
-    static EventQueue _queue;
-
-    // Events Table
-    static EventTable _eventsTable;
-
-    // Subscriptions
-    static EventTable _subscriptions;
+    // Stores current status (CONNECTED / DISCONNECTED) of the connection.
+    bool _status;
+    // Points to the connection handler function to call when connection with Grandeur is successfully
+    // estbalished.
+    void (*_connectionHandler)(bool);
+    // Handles request/response like communication.
+    EventEmitter<gId, Callback> _tasks;
+    // List of subscribable events.
+    const char* _events[1] = {"data"};
+    // Handles pub/sub like communication.
+    EventEmitter<String, Callback> _subscriptions;
     
-    // Container for connection callback
-    static void (*_connectionCallback)(bool);
+    
+    void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length);
+    // Prepares a message.
+    Message prepareMessage(const char* task);
+    Message prepareMessage(const char* task, Var payload);
+    // Sends a generic duplex message.
+    void sendMessage(const char* message);
+    // Receives a message from duplex channel.
+    void receive(Var header, Var payload);
+    // Handles the update packet.
+    void publish(const char* event, const char* path, Var data);
 
-    // Define function to handle the queued events
-    static void handle(EventID id, EventKey key, EventPayload payload, Callback callback);
+    // Buffering data structure:
+    Buffer _buffer;
 
   public:
     // Constructor
-    DuplexHandler(Config config);
     DuplexHandler();
+    void init(Config config);
+    // Sends a message to duplex channel.
+    Message send(const char* task, Callback cb);
+    Message send(const char* task, Var payload, Callback cb);
 
-    // Init the connection
-    void init(void);
+    // Subscribes to a topic.
+    gId subscribe(const char* topic, Var payload, Callback updateHandler);
+    // Unsubscribes from a topic.
+    void unsubscribe(const char* topic, gId eventId, Var payload);
 
-    // Ping function to keep connection alive.
-    void ping();
 
-    // Function to send a generic duplex message.
-    static void send(const char* task, const char* payload, Callback callback);
-
-    // Function to unsubscribe to a device topic.
-    void unsubscribe(gID id, const char* payload);
-
-    // Function to subscribe to a device topic.
-    gID subscribe(const char* event, const char* payload, Callback updateHandler);
-
-    // Function to schedule an event handler for connection with Grandeur
-    void onConnectionEvent(void connectionEventHandler(bool));
+    // Schedules a connection handler function to be called when connection with Grandeur
+    // establishes/drops.
+    void onConnectionEvent(void connectionCallback(bool));
+    // Removes the connection handler function.
+    void clearConnectionCallback(void);
     
-    // Getter for connection state
-    short getStatus(void);
+    // Gets current status (CONNECTED / DISCONNECTED) of the connection.
+    bool getStatus(void);
     
     // This runs duplex
     void loop(bool valve);
 
-    friend void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length);
+    #if DEBUG
+    // Defines these functions when in debug mode.
+    void (*connectionHandler)(bool) = _connectionHandler;
+    const char* query = _query.c_str();
+    const char* token = _token.c_str();
+    #endif /* DEBUG */
 };
 
 #endif

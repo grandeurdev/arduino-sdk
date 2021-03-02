@@ -9,52 +9,49 @@
  */
 
 #include "Grandeur.h"
-#include "DuplexHandler.h"
 
 Grandeur grandeur;
 
 Grandeur::Grandeur() {}
 
-Project Grandeur::init(String apiKey, String token) {
-  // Setting config
+Grandeur::Project::Project() {}
+
+Grandeur::Project::Project(DuplexHandler* duplex) : _duplex(duplex) {}
+
+Grandeur::Project Grandeur::init(String apiKey, String token) {
+  // Setting config.
   _config = {apiKey, token};
-
-  // Creating a new project reference.
-  Project project;
-
-  // Duplex handles the realtime connection with the project.
-  project._duplexHandler = DuplexHandler(_config);
-
-  // Starting Duplex.
-  project._duplexHandler.init();
-
-  // Return project object
-  return project;
+  // Initializing duplex channel.
+  _duplexHandler.init(_config);
+  // Returning project.
+  return Project(&_duplexHandler);
 }
 
-Project::Project() {}
-
-void Project::onConnection(void connectionCallback(bool)) {
-  // Connection handler for duplex
-  _duplexHandler.onConnectionEvent(connectionCallback);
+void Grandeur::Project::onConnection(void connectionCallback(bool)) {
+  // Specifying connection handler for underlying duplex channel.
+  _duplex->onConnectionEvent(connectionCallback);
 }
 
-bool Project::isConnected(void) {
-  // Return status of duplex
-  return _duplexHandler.getStatus() == CONNECTED;
+void Grandeur::Project::clearConnectionCallback(void) {
+  // Clearing connection handler of its underlying duplex channel.
+  _duplex->clearConnectionCallback();
 }
 
-Device Project::device(String deviceID) {
-  // Return new device class object
-  return Device(deviceID, _duplexHandler);
+bool Grandeur::Project::isConnected(void) {
+  return (_duplex->getStatus() == CONNECTED);
 }
 
-Datastore Project::datastore(void) {
-  // Return new datastore class object 
-  return Datastore(_duplexHandler);
+Grandeur::Project::Device Grandeur::Project::device(String deviceId) {
+  // Return the new device object.
+  return Device(_duplex, deviceId);
 }
 
-void Project::loop(bool valve) {
-  // Running duplex loop
-  _duplexHandler.loop(valve);
+Grandeur::Project::Datastore Grandeur::Project::datastore(void) {
+  // Return the new datastore object.
+  return Datastore(_duplex);
+}
+
+void Grandeur::Project::loop(bool valve) {
+  // Running duplex loop.
+  _duplex->loop(valve);
 }

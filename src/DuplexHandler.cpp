@@ -8,319 +8,297 @@
  *
  */
 
-#include "DuplexHandler.h"
-#include "arduinoWebSockets/WebSockets.h"
 
-/* Create client */
-WebSocketsClient client;
+#include <regex>
+#include "DuplexHandler.h"
 
 // Init ping counter
-unsigned long millisCounterForPing = 0;
+unsigned long timeSinceLastMessage = 0;
 
-// Init status handler and variable
-short DuplexHandler::_status = DISCONNECTED;
-void (*DuplexHandler::_connectionCallback)(bool) = [](bool connectionEventHandler) {};
+DuplexHandler::DuplexHandler() : _query("/?type=device"), _token(""), _status(DISCONNECTED),
+  _connectionHandler([](bool status) {}) {}
 
-// Define a queue
-EventQueue DuplexHandler::_queue;
-
-// Create a new event table and subscriptions
-EventTable DuplexHandler::_eventsTable;
-EventTable DuplexHandler::_subscriptions;
-
-/* Deifne event handler */
-void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length);
-
-DuplexHandler::DuplexHandler(Config config) {
-  // Constructor
-  _query = "/?type=device&apiKey=" + config.apiKey;
+void DuplexHandler::init(Config config) {
+  _query = _query + "&apiKey=" + config.apiKey;
   _token = config.token;
-}
-
-DuplexHandler::DuplexHandler() {
-  // Overload the contructor
-  _query = "/?type=device";
-  _token = "";
-}
-
-void DuplexHandler::init(void) {
   // Setting up event handler
-  client.onEvent(&duplexEventHandler);
-
+  _client.onEvent([=](WStype_t eventType, uint8_t* message, size_t length) {
+    duplexEventHandler(eventType, message, length);
+  });
   // Scheduling reconnect every 5 seconds if it disconnects
-  client.setReconnectInterval(5000);
+  _client.setReconnectInterval(5000);
 
-  // Opening up the connection
-  client.beginSSL(GRANDEUR_URL, GRANDEUR_PORT, _query, GRANDEUR_FINGERPRINT, "node");
+  DEBUG_GRANDEUR("Initializing duplex channel.");
 
-  // Set auth header
+  // Opening up the connection.
+  _client.beginSSL(GRANDEUR_URL, GRANDEUR_PORT, _query, GRANDEUR_FINGERPRINT, "node");
+  // Setting auth header.
   char tokenArray[_token.length() + 1];
   _token.toCharArray(tokenArray, _token.length() + 1);
-  client.setAuthorization(tokenArray);
-}
-
-void DuplexHandler::onConnectionEvent(void connectionEventHandler(bool)) {
-  // Event handler for connection
-  _connectionCallback = connectionEventHandler;
-}
-
-short DuplexHandler::getStatus() {
-  // Return status
-  return _status;
+  _client.setAuthorization(tokenArray);
 }
 
 void DuplexHandler::loop(bool valve) {
-  // Give duplex time to execute
   if(valve) {
     // If valve is true => valve is open
-    if(millis() - millisCounterForPing >= PING_INTERVAL) {
-        // Ping Grandeur if PING_INTERVAL milliseconds have passed
-        millisCounterForPing = millis();
-        ping();
+    if(millis() - timeSinceLastMessage >= PING_INTERVAL) {
+        // Ping Grandeur if PING_INTERVAL milliseconds have passed.
+        timeSinceLastMessage = millis();
+
+        DEBUG_GRANDEUR("Pinging Grandeur.");
+        send("ping", NULL);
     }
-
     // Running duplex loop
-    client.loop();
+    _client.loop();
   }
 }
 
-// Define the handle function
-void DuplexHandler::handle(EventID id, EventKey key, EventPayload payload, Callback callback) {
-  // Check connection status
+Message DuplexHandler::prepareMessage(const char* task) {
+  // Generate a new message id.
+  gId messageId = gid();
+  // Creating new message.
+  Var oMessage;
+  oMessage["header"]["id"] = messageId;
+  oMessage["header"]["task"] = task;
+
+  return {messageId, JSON.stringify(oMessage)};
+}
+
+Message DuplexHandler::prepareMessage(const char* task, Var payload) {
+  // Generate a new message id.
+  gId messageId = gid();
+  // Creating new message.
+  Var oMessage;
+  oMessage["header"]["id"] = messageId;
+  oMessage["header"]["task"] = task;
+  oMessage["payload"] = payload;
+
+  // Preparing message string.
+  String message = JSON.stringify(oMessage);
+  DEBUG_GRANDEUR("Prepared message:: message: %s.", message.c_str());
+
+  return {messageId, message};
+}
+
+void DuplexHandler::sendMessage(const char* message) {
+  // Returning if channel isn't alive.
+  if(_status != CONNECTED) return;
+
+  // Resetting timeSinceLastMessage.
+  //timeSinceLastMessage = millis();
+
+  DEBUG_GRANDEUR("Sending message:: %s.", message);
+  // Sending on channel.
+  _client.sendTXT(message);
+}
+
+Message DuplexHandler::send(const char* task, Callback cb) {
+  // Preparing a new message.
+  Message message = prepareMessage(task);
+
+  // Adding task to receive the response message.
+  _tasks.once(message.id, cb);
+
+  // If channel isn't connected yet, buffer the message and return.
   if(_status != CONNECTED) {
-    return ;
+    _buffer.push(message.id, message.str);
+    return {message.id, message.str};
   }
 
-  // Create packet
-  char packet[PACKET_SIZE];
+  // Sending message.
+  sendMessage(message.str.c_str());
 
-  // Saving callback to eventsTable
-  _eventsTable.insert(key, id, callback);
-  // _eventsTable.print();
-  // _subscriptions.print();
-
-  // Formatting the packet
-  snprintf(packet, PACKET_SIZE, "{\"header\": {\"id\": %lu, \"task\": \"%s\"}, \"payload\": %s}", id, key.c_str(), payload.c_str());
-  
-  // Sending to server
-  client.sendTXT(packet);
+  return {message.id, message.str};
 }
 
-void DuplexHandler::send(const char* task, const char* payload, Callback callback) {
-  // Generate packet id
-  gID packetID = micros();
+Message DuplexHandler::send(const char* task, Var payload, Callback cb) {
+  // Preparing a new message.
+  Message message = prepareMessage(task, payload);
 
-  // Check connection status
+  // Adding task to receive the response message.
+  _tasks.once(message.id, cb);
+  
+  // If channel isn't connected yet, buffer the message and return.
   if(_status != CONNECTED) {
-    // Append the packet to queue
-    _queue.push(packetID, task, payload, callback);
-    // _queue.print();
-    return ;
+    _buffer.push(message.id, message.str);
+    return {message.id, message.str};
   }
 
-  // Create packet
-  char packet[PACKET_SIZE];
+  // Sending message.
+  sendMessage(message.str.c_str());
 
-  // Saving callback to eventsTable
-  _eventsTable.insert(task, packetID, callback);
-  // _eventsTable.print();
-  // _subscriptions.print();
-
-  // Formatting the packet
-  snprintf(packet, PACKET_SIZE, "{\"header\": {\"id\": %lu, \"task\": \"%s\"}, \"payload\": %s}", packetID, task, payload);
-  
-  // Sending to server
-  client.sendTXT(packet);
+  return {message.id, message.str};
 }
 
-void DuplexHandler::unsubscribe(gID id, const char* payload) {
-  // Generate an id
-  gID packetID = micros();
-
-  // Remove callback from subscriptions table
-  _subscriptions.remove(id);
-  // _eventsTable.print();
-  // _subscriptions.print();
-
-  // Push unsub to queue
-  _queue.push(packetID, "/topic/unsubscribe", payload, NULL);
-
-  // and remove subscription packet from queue
-  _queue.remove(id);
-  // _queue.print();
+void DuplexHandler::receive(Var header, Var payload) {
+  // Extracting task and id from header and code.
+  const char* task = header["task"];
+  gId id = header["id"];
+  const char* code = payload["code"];
   
-  // Check connection status
-  if(_status != CONNECTED) {
-    // Don't proceed if we aren't
-    return ;
+  // Extracting data.
+  Var data = null;
+  // Response to Get has data in payload["data"].
+  if(strcmp(task, "/device/data/get") == 0) data = payload["data"];
+  // Response to Set has data in payload["update"].
+  else if(strcmp(task, "/device/data/set") == 0) data = payload["update"];
+  // For datastore, we delete code and message from the payload and send the rest.
+  else if(strcmp(task, "/datastore/insert") == 0 || strcmp(task, "/datastore/delete") == 0 ||
+    strcmp(task, "/datastore/update") == 0 || strcmp(task, "/datastore/pipeline") == 0) {
+    data = payload;
+    data["code"] = undefined;
+    data["message"] = undefined;
   }
 
-  // Create packet
-  char packet[PACKET_SIZE];
+  DEBUG_GRANDEUR( "Response message:: code: %s, data: %s.", code, JSON.stringify(data).c_str() );
 
-  // Saving callback to eventsTable
-  _eventsTable.insert("/topic/unsubscribe", packetID, NULL);
-  // _eventsTable.print();
-  // _subscriptions.print();
-
-  // Formatting the packet
-  snprintf(packet, PACKET_SIZE, "{\"header\": {\"id\": %lu, \"task\": \"%s\"}, \"payload\": %s}", packetID, "/topic/unsubscribe", payload);
-  
-  // Sending to server
-  client.sendTXT(packet);
+  // Emit on the Id from the tasks.
+  if(Var::typeof_(data) != "null" && Var::typeof_(data) != "undefined")
+    _tasks.emit( id, code, data );
+  else
+    _tasks.emit( id, code, undefined );
 }
 
-gID DuplexHandler::subscribe(const char* event, const char* payload, Callback updateHandler) {
-  // Generate an id
-  gID packetID = micros();
+void DuplexHandler::publish(const char* event, const char* path, Var data) {
+  DEBUG_GRANDEUR( "Data update:: path: %s, data: %s.", path, JSON.stringify(data) );
 
-  // Saving callback to subscriptions Table
-  _subscriptions.insert(event, packetID, updateHandler);
-  // _eventsTable.print();
-  // _subscriptions.print();
+  // Handling the backward compatibility for summary/parms.
+  if (strcmp(event, "deviceParms") == 0 || strcmp(event, "deviceSummary") == 0)
+    strcpy((char*) event, "data");
 
-  // Append the packet to queue because in case of queue
-  // the packet will always be queue either we are connected
-  // or disconnected
-  // This is being done to handle case where we were connected
-  // the subscribed to some events and got disconnected
-  _queue.push(packetID, "/topic/subscribe", payload, NULL);
-  // _queue.print();
-  
-  // Check connection status
-  if(_status != CONNECTED) {
-    // Don't proceed if we aren't
-    // but return packet id
-    return packetID;
+  // If it's update for device data, emit on the pattern "event/path". So that the listeners
+  // subscribing to "event/"" get the update for "event/path" as well.
+  if(strcmp(event, "data") == 0) {
+    _subscriptions.pEmit( String(event) + "/" + String(path), path, data );
+    return;
   }
 
-  // Create packet
-  char packet[PACKET_SIZE];
-
-  // Saving callback to eventsTable
-  _eventsTable.insert("/topic/subscribe", packetID, NULL);
-  // _eventsTable.print();
-  // _subscriptions.print();
-
-  // Formatting the packet
-  snprintf(packet, PACKET_SIZE, "{\"header\": {\"id\": %lu, \"task\": \"%s\"}, \"payload\": %s}", packetID, "/topic/subscribe", payload);
-  
-  // Sending to server
-  client.sendTXT(packet);
-
-  // Return packet id
-  return packetID;
+  // Otherwise just emit on the event.
+  _subscriptions.emit(String(event), "", data);
+  return;
 }
 
-void DuplexHandler::ping() {
-  // Ping handler
-  if(_status == CONNECTED) {
-    // Generate packet
-    char packet[PING_PACKET_SIZE];
+gId DuplexHandler::subscribe(const char* topic, Var payload, Callback updateHandler) {
+  DEBUG_GRANDEUR("Subscribing to topic:: %s.", topic);
 
-    // Create id
-    gID packetID = millis();
+  // Sending subscription request.
+  Message message = send("/topic/subscribe", payload, NULL);
+  // Setting update handler.
+  _subscriptions.on(String(topic), updateHandler);
+  // Buffer subscription request message regardless of connection/disconnection to handle the case
+  // of subscribing, disconnecting, and reconnecting without record of previous subscriptions.
+  _buffer.push(message.id, message.str);
 
-    // Saving callback to eventsTable
-    _eventsTable.insert("ping", packetID, NULL);
-
-    // Formatting the packet
-    snprintf(packet, PING_PACKET_SIZE, "{\"header\": {\"id\": %lu, \"task\": \"ping\"}}", packetID);
-
-    // Sending to server
-    client.sendTXT(packet);
-  }
+  // Return the message Id.
+  return message.id;
 }
 
-/** This function handles all the cloud events.
- * @param eventType: The type of event that has occurred.
- * @param packet: The packet corresponding to the event.
- * @param length: The size of the @param packet.
-*/
-void duplexEventHandler(WStype_t eventType, uint8_t* packet, size_t length) {
+void DuplexHandler::unsubscribe(const char* topic, gId eventId, Var payload) {
+  DEBUG_GRANDEUR("Unsubscribing from topic:: %s.", JSON.stringify(payload).c_str());
 
+  // Sending unsubscription request to Grandeur. and remove subscription request message from buffer for future reconnection.
+  send("/topic/unsubscribe", payload, NULL);
+  // Unset the update handler
+  _subscriptions.off(String(topic));
+  // Debuffer the subscription packet.
+  _buffer.remove(eventId);
+}
+
+void DuplexHandler::duplexEventHandler(WStype_t eventType, uint8_t* message, size_t length) {
+  // Resetting timeSinceLastMessage.
+  // timeSinceLastMessage = millis();
   // Switch over event type
   switch(eventType) {
     case WStype_CONNECTED:
+      DEBUG_GRANDEUR("Duplex channel established.");
       // When duplex connection opens
-      DuplexHandler::_status = CONNECTED;
+      _status = CONNECTED;
+      // Running connection handler.
+      _connectionHandler(_status);
 
-      // Generate callback
-      DuplexHandler::_connectionCallback(DuplexHandler::_status);
+      // Flushing all buffered messages to the channel.
+      _buffer.forEach([=](const char* message) { sendMessage(message); });
 
-      // Resetting ping millis counter
-      millisCounterForPing = millis();
-
-      // Handle the queued events
-      DuplexHandler::_queue.forEach(DuplexHandler::handle);
-
-      // Then send 
-      return ;
+      break;
 
     case WStype_DISCONNECTED:
+      DEBUG_GRANDEUR("Duplex channel broke.");
       // When duplex connection closes
-      DuplexHandler::_status = DISCONNECTED;
+      _status = DISCONNECTED;
+      // Running connection handler.
+      _connectionHandler(_status);
 
-      // Clear event table
-      DuplexHandler::_eventsTable.clear();
+      // Clear all tasks.
+      _tasks.offAll();
 
-      // Generate connection event
-      return DuplexHandler::_connectionCallback(DuplexHandler::_status);
+      break;
 
     case WStype_TEXT:
-      // Serial.printf("%s\n", packet);
-
       // When a duplex message is received.
-      Var messageObject = JSON.parse((char*) packet);
-
-      // Handle parsing errors
-      if (JSON.typeof(messageObject) == "undefined") {
+      DEBUG_GRANDEUR("Message is received:: %s.", message);
+      // Parsing the JSON message.
+      Var oMessage = JSON.parse((char*) message);
+      // Handling any parsing errors
+      if (JSON.typeof(oMessage) == "undefined") {
         // Just for internal errors of Arduino_JSON
         // if the parsing fails.
-        DEBUG_GRANDEUR("Parsing input failed!");
+        DEBUG_GRANDEUR("Parsing message failed!");
         return;
       }
-
-      // If it is an update instead of response to a task
-      if(messageObject["header"]["task"] == "update") {
-        // Formulate the key
-        std::string event((const char*) messageObject["payload"]["event"]);
-        std::string path((const char*) messageObject["payload"]["path"]);
-
-        // Handle the backward compatibility case
-        if (event == "deviceParms" || event == "deviceSummary") event = "data";
-
-        // Emit the event 
-        DuplexHandler::_subscriptions.emit(event + "/" + path, messageObject["payload"]["update"], messageObject["payload"]["path"]);
-        
-        // Return
-        return;
-      }
-      // Just return if it is unpair event
-      else if(messageObject["header"]["task"] == "unpair") {
-        return ;
-      }
-
-      // Fetching event callback function from the events Table
-      Callback callback = DuplexHandler::_eventsTable.findAndRemove((gID) messageObject["header"]["id"]);
       
-      // DuplexHandler::_eventsTable.print();
-      // DuplexHandler::_subscriptions.print();
+      Var header = oMessage["header"];
+      Var payload = oMessage["payload"];
+      const char* task = header["task"];
 
-      // Remove the packet if it was queued
-      // because the ack has been received
-      if (messageObject["header"]["task"] == "/topic/subscribe");
+      // ROUTES:
+      // We do not need to handle the unpair event in Device SDKs.
+      if(strcmp(task, "unpair") == 0);
+      // Ping has no data so we simply emit.
+      else if(strcmp(task, "ping") == 0)
+        _tasks.emit((gId) header["id"], "", undefined);
+      // If it is an update event rather than a task (response message).
+      else if(strcmp(task, "update") == 0)
+        publish(payload["event"], payload["path"], payload["update"]);
+      // Otherwise: It's a response message for a task. So we receive it.
       else {
-        // but if it is not of subscribe type
-        DuplexHandler::_queue.remove((long) messageObject["header"]["id"]);
-        // DuplexHandler::_queue.print();
+        receive(header, payload);
+
+        // Debuffer the message except if it's a subscription request. This is to solve losing
+        // subscriptions due to reconnection.
+        if (strcmp(task, "/topic/subscribe") == 0);
+        else
+          _buffer.remove((gId) header["id"]);
       }
-
-      // If not found then simply return
-      if(!callback) return;
-
-      // Or otherwise resolve the event
-      return callback(messageObject["payload"]);
   }
 }
 
+void Buffer::push(gId id, String message) {
+  _buffer[id] = message;
+}
+
+void Buffer::remove(gId id) {
+  _buffer.erase(id);
+}
+
+void Buffer::forEach(std::function<void(const char*)> callback) {
+  // Iterating through the _buffer running callback on each message.
+  for(std::map<gId, String>::iterator it = _buffer.begin(); it != _buffer.end(); it++) {
+    DEBUG_GRANDEUR("Flushing:: Id: %lu, Message: %s.", it->first, it->second.c_str());
+    callback(it->second.c_str());
+  }
+}
+
+void DuplexHandler::onConnectionEvent(void connectionCallback(bool)) {
+  DEBUG_GRANDEUR("Setting up connection handler.");
+  _connectionHandler = connectionCallback;
+}
+
+void DuplexHandler::clearConnectionCallback(void) {
+  DEBUG_GRANDEUR("Clearing connection handler.");
+  // Setting connection handler to empty function.
+  _connectionHandler = [](bool status) {};
+}
+
+bool DuplexHandler::getStatus() {
+  return _status;
+}

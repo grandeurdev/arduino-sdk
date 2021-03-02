@@ -23,8 +23,8 @@ String ssid = "YOUR-WIFI-SSID";
 String passphrase = "YOUR-WIFI-PASSWORD";
 
 // Declaring and initializing other variables
-Project myProject;
-Datastore myDatastore;
+Grandeur::Project myProject;
+Grandeur::Project::Datastore myDatastore;
 WiFiEventHandler onWiFiConnectedHandler;
 WiFiEventHandler onWiFiDisconnectedHandler;
 int statePin = D0;
@@ -33,7 +33,7 @@ unsigned long current = millis();
 // Function prototypes
 void setupWiFi(void);
 void connectionCallback(bool status);
-void insertCallback(Var payload);
+void insertCallback(const char* code);
 
 void setup() {
   Serial.begin(9600);
@@ -100,10 +100,10 @@ void connectionCallback(bool status) {
   }
 }
 
-void insertCallback(Var insertResult) {
+void insertCallback(const char* code) {
   // This function prints if the logs were successfully inserted into the datastore or not.
-  if(insertResult["code"] == "DATASTORE-DOCUMENTS-INSERTED") {
-    Serial.println("Voltage is successfully logged to Grandeur.");
+  if(strcmp(code, "DATASTORE-DOCUMENTS-INSERTED") == 0) {
+    Serial.printf("Voltage is successfully logged to Grandeur.");
     return;
   }
   // If insertion is not successful.

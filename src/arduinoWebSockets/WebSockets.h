@@ -33,6 +33,8 @@
 #include <IPAddress.h>
 #endif
 
+#include "../macros.h"
+
 #ifdef ARDUINO_ARCH_AVR
 #error Version 2.x.x currently does not support Arduino with AVR since there is no support for std namespace of c++.
 #error Use Version 1.x.x. (ATmega branch)
@@ -40,7 +42,9 @@
 #include <functional>
 #endif
 
-// #define DEBUG_ESP_PORT Serial 
+#if DEBUG_WS
+#define DEBUG_ESP_PORT Serial
+#endif /* DEBUG */
 #ifndef NODEBUG_WEBSOCKETS
 #ifdef DEBUG_ESP_PORT
 #define DEBUG_WEBSOCKETS(...) DEBUG_ESP_PORT.printf(__VA_ARGS__)
