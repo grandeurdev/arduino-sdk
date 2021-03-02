@@ -13,10 +13,23 @@
 #include "macros.h"
 #include "EventEmitter/EventEmitter.h"
 #include "arduinoWebSockets/WebSocketsClient.h"
-#include <list>
+#include <map>
 
 #ifndef DUPLEXHANDLER_H_
 #define DUPLEXHANDLER_H_
+
+class Buffer {
+  private:
+    // We use map to implement buffering of messages when duplex channel isn't alive.
+    std::map<gId, String> _buffer;
+  public:
+    // Adds a message to the buffer with id.
+    void push(gId id, String message);
+    // Removes a message from the buffer with id.
+    void remove(gId id);
+    // Calls a callback on each message in the buffer.
+    void forEach(std::function<void(const char*)> callback);
+};
 
 // Class to establish and handle real-time communication channel with Grandeur and send/receive
 // messages on this channel.
@@ -52,15 +65,8 @@ class DuplexHandler {
     // Handles the update packet.
     void publish(const char* event, const char* path, Var data);
 
-    // BUFFER:
-    // We use map to implement buffering of messages when duplex channel isn't alive.
-    std::map<gId, String> _buffer;
-    // Adds a message to the buffer with id.
-    void buffer(gId id, String message);
-    // Removes a message from the buffer with id.
-    void debuffer(gId id);
-    // Sends all messages in the buffer to the channel.
-    void flushBuffer();
+    // Buffering data structure:
+    Buffer _buffer;
 
   public:
     // Constructor

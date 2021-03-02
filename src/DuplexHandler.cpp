@@ -101,7 +101,7 @@ Message DuplexHandler::send(const char* task, Callback cb) {
 
   // If channel isn't connected yet, buffer the message and return.
   if(_status != CONNECTED) {
-    buffer(message.id, message.str);
+    _buffer.push(message.id, message.str);
     return {message.id, message.str};
   }
 
@@ -120,7 +120,7 @@ Message DuplexHandler::send(const char* task, Var payload, Callback cb) {
   
   // If channel isn't connected yet, buffer the message and return.
   if(_status != CONNECTED) {
-    buffer(message.id, message.str);
+    _buffer.push(message.id, message.str);
     return {message.id, message.str};
   }
 
@@ -187,7 +187,7 @@ gId DuplexHandler::subscribe(const char* topic, Var payload, Callback updateHand
   _subscriptions.on(String(topic), updateHandler);
   // Buffer subscription request message regardless of connection/disconnection to handle the case
   // of subscribing, disconnecting, and reconnecting without record of previous subscriptions.
-  buffer(message.id, message.str);
+  _buffer.push(message.id, message.str);
 
   // Return the message Id.
   return message.id;
@@ -201,7 +201,7 @@ void DuplexHandler::unsubscribe(const char* topic, gId eventId, Var payload) {
   // Unset the update handler
   _subscriptions.off(String(topic));
   // Debuffer the subscription packet.
-  debuffer(eventId);
+  _buffer.remove(eventId);
 }
 
 void DuplexHandler::duplexEventHandler(WStype_t eventType, uint8_t* message, size_t length) {
@@ -217,7 +217,7 @@ void DuplexHandler::duplexEventHandler(WStype_t eventType, uint8_t* message, siz
       _connectionHandler(_status);
 
       // Flushing all buffered messages to the channel.
-      flushBuffer();
+      _buffer.forEach([=](const char* message) { sendMessage(message); });
 
       break;
 
@@ -267,24 +267,24 @@ void DuplexHandler::duplexEventHandler(WStype_t eventType, uint8_t* message, siz
         // subscriptions due to reconnection.
         if (strcmp(task, "/topic/subscribe") == 0);
         else
-          debuffer((gId) header["id"]);
+          _buffer.remove((gId) header["id"]);
       }
   }
 }
 
-void DuplexHandler::buffer(gId id, String message) {
+void Buffer::push(gId id, String message) {
   _buffer[id] = message;
 }
 
-void DuplexHandler::debuffer(gId id) {
+void Buffer::remove(gId id) {
   _buffer.erase(id);
 }
 
-void DuplexHandler::flushBuffer() {
-  // Iterating through the _buffer sending each message.
-  for (std::map<gId, String>::iterator it = _buffer.begin(); it != _buffer.end(); it++) {
+void Buffer::forEach(std::function<void(const char*)> callback) {
+  // Iterating through the _buffer running callback on each message.
+  for(std::map<gId, String>::iterator it = _buffer.begin(); it != _buffer.end(); it++) {
     DEBUG_GRANDEUR("Flushing:: Id: %lu, Message: %s.", it->first, it->second.c_str());
-    sendMessage(it->second.c_str());
+    callback(it->second.c_str());
   }
 }
 
