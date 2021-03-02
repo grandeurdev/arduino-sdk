@@ -85,7 +85,7 @@ void DuplexHandler::sendMessage(const char* message) {
   if(_status != CONNECTED) return;
 
   // Resetting timeSinceLastMessage.
-  timeSinceLastMessage = millis();
+  //timeSinceLastMessage = millis();
 
   DEBUG_GRANDEUR("Sending message:: %s.", message);
   // Sending on channel.
@@ -206,7 +206,7 @@ void DuplexHandler::unsubscribe(const char* topic, gId eventId, Var payload) {
 
 void DuplexHandler::duplexEventHandler(WStype_t eventType, uint8_t* message, size_t length) {
   // Resetting timeSinceLastMessage.
-  timeSinceLastMessage = millis();
+  // timeSinceLastMessage = millis();
   // Switch over event type
   switch(eventType) {
     case WStype_CONNECTED:
