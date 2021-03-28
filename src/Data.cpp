@@ -75,7 +75,6 @@ void Grandeur::Project::Device::Data::set(const char* path, Var data) {
   oPayload["data"] = data;
 
   // Sending the packet without response.
-  Serial.println(oPayload);
   _duplex->send("/device/data/set", oPayload);
 }
 

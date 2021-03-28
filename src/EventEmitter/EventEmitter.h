@@ -39,7 +39,6 @@ public:
     // Adding a new nonreusable listener to listeners map with event name.
     listeners.insert(std::pair<EventName, Listener<Emitter>>(eventName, Listener<Emitter>(emitter, true)));
     events.push_back(eventName);
-    Serial.printf("Size is: %d.\n", getNListeners());
   }
 
   void off(EventName eventName) {
