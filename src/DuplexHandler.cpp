@@ -46,7 +46,7 @@ void DuplexHandler::loop(bool valve) {
         timeSinceLastMessage = millis();
 
         DEBUG_GRANDEUR("Pinging Grandeur.");
-        send("ping", NULL);
+        send("ping");
     }
     // Running duplex loop
     _client.loop();
@@ -111,12 +111,44 @@ Message DuplexHandler::send(const char* task, Callback cb) {
   return {message.id, message.str};
 }
 
+Message DuplexHandler::send(const char* task) {
+  // Preparing a new message.
+  Message message = prepareMessage(task);
+
+  // If channel isn't connected yet, buffer the message and return.
+  if(_status != CONNECTED) {
+    _buffer.push(message.id, message.str);
+    return {message.id, message.str};
+  }
+
+  // Sending message.
+  sendMessage(message.str.c_str());
+
+  return {message.id, message.str};
+}
+
 Message DuplexHandler::send(const char* task, Var payload, Callback cb) {
   // Preparing a new message.
   Message message = prepareMessage(task, payload);
 
   // Adding task to receive the response message.
   _tasks.once(message.id, cb);
+  
+  // If channel isn't connected yet, buffer the message and return.
+  if(_status != CONNECTED) {
+    _buffer.push(message.id, message.str);
+    return {message.id, message.str};
+  }
+
+  // Sending message.
+  sendMessage(message.str.c_str());
+
+  return {message.id, message.str};
+}
+
+Message DuplexHandler::send(const char* task, Var payload) {
+  // Preparing a new message.
+  Message message = prepareMessage(task, payload);
   
   // If channel isn't connected yet, buffer the message and return.
   if(_status != CONNECTED) {
@@ -254,8 +286,7 @@ void DuplexHandler::duplexEventHandler(WStype_t eventType, uint8_t* message, siz
       // We do not need to handle the unpair event in Device SDKs.
       if(strcmp(task, "unpair") == 0);
       // Ping has no data so we simply emit.
-      else if(strcmp(task, "ping") == 0)
-        _tasks.emit((gId) header["id"], "", undefined);
+      else if(strcmp(task, "ping") == 0);
       // If it is an update event rather than a task (response message).
       else if(strcmp(task, "update") == 0)
         publish(payload["event"], payload["path"], payload["update"]);

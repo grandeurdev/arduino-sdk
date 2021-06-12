@@ -72,9 +72,15 @@ class DuplexHandler {
     // Constructor
     DuplexHandler();
     void init(Config config);
-    // Sends a message to duplex channel.
+    // Sends a message to duplex channel:
+    // without payload.
     Message send(const char* task, Callback cb);
+    // without payload, without response.
+    Message send(const char* task);
+    // with payload.
     Message send(const char* task, Var payload, Callback cb);
+    // with payload, without response.
+    Message send(const char* task, Var payload);
 
     // Subscribes to a topic.
     gId subscribe(const char* topic, Var payload, Callback updateHandler);

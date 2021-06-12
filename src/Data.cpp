@@ -74,8 +74,8 @@ void Grandeur::Project::Device::Data::set(const char* path, Var data) {
   oPayload["path"] = path;
   oPayload["data"] = data;
 
-  // Sending the packet and scheduling callback.
-  _duplex->send("/device/data/set", oPayload, NULL);
+  // Sending the packet without response.
+  _duplex->send("/device/data/set", oPayload);
 }
 
 Grandeur::Project::Device::Event Grandeur::Project::Device::Data::on(const char* path, Callback cb) {
