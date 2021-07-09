@@ -79,7 +79,7 @@ To get a deeper understanding of the core concepts Grandeur is built upon, dive 
     * [loop](#loop)
     * [device](#:~:text=device%20(deviceID:%20_String_)%20:%20returns%20_Grandeur::Project::Device_)
     * [datastore](#datastore)
-  * [Device](#:~:text=Device%20class%20gives%20you%20the%20functions%20to%20interact%20with%20your%20device%20data.)
+  * [Device](#device-class)
     * [Data](#data)
       * [get](#get)
       * [set](#set)
@@ -962,7 +962,7 @@ void setup() {
 // Gets the object of Datastore class.
 ```
 
-## Device
+## Device<a name="device-class"></a>
 
 Device class gives you the functions to interact with your device data. Its `data` function returns the object of `Data` class that gives you the functions to get, set, and subscribe to the device's data variables. Subscribe means if you update this device's data variables from anywhere other than this device itself, this device will get the update. This is great for realtime switching ON/OFF of your device remotely from an app or changing voltage of its pins for example.
 
