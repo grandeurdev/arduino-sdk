@@ -77,7 +77,7 @@ To get a deeper understanding of the core concepts Grandeur is built upon, dive 
     * [isConnected](#isconnected)
     * [onConnection](#onconnection)
     * [loop](#loop)
-    * [device](#:~:text=device%20(deviceID:%20_String_)%20:%20returns%20_Grandeur::Project::Device_)
+    * [device](#device-function)
     * [datastore](#datastore)
   * [Device](#device-class)
     * [Data](#data)
@@ -922,7 +922,7 @@ void loop() {
 // Runs the SDK only when the WiFi is connected.
 ```
 
-### device
+### device<a name="device-function"></a>
 
 > device (deviceID: _String_) : returns _Grandeur::Project::Device_
 
