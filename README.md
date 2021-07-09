@@ -79,7 +79,7 @@ To get a deeper understanding of the core concepts Grandeur is built upon, dive 
     * [loop](#loop)
     * [device](#:~:text=device%20(deviceID:%20_String_)%20:%20returns%20_Grandeur::Project::Device_)
     * [datastore](#datastore)
-  * [Device](#:~:text=Device%20class%20gives%20you%20the%20functions)
+  * [Device](#:~:text=Device%20class%20gives%20you%20the%20functions%20to%20interact%20with%20your%20device%20data.)
     * [Data](#data)
       * [get](#get)
       * [set](#set)
