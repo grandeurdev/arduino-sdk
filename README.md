@@ -72,20 +72,21 @@ To get a deeper understanding of the core concepts Grandeur is built upon, dive 
     * [Networking](#networking)
     * [Allowed Origins](#allowed-origins)
 * [Documentation](#documentation)
-    * [init](#grandeur-init)
+    * [init](#init)
   * [Project](#project)
     * [isConnected](#isconnected)
     * [onConnection](#onconnection)
     * [loop](#loop)
-    * [device](#device)
+    * [device](#:~:text=device%20(deviceID:%20_String_)%20:%20returns%20_Grandeur::Project::Device_)
     * [datastore](#datastore)
-  * [Device](#device)
+  * [Device](#:~:text=Device%20class%20gives%20you%20the%20functions)
     * [Data](#data)
       * [get](#get)
       * [set](#set)
       * [on](#on)
   * [Datastore](#datastore)
     * [insert](#insert)
+    * [search](#search)
 * [Enhancements Under Consideration](#enhancements-under-consideration)
 
 ## Get Started
@@ -779,13 +780,16 @@ So to allow a web app to interact with your project using the Web SDK, you first
 
 `Grandeur` is the entry point — the door of the SDK. `grandeur` is the global object of the `Grandeur` that gets available right away when you include `<Grandeur.h>` in your sketch. It has just one purpose and therefore gives you only one function: `grandeur.init()`.
 
-`Project` is the main class and all functionalities originate from it. You can safely imagine the object of `Project` class as a reference to your project on Grandeur. You get the object of this class when you initialize SDK's configurations using `grandeur.init()`.
+`Project` is the main class and all grandeur functionalities originate from it. You can safely imagine the object of `Project` class as a reference to your project on Grandeur. You get the object of this class when you initialize SDK's configurations using `grandeur.init()`.
 
 > ***Note 2***: You cannot connect with Grandeur or even with internet without first connecting with the WiFi. Therefore, the examples below are just for reference and you are required to handle your device's WiFi yourself in order for things to work. You can see [these examples][Examples] to get a deeper understanding. They do WiFi handling too. 😉
 
+## Grandeur
+
+Grandeur class exposes one method — `init` — and one class — `Project`:
 ### init
 
-> grandeur.init (apiKey: _String_, token: _String_) : returns _Project_
+> grandeur.init (apiKey: _String_, token: _String_) : returns _Grandeur::Project_
 
 This method initializes SDK's connection configurations: `apiKey` and `authToken`, and returns an object of the `Project` class. `Project` class is the main class that exposes all functions you can perform on your project resources through the SDK.
 
@@ -799,7 +803,7 @@ This method initializes SDK's connection configurations: `apiKey` and `authToken
 #### Example
 
 ```cpp
-// Container for the object of GrandeurDevice class.
+// Container for the object of Device class.
 Grandeur::Project myProject;
 void setup() {
   myProject = grandeur.init(YourApiKey, YourToken);
@@ -812,7 +816,7 @@ void setup() {
 
 ## Project
 
-Project is the main class of the SDK. When SDK connects with Grandeur, this class represents your grandeur project, from the device's perspective — there are only two resources your device can interact with: **device** and **datastore**, which are represented by their respective classes.
+Project is the main class of the SDK. When your device connects with Grandeur, this class represents your grandeur project, from the device's perspective — there are only two resources your device can interact with: **device** and **datastore**, which are represented by their respective classes.
 
 Project class exposes the following methods:
 
@@ -920,9 +924,9 @@ void loop() {
 
 ### device
 
-> device (deviceID: _String_) : returns _Device_
+> device (deviceID: _String_) : returns _Grandeur::Project::Device_
 
-This method returns an object of the **Device** class. Read about **Device** class [here][Device Class].
+This method returns an object of the **Device** class.
 
 #### Example
 
@@ -940,7 +944,7 @@ void setup() {
 
 ### datastore
 
-> datastore (void) : returns _Datastore_
+> datastore (void) : returns _Grandeur::Project::Datastore_
 
 This method returns a reference to object of the **Datastore** class. Datastore class exposes the functions of the datastore API which handles your queries to your project's datastore like: logging device variables to the cloud datastore, searching for data, etc.
 
@@ -960,7 +964,35 @@ void setup() {
 
 ## Device
 
-Device class gives you the functions to interact with your device metadata and data. Its `data` function returns the object of `Data` class that gives you the functions to get, set, and subscribe to the device's data variables. Subscribe means if you update this device's data variables from anywhere other than this device itself, this device will get the update. This is great for realtime switching ON/OFF of your device remotely from an app or changing voltage of its pins for example.
+Device class gives you the functions to interact with your device data. Its `data` function returns the object of `Data` class that gives you the functions to get, set, and subscribe to the device's data variables. Subscribe means if you update this device's data variables from anywhere other than this device itself, this device will get the update. This is great for realtime switching ON/OFF of your device remotely from an app or changing voltage of its pins for example.
+
+Device class exposes only the `data` function:
+
+### data
+
+> data () : returns _Grandeur::Project::Device::Data_
+
+This method returns an object of the **Data** class.
+
+#### Example
+
+```cpp
+Grandeur::Project myProject;
+Grandeur::Project::Device myDevice;
+Grandeur::Project::Device::Data myDeviceData;
+void setup() {
+  myProject = grandeur.init(YourApiKey, YourToken);
+  myDevice = myProject.device(YourDeviceID);
+  myDeviceData = myDevice.data();
+}
+
+// **RESULT**
+// Gets the object of the Device Data class.
+```
+
+## Data
+
+`Data` class gives you the functions to get, set, and subscribe to the device's data variables.
 
 Here's how you can use each function of the `Data` class:
 
