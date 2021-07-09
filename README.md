@@ -24,6 +24,8 @@ Grandeur is not a regular IoT cloud. It's a complete IoT product development and
 
 * No need to mix and match various services to come up with your own solution. Grandeur is a single spot solution for all of your needs, from **built-in authentication** of your users and devices to **an integrated database** to an **out-of-the-box file storage system** and a registry of data for all of your devices. And You can manage absolutely everything from a single dashboard.
 
+* [Grandeur Canvas](https://grandeur.tech) is the latest addition to the Grandeur family. It lets you drag and drop widgets — like buttons, sliders, displays, and graphs — to sketch a layout which you can use in place of your app. This means you do not have to have app designers in your team before starting to build IoT — a single hardware engineer is a beast with Grandeur.
+
 * Simple pricing. Unlike Google and AWS, we do not have to deal with a different pricing model for each service and aggregate them together to compute the monthly bill making it almost impossible for the user to understand why he has to pay this much! Packaging all our services into one platform has let us develop a very simple and transparent pricing model. You can [start free][Grandeur Sign Up] for a certain quota and then pay as you go based on your resources consumption. Checkout [pricing][Grandeur Pricing] for more details.
 
 * We have a growing [community on Hackster][Grandeur Hackster] which is equivalent to growing number of developers which are using Grandeur and improving the opensource SDKs resulting in increasing Grandeur support.
@@ -78,12 +80,10 @@ To get a deeper understanding of the core concepts Grandeur is built upon, dive 
     * [device](#device)
     * [datastore](#datastore)
   * [Device](#device)
-    * [getSummary](#getsummary)
-    * [getParms](#getparms)
-    * [setSummary](#setsummary)
-    * [setParms](#setparms)
-    * [onSummary](#onsummary)
-    * [onParms](#onparms)
+    * [Data](#data)
+      * [get](#get)
+      * [set](#set)
+      * [on](#on)
   * [Datastore](#datastore)
     * [insert](#insert)
 * [Enhancements Under Consideration](#enhancements-under-consideration)
@@ -777,30 +777,30 @@ So to allow a web app to interact with your project using the Web SDK, you first
 
 # Documentation
 
-`Project` is the main class and all functionalities originate from it. You can safely imagine the object of `Project` class as a reference to your project on Grandeur. You get a reference to this object when you initialize SDK's configurations using `grandeur.init()`.
+`Grandeur` is the entry point — the door of the SDK. `grandeur` is the global object of the `Grandeur` that gets available right away when you include `<Grandeur.h>` in your sketch. It has just one purpose and therefore gives you only one function: `grandeur.init()`.
 
-`grandeur` is the global object that gets available right away when you include `<Grandeur.h>` in your sketch. It has just one purpose and therefore gives you only one function: `grandeur.init()`.
+`Project` is the main class and all functionalities originate from it. You can safely imagine the object of `Project` class as a reference to your project on Grandeur. You get the object of this class when you initialize SDK's configurations using `grandeur.init()`.
 
-> ***Note 2***: You cannot connect with Grandeur or even with internet without first connecting with the WiFi. Therefore, the examples below are just for reference and you are required to handle your device's WiFi in order for things to work. You can see [these examples][Examples] to get a deeper understanding. They do WiFi handling too. 😉
+> ***Note 2***: You cannot connect with Grandeur or even with internet without first connecting with the WiFi. Therefore, the examples below are just for reference and you are required to handle your device's WiFi yourself in order for things to work. You can see [these examples][Examples] to get a deeper understanding. They do WiFi handling too. 😉
 
 ### init
 
 > grandeur.init (apiKey: _String_, token: _String_) : returns _Project_
 
-This method initializes SDK's connection configurations: `apiKey` and `authToken`, and returns a reference to object of the `Project` class. `Project` class is the main class that exposes all functions of the SDK.
+This method initializes SDK's connection configurations: `apiKey` and `authToken`, and returns an object of the `Project` class. `Project` class is the main class that exposes all functions you can perform on your project resources through the SDK.
 
 #### Parameters
 
 | Name        | Type     | Description                                                     |
 |-------------|----------|-----------------------------------------------------------------|
-| apiKey      | _String_ | API key of your project that your device belongs to             |
-| token       | _String_ | Access token generated when the device is paired with the user  |
+| apiKey      | _String_ | API key of your project that your device is registered in.      |
+| token       | _String_ | Access token generated when the device is paired with a user.   |
 
 #### Example
 
 ```cpp
 // Container for the object of GrandeurDevice class.
-Project myProject;
+Grandeur::Project myProject;
 void setup() {
   myProject = grandeur.init(YourApiKey, YourToken);
 }
@@ -812,20 +812,20 @@ void setup() {
 
 ## Project
 
-Project is the main class of the SDK. When SDK connects with Grandeur, this class represents your cloud project, tuned down to the device scope. There are only two APIs you can interact with: device and datastore, which are represented by their respective classes.
+Project is the main class of the SDK. When SDK connects with Grandeur, this class represents your grandeur project, from the device's perspective — there are only two resources your device can interact with: **device** and **datastore**, which are represented by their respective classes.
 
-This class exposes the following methods:
+Project class exposes the following methods:
 
 ### isConnected
 
 > isConnected(void): returns _bool_
 
-This method returns true if the SDK is connected with Grandeur.
+This method returns true if the device is connected with Grandeur.
 
 #### Example
 
 ```cpp
-Project myProject;
+Grandeur::Project myProject;
 void setup() {
   myProject = grandeur.init(YourApiKey, YourToken);
 }
@@ -851,19 +851,19 @@ void loop() {
 
 > onConnection (callback : _Callback_) : returns _void_
 
-This method schedules a function to be called when the SDK's connection with Grandeur is made or broken. The function passed to it as argument is called an **event handler** for it handles events like connection/disconnection with Cloud. Example below illustrates its usage.
+This method schedules a function to be called when the device's connection with Grandeur is made or broken. The function passed to it as argument is called an **event handler** for it handles events like connection/disconnection with Grandeur. Example below illustrates its usage.
 
 #### Parameters
 
 | Name        | Type             | Description                                                                    |
 |-------------|------------------|--------------------------------------------------------------------------------|
-| callback    | _void (*)(bool)_ | An event handler function for device's connection/disconnection with Grandeur  |
+| callback    | _void (*)(bool)_ | An event handler function for device's connection/disconnection with Grandeur. |
 
 
 #### Example
 
 ```cpp
-Project myProject;
+Grandeur::Project myProject;
 
 void connectionCallback(bool status) {
   // This method handles the events related to device's connection with Grandeur.
@@ -898,21 +898,21 @@ void loop() {
 
 > loop (valve: _bool_) : returns _void_
 
-This method is the legs of the SDK. Without it, the SDK can't run. Therefore, it must be called in Arduino's `loop()` and without being suspected to any *delay*. **This method is what runs the underlying event loop and makes all the *Async* functions possible.**
-It also accepts an argument which we call **valve**. A **valve** is a boolean expression whose value decides if the SDK would run for this `loop` or not. For example, we can use it to dictate to the SDK to run only when the device WiFi is connected.
+This method is the legs of the SDK. Without it, the SDK doesn't run. Therefore, it must be called in Arduino's `loop()` and without being suspected to any *delay*. **This method is what runs the underlying event loop and makes all the *Async* functions possible.**
+It can also accept an argument which we call **valve**. A **valve** is a boolean expression whose value decides if the SDK would run for current `loop` or not. For example, we can use it to dictate to the SDK to run only when the device WiFi is connected.
 
-> **A Tidbit:** [Here][Using Millis Instead of Delay] is how you can use `millis()` instead of `delay()` if you want a function to run after every few moments.
+> **A Tidbit:** [Here][Using Millis Instead of Delay] is how you can use `millis()` instead of `delay()` if you want a function to run after every few moments without blocking the loop.
 
 #### Example
 
 ```cpp
-Project myProject;
+Grandeur::Project myProject;
 void setup() {
   myProject = grandeur.init(YourApiKey, YourToken);
 }
 
 void loop() {
-  myProject.loop(WiFiState == CONNECTED);  
+  myProject.loop(WiFiState == CONNECTED);  // Same as "if(WiFiState == CONNECTED) myProject.loop();"
 }
 // **RESULT**
 // Runs the SDK only when the WiFi is connected.
@@ -922,13 +922,13 @@ void loop() {
 
 > device (deviceID: _String_) : returns _Device_
 
-This method returns a reference to object of the **Device** class. Read about **Device** class [here][Device Class].
+This method returns an object of the **Device** class. Read about **Device** class [here][Device Class].
 
 #### Example
 
 ```cpp
-Project myProject;
-Device myDevice;
+Grandeur::Project myProject;
+Grandeur::Project::Device myDevice;
 void setup() {
   myProject = grandeur.init(YourApiKey, YourToken);
   myDevice = myProject.device(YourDeviceID);
@@ -947,8 +947,8 @@ This method returns a reference to object of the **Datastore** class. Datastore 
 #### Example
 
 ```cpp
-Project myProject;
-Datastore myDatastore;
+Grandeur::Project myProject;
+Grandeur::Project::Datastore myDatastore;
 void setup() {
   myProject = grandeur.init(YourApiKey, YourToken);
   myDatastore = myProject.datastore();
@@ -960,13 +960,14 @@ void setup() {
 
 ## Device
 
-Device class exposes the functions of the device API. Its data function returns a reference to object of `Data` class which represents device's data space. You can use it to update device variables on Grandeur, pulling variables from Grandeur, listening for updates in your device variables, etc.
+Device class gives you the functions to interact with your device metadata and data. Its `data` function returns the object of `Data` class that gives you the functions to get, set, and subscribe to the device's data variables. Subscribe means if you update this device's data variables from anywhere other than this device itself, this device will get the update. This is great for realtime switching ON/OFF of your device remotely from an app or changing voltage of its pins for example.
 
-Device's `Data` class exposes the following functions:
+Here's how you can use each function of the `Data` class:
 
 ### get
 
 > get (path: _String_, callback: _Callback_) : returns _void_
+> get (callback: _Callback_) : returns _void_
 
 This method gets a device variable from Grandeur.
 
@@ -980,11 +981,11 @@ This method gets a device variable from Grandeur.
 #### Example
 
 ```cpp
-Project myProject;
-Device myDevice;
+Grandeur::Project myProject;
+Grandeur::Project::Device myDevice;
 
 void getVoltageCallback(Var result) {
-  // This method just prints *voltage* variable from the device's summary.
+  // This method prints *voltage* variable from device data.
   Serial.println(result["data"]<<"\n");
 }
 
@@ -994,39 +995,42 @@ void setup() {
 }
 
 void loop() {
-  // This gets the summary on every loop and calls getSummaryCallback() function when its
-  // response from the cloud is received.
+  // This requests to get "voltage" variable from device data on every loop and calls getVoltageCallback() function when the
+  // data from Grandeur actually arrives.
   myDevice.data().get("voltage", getVoltageCallback);
 
-  myProject.loop(true);
+  if(WiFiIsConnected) myProject.loop();
 }
 
 // **RESULT**
 // Prints the value of the voltage variable from Grandeur on every loop.
 ```
 
+You can get all device data variables with the `path`-less `get` function overload.
+
 ### set
 
 > set (path : _String_, data : _any_, callback: _Callback_) : returns _void_
+> set (path : _String_, data : _any_) : returns _void_
 
 This method updates a device variable on Grandeur with new data.
 
 #### Parameters
 
-| Name        | Type          | Description                                                  |
-|-------------|---------------|--------------------------------------------------------------|
-| path        | _String_      | Path of the device variable using dot notation               |
-| data        | _Var_         | New data to store in the variable                            |
-| callback    | _Callback_    | A function to be called when set response is received        |
+| Name        | Type          | Description                                                              |
+|-------------|---------------|--------------------------------------------------------------------------|
+| path        | _String_      | Path of the device variable using dot notation.                          |
+| data        | _Var_         | New data to store in the variable.                                       |
+| callback    | _Callback_    | A function to be called after the variable at `path` is actually updated.|
 
 #### Example
 
 ```cpp
-Project myProject;
-Device myDevice;
+Grandeur::Project myProject;
+Grandeur::Project::Device myDevice;
 
 void setVoltageCallback(Var result) {
-  // This method prints *voltage* value after it is updated on Grandeur.
+  // This method prints "voltage" value after it is updated on Grandeur.
   Serial.println(result["update"]);
 }
 
@@ -1038,23 +1042,28 @@ void setup() {
 void loop() {
   // Reading pin value.
   int voltage = analogRead(A0);
-  // This sets the summary on every loop and calls setSummaryCallback() function when its
-  // response from the cloud is received.
+  // This requests to set the "voltage" variable on every loop and calls setVoltageCallback() function when the
+  // variable is actually updated on Grandeur.
   myDevice.data().set("voltage", voltage, setVoltageCallback);
 
-  myProject.loop(true);
+  if(WiFiIsConnected) myProject.loop();
 }
 
 // **RESULT**
-// Setting the summary and prints the updated values of the summary
-// variables (voltage and current in our case) on every loop.
+// Sets the voltage variable and prints its updated value
+// after it's updated on Grandeur, on every loop.
 ```
+
+If you do not need to do anything after the successful update of a data variable, you can use the `callback`-less `set` function overload.
 
 ### on
 
 > on (path: _String_, callback : _Callback_) : returns _void_
+> on (callback : _Callback_) : returns _void_
 
 This method schedules a function to be called when a device variable changes on Grandeur.
+
+A variable can be changed by a paired user from an app, dashboard, or any SDKs. All three of these updates would trigger the on-callback, or you can call it the device's data update handler. But updating a device's data variable from the device itself won't trigger its own update handler.
 
 > ***A Tidbit***: *Update is a special type of event* and the function that handles it is called an **update handler**.
 
@@ -1070,60 +1079,60 @@ More on Callback [here][callback].
 #### Example
 
 ```cpp
-Project myProject;
-Device myDevice;
+Grandeur::Project myProject;
+Grandeur::Project::Device myDevice;
 
 void voltageUpdatedCallback(Var result) {
-  // When summary update occurs on Grandeur, this function extracts the updated values of
-  // voltage and current, and sets the corresponding pins.
-  Serial.println("Summary update occurred!\n");
-  int voltage = updatedSummary["voltage"];
-  digitalWrite(voltage, A0);
+  // When "voltage" update occurs on Grandeur, this function extracts
+  // its updated value and writes it to an analog pin.
+  Serial.println("Voltage update occurred!\n");
+  int voltage = result["voltage"];
+  analogWrite(voltage, A0);
 }
 
 void setup() {
   myProject = grandeur.init(YourApiKey, YourToken);
   myDevice = myProject.device(YourDeviceID);
 
-  myDevice.on("voltage", voltageUpdatedCallback);
+  myDevice.data().on("voltage", voltageUpdatedCallback);
 }
 
 void loop() {
-  myProject.loop(true);
+  if(WiFiIsConnected) myProject.loop();
 }
 ```
 
+You can subscribe to all device data variables with the `path`-less `on` function overload.
+
 ## Datastore
 
-Device class exposes the functions of the device API. It generally handles your device's data on Grandeur like: updating device variables on Grandeur, pulling variables from Grandeur, listening for cloud updates in your device variables, and so on.
+Datastore class gives you the functions to store and search for data in Grandeur datastore which a highly scalable database where you can log data points and retrieve them later to plot trend or device health graphs. Read about Datastore [here](https://www.hackster.io/grandeurtech/data-persistence-in-iot-with-grander-fd09ee).
 
-It exposes the following functions:
+Datastore class exposes the following functions:
 
 ### insert
 
 > insert (documents: _Var_, callback: _Callback_) : returns _void_
 
-This method inserts documents into Grandeur datastore.
+This method inserts documents into datastore.
 
 #### Parameters
 
-| Name        | Type         | Description                                                              |
-|-------------|--------------|--------------------------------------------------------------------------|
-| documents   | _Var_ | An array of documents (_Var_ s) to be inserted into the datastore |
-| callback    | _Callback_   | A function to be called when insertion of documents is completed         |
+| Name        | Type         | Description                                                        |
+|-------------|--------------|--------------------------------------------------------------------|
+| documents   | _Var_        | An array of documents (_Var_ s) to be inserted into the datastore. |
+| callback    | _Callback_   | A function to be called when insertion of documents completes.     |
 
 #### Example
 
 ```cpp
-Project myProject;
-Datastore myDatastore;
+Grandeur::Project myProject;
+Grandeur::Project::Datastore myDatastore;
 
 void insertCallback(Var insertionResult) {
   // This method just prints if the insertion is successful or not.
-  if(insertionResult["code"] == "DATASTORE-DOCUMENTS-INSERTED") {
-    Serial.println("Insertion successful.");
-  }
-  Serial.println("Insertion Failed.");
+  if(insertionResult["code"] == "DATASTORE-DOCUMENTS-INSERTED") Serial.println("Insertion successful.");
+  else Serial.println("Insertion Failed.");
 }
 
 void setup() {
@@ -1143,7 +1152,7 @@ void loop() {
   // completes.
   myDatastore.insert(docs, insertCallback);
 
-  myProject.loop(true);
+  if(WiFiIsConnected) myProject.loop();
 }
 
 // **RESULT**
@@ -1155,22 +1164,22 @@ void loop() {
 
 > search (filter: _Var_, projection: _Var_, pageNumber: _int_, callback: _Callback_) : returns _void_
 
-This method searches for documents in Grandeur datastore based on the `filter` supplied. `Filter` describes what documents to return and `projection` describes what fields to mask/unmask in those documents. Their is a limit on the how many documents can be returned in one query. The documents are divided into pages and you can get subsequent pages by specifying the `pageNumber`.
+This method searches for documents in datastore based on the `filter` supplied. `Filter` describes what documents to return and `projection` describes what fields to return in those documents. Documents are returned in pages and each page is **20 documents** in size. This is what the `pageNumber` is for. You'll get first page by specifying the `pageNumber` to 0 and 1 for second page. and so on.
 
 #### Parameters
 
-| Name        | Type         | Description                                                                                |
-|-------------|--------------|--------------------------------------------------------------------------------------------|
-| filter      | _Var_        | A document that describes the conditions which the documents should satisfy to be returned |
-| projection  | _Var_        | A document that describes what fields to return                                            |
-| pageNumber  | _int_        | Number of the requested page                                                               |
-| callback    | _Callback_   | A function to be called when insertion of documents is completed                           |
+| Name        | Type         | Description                                                                            |
+|-------------|--------------|----------------------------------------------------------------------------------------|
+| filter      | _Var_        | A document describing the conditions that the documents to be returned are to satisfy. |
+| projection  | _Var_        | A document that describes what fields to return.                                       |
+| pageNumber  | _int_        | Number of the page to return.                                                          |
+| callback    | _Callback_   | A function to be called when documents are completed.                                  |
 
 #### Example
 
 ```cpp
-Project myProject;
-Datastore myDatastore;
+Grandeur::Project myProject;
+Grandeur::Project::Datastore myDatastore;
 
 void searchCallback(Var searchResult) {
   // This method just prints the documents if the search is successful.
@@ -1198,7 +1207,7 @@ void loop() {
   // This fetches 1st page of all the documents stored in the datastore.
   myDatastore.collection("myCollectionName").search({}, {}, 0, searchCallback);
 
-  myProject.loop(true);
+  if(WiFiIsConnected) myProject.loop();
 }
 
 // **RESULT**
