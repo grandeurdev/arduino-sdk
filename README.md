@@ -12,7 +12,7 @@ Grandeur is designed keeping in mind all the challenges a hardware engineer can 
 
 For example, you can use the **Auth API** to create *register* and *login* flows and make sure each user has access to its own data and no one other than the device admin itself should be able to interact with its device. You can store a humongous amount of data in cloud database to analyze and extract intelligent information from it and display useful graphs. Use our **datastore API** for that. You can host your product's website and your web app on Grandeur as well. It's **as simple as running literally a single command**. Also, your hardware device can listen for events and updates from your app, your app can listen for events and updates from your hardware device, and they can communicate with each other in realtime (with a latency of ~200ms). **Devices API** and **Device SDK** come into play here. But in no way would you have to waste your time in mixing and matching the APIs, checking which one works for your use case, and go through a huge learning curve -- like you would do while working with AWS or Google Cloud Platform. All the Grandeur APIs are completely integrated and speed and security is built in. The SDKs are designed around the whole ideology of **seamless integration.** 
 
-Grandeur is not a regular IoT cloud. It's a complete IoT product development and management platform, designed for production environments. Here's how:
+Grandeur is not a regular IoT backend. It's a complete IoT product development and management platform, designed for production environments. Here's how:
 
 * Grandeur is product-centered. It is much more than just a medium of communication between your app and your hardware device. Focusing on expediting IoT product development, it offers an ecosystem of the most necessary tools integrated to make the most head-cracking development problems seamless. What problems you may ask?
   * Huge development stack (Your IoT product which is generally hardware, your web app, your server API, and the communication between all of these).
@@ -26,7 +26,7 @@ Grandeur is not a regular IoT cloud. It's a complete IoT product development and
 
 * [Grandeur Canvas](https://grandeur.tech) is the latest addition to the Grandeur family. It lets you drag and drop widgets — like buttons, sliders, displays, and graphs — to sketch a layout which you can use instead of coding a full app. This means you do not have to have app designers in your team before starting to build IoT — a single hardware engineer is a beast with Grandeur.
 
-* Simple pricing. Unlike Google and AWS, we do not have to deal with a different pricing model for each service and aggregate them together to compute the monthly bill making it almost impossible for the user to understand why he has to pay this much! Packaging all our services into one platform has let us develop a very simple and transparent pricing model. You can [start free][Grandeur Sign Up] for a certain quota and then pay as you go based on your resources consumption. Checkout [pricing][Grandeur Pricing] for more details.
+* Simple pricing. Unlike Google and AWS, we do not have to deal with a different pricing model for each service and aggregate them together to compute the monthly bill making it almost impossible for the user to understand why he has to pay this much! Focusing just on solving IoT has let us develop a very simple and transparent pricing model. You can [start free][Grandeur Sign Up] for a certain quota and then pay as you go based on your resources consumption. Checkout [pricing][Grandeur Pricing] for more details.
 
 * We have a growing [community on Hackster][Grandeur Hackster] which is equivalent to growing number of developers which are using Grandeur and improving the opensource SDKs resulting in increasing Grandeur support.
 
@@ -35,6 +35,8 @@ Grandeur is not a regular IoT cloud. It's a complete IoT product development and
 Follow [our Hackster Hub][Grandeur Hackster] for quick starts and advanced development projects.
 
 [Here][Get Started With Grandeur] is how you can create a new project on Grandeur and start using the Javascript SDK to build your IoT apps.
+
+[Here][Get Started With Grandeur Canvas] is how you can drag-and-drop your app in seconds.
 
 From here onwards, we'll look at how you can use the Arduino SDK for all arduino-compatible modules to put your devices live and connected on Grandeur. Let's dive in!
 
@@ -95,11 +97,11 @@ To get a deeper understanding of the core concepts Grandeur is built upon, dive 
 
 1. You can search for **Grandeur** in Arduino's library manager. In Arduino IDE, open `Sketch > Include Library > Manage Libraries` and install Grandeur from there.
 
-2. You can also clone **Arduino SDK** from [here][Arduino SDK] and [install it in your Arduino IDE][Installing an Arduino Library].
+2. You can also download the latest release of **Arduino SDK** from [here][Latest Release] and [install it in your Arduino IDE][Installing an Arduino Library].
 
 ### Inclusion
 
-When you include `<Grandeur.h>` in your sketch, a global object `grandeur` is created right away which you can use to initialize the SDK's configurations.
+When you include `<Grandeur.h>` in your sketch, a global object `grandeur` is created right away which you can use to give the SDK credentials so it can start connecting with Grandeur (more on it in the next step).
 
 ```cpp
 #include <Grandeur.h>
@@ -110,7 +112,7 @@ When you include `<Grandeur.h>` in your sketch, a global object `grandeur` is cr
 
 ### Initialization
 
-Initialization is as simple as calling `grandeur.init()` with your credentials (Project's API Key and Device's Access Token). The SDK uses your API key to select your project, and device ID and access token to limit its scope to only your device's data. It then returns a `Project` object which exposes other subclasses like `Device` and `Datastore`, and you can go programming your device from there.
+Initialization is as simple as calling `grandeur.init()` with your credentials (Your project's API Key and device's Access Token). The SDK uses your API key to know which project, and device ID and access token to know which device. It then returns a `Project` object which exposes other subclasses like `Device` and `Datastore`, and you can go programming your device from there.
 
 ```cpp
 #include <Grandeur.h>
@@ -1262,6 +1264,7 @@ Here are some enhancements that we are considering to implement in the SDK. They
 [Grandeur Settings]: https://cloud.grandeur.tech/settings "Grandeur Settings"
 [Grandeur Pricing]: https://grandeur.tech/pricing/ "Pricing"
 [Get Started With Grandeur]: https://github.com/grandeurtech/js-sdk#get-started "Get Started With Grandeur"
+[Get Started With Grandeur Canvas]: https://youtu.be/gqTmtDJkPl8 "Get Started With Grandeur Canvas"
 [An Example Webapp]: https://github.com/grandeurtech/js-sdk#example "An Example Webapp"
 [Examples]:  https://github.com/grandeurtech/arduino-sdk/tree/master/examples/
 [Arduino IDE]: https://www.arduino.cc/en/main/software "Arduino IDE"
@@ -1284,6 +1287,7 @@ Here are some enhancements that we are considering to implement in the SDK. They
 
 [Get Started with Arduino SDK]: #get-started "Get Started with Arduino SDK"
 [Arduino SDK]: https://github.com/grandeurtech/arduino-sdk "Arduino SDK"
+[Latest Release]: https://github.com/grandeurtech/arduino-sdk/releases/latest "Arduino SDK's Latest Release"
 [project]: #project "Project"
 [summary]: #device-registry "Summary"
 [parms]: #device-registry "Parms"
