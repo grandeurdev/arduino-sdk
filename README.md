@@ -24,7 +24,7 @@ Grandeur is not a regular IoT cloud. It's a complete IoT product development and
 
 * No need to mix and match various services to come up with your own solution. Grandeur is a single spot solution for all of your needs, from **built-in authentication** of your users and devices to **an integrated database** to an **out-of-the-box file storage system** and a registry of data for all of your devices. And You can manage absolutely everything from a single dashboard.
 
-* [Grandeur Canvas](https://grandeur.tech) is the latest addition to the Grandeur family. It lets you drag and drop widgets — like buttons, sliders, displays, and graphs — to sketch a layout which you can use in place of your app. This means you do not have to have app designers in your team before starting to build IoT — a single hardware engineer is a beast with Grandeur.
+* [Grandeur Canvas](https://grandeur.tech) is the latest addition to the Grandeur family. It lets you drag and drop widgets — like buttons, sliders, displays, and graphs — to sketch a layout which you can use instead of coding a full app. This means you do not have to have app designers in your team before starting to build IoT — a single hardware engineer is a beast with Grandeur.
 
 * Simple pricing. Unlike Google and AWS, we do not have to deal with a different pricing model for each service and aggregate them together to compute the monthly bill making it almost impossible for the user to understand why he has to pay this much! Packaging all our services into one platform has let us develop a very simple and transparent pricing model. You can [start free][Grandeur Sign Up] for a certain quota and then pay as you go based on your resources consumption. Checkout [pricing][Grandeur Pricing] for more details.
 
