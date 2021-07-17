@@ -55,10 +55,10 @@ To get a deeper understanding of the core concepts Grandeur is built upon, dive 
   * [Inclusion](#inclusion)
   * [Initialization](#initialization)
   * [Handling the WiFi](#handling-the-wifi)
-  * [Setting Up the Valve](#setting-up-the-valve)
-  * [Events Listening](#events-listening)
+  * [Sending Messages Only When the WiFi is Connected](#sending-messages-only-when-the-wifi-is-connected)
+  * [Handling Connection and Disconnection with Grandeur](#handling-connection-and-disconnection-with-grandeur)
   * [Fetching Device Variables and Updating Them](#fetching-device-variables-and-updating-them)
-  * [Handling Updates From Grandeur](#handling-updates-from-the-cloud)
+  * [Handling Updates From Grandeur](#handling-updates-from-grandeur)
 * [Example](#example)
 * [The Dexterity of Arduino SDK](#the-dexterity-of-arduino-sdk)
 * [Grandeur Ecosystem](#grandeur-ecosystem)
@@ -101,7 +101,7 @@ To get a deeper understanding of the core concepts Grandeur is built upon, dive 
 
 ### Inclusion
 
-When you include `<Grandeur.h>` in your sketch, a global object `grandeur` is created right away which you can use to give the SDK credentials so it can start connecting with Grandeur (more on it in the next step).
+When you include `<Grandeur.h>` in your sketch, a global object `grandeur` is created right away which you can use to give the SDK [your project's API Key](https://cloud.grandeur.tech/settings/#:~:text=Project%20API%20Key) and [your device access token](https://cloud.grandeur.tech/devices/#:~:text=Register%20Device) so it can start connecting with Grandeur (more on it in the next step).
 
 ```cpp
 #include <Grandeur.h>
@@ -112,12 +112,12 @@ When you include `<Grandeur.h>` in your sketch, a global object `grandeur` is cr
 
 ### Initialization
 
-Initialization is as simple as calling `grandeur.init()` with your credentials (Your project's API Key and device's Access Token). The SDK uses your API key to know which project, and device ID and access token to know which device. It then returns a `Project` object which exposes other subclasses like `Device` and `Datastore`, and you can go programming your device from there.
+Initialization is as simple as calling `grandeur.init()` with your credentials (Your project's API Key and device's Access Token). The SDK uses your API key to know which project and access token to make sure the request is coming from a legit source. It then returns a `Grandeur::Project` object which exposes other subclasses like `Device` and `Datastore`, and you can go programming your device from there.
 
 ```cpp
 #include <Grandeur.h>
 
-Project myProject;
+Grandeur::Project myProject;
 
 void setup() {
   // You can initialize device configurations like this.
@@ -146,7 +146,7 @@ Here we illustrate how to handle your ESP8266's WiFi.
 #include <Grandeur.h>
 #include <ESP8266WiFi.h>
 
-Project myProject;
+Grandeur::Project myProject;
 
 void setupWiFi(void) {
   Serial.begin(9600);
@@ -169,22 +169,18 @@ void setup() {
 
 void loop() {
   // This runs the SDK when the device WiFi is connected.
-  myProject.loop(WiFi.status() == WL_CONNECTED);
+  if(WiFi.status() == WL_CONNECTED) myProject.loop();
 }
 
 ```
 
-### Setting Up the Valve
+### Sending Messages Only When the WiFi is Connected
 
-You can see this line in the previous subsection: `myProject.loop(WiFi.status() == WL_CONNECTED)`, but what does that mean?
+`loop` function is what runs the SDK: it connects the device with Grandeur; when disconnected, it automatically reconnects; pulls new messages from Grandeur; pushes messages to Grandeur; and so on. But trying to do any sort of communication on the internet is useless until the WiFi isn't connected. That's exactly what the statement `if(WiFi.status() == WL_CONNECTED) myProject.loop()` does. The if-statement decides when the SDK should run and when it should not. In this case, it would only run when the WiFi is connected. If while running, the WiFi gets disconnected, `WiFi.status() == WL_CONNECTED` would evaluate to `false` and the SDK would stop running (trying to send more messages or fetch data).
 
-`loop` function is what runs the SDK: it connects with the cloud; when disconnected, it automatically reconnects; pulls new messages from the cloud; pushes messages to the cloud; and so on. But doing any sort of communication on the internet is useless until the WiFi isn't connected. That's exactly what the statement does: it acts like a **valve** for the SDK. The conditional expression passed to the `loop` function decides when the SDK would run and when it would not. In this case, it would only run when the WiFi is connected, causing `WiFi.status() == WL_CONNECTED` expression to evaluate to `true`. If while running, the WiFi gets disconnected, `WiFi.status() == WL_CONNECTED` would evaluate to `false` and the SDK would stop running.
+### Handling Connection and Disconnection with Grandeur
 
-### Setting Up Connection Event Handler
-
-You can also listen on SDK's connection-related events. For example, to run some code when the device makes a successful connection to the cloud or when the device's connection to the cloud breaks, you can wrap that code in a `Callback` function and pass it to `Project`'s `onConnection()` function.
-
-The `Callback` function is a special type of function that accepts a `Var` as a parameter and returns `void`. Read more about `Callback` and `Var` [here][var].
+You can also listen on SDK's connection-related events. For example, to run some code when the device makes a successful connection to Grandeur or when the device's connection to Grandeur breaks, you can wrap that code in "a function that takes a `bool` and returns `void`" and pass it to `Grandeur::Project`'s `onConnection()` function.
 
 Here's how you can handle the connection event:
 
@@ -192,7 +188,7 @@ Here's how you can handle the connection event:
 #include <Grandeur.h>
 #include <ESP8266WiFi.h>
 
-Project myProject;
+Grandeur::Project myProject;
 
 void setupWiFi(void) {
   Serial.begin(9600);
@@ -231,20 +227,20 @@ void setup() {
 
 void loop() {
   // This runs the SDK when the device WiFi is connected.
-  myProject.loop(WiFi.status() == WL_CONNECTED);
+  if(WiFi.status() == WL_CONNECTED) myProject.loop();
 }
 
 // **RESULT**
-// Prints "Device Connected to Grandeur!\n" when device gets connected to the cloud.
-// And prints "Device Disconnected from Grandeur!\n" when device's connection from
-// the cloud breaks.
+// Prints "Device Connected to Grandeur!\n" when device connects with Grandeur.
+// And prints "Device Disconnected from Grandeur!\n" when device's connection with
+// Grandeur breaks.
 ```
 
 ### Fetching Device Variables and Updating Them
 
-On Grandeur, a device has a special space where you can store its variables as key-value pairs, for example, a device's voltage or current or its ON/OFF state. Keeping the online copy of device variables updated gives you many advantages. You can see if your device is ON/OFF just by fetching its `state` from Grandeur.
+In IoT, every device in the network wants to publish some variables for users or other devices in the network to see. On Grandeur, we call these the **data** of the device. you can store the device variables as key-value pairs, like the device's voltage or current or its ON/OFF state. Keeping the online copy of device variables (aka. data) updated gives you many advantages: you can see if your device is ON or OFF at any moment just by fetching its `state` from Grandeur.
 
-Both `data().get()` and `data().set()` are **Async functions** because they communicate with Grandeur through internet. Communication through internet takes some time and we cannot wait, for example, for a device variable to arrive from Grandeur — meanwhile blocking the rest of the device program execution. So, what we do is, we schedule a function to be called for the future when the variable arrives and resume with rest of the device program, forgetting that we ever called `data().get()`. When the variable arrives, the SDK calls our scheduled function, giving us access to that variable inside that function.
+Both `device(deviceId).data().get()` and `device(deviceId).data().set()` are **Async functions** because they communicate with Grandeur through internet. Communication through internet takes some time (due to Internet latency being in ms while processors run instructions in a fraction of a µs) and we cannot wait for our data to arrive from Grandeur, meanwhile blocking the rest of the program execution. So, what we do is, we schedule a function to be called in future when the variable would have arrived and resume the rest of the device program, forgetting that we ever called `device(deviceId).data().get()`. When the variable arrives, the SDK calls our scheduled function automatically, giving us access to that variable inside that function.
 
 Read more about **Async functions**, `Callback`, and `Var` [here][the dexterity of arduino sdk].
 
@@ -254,8 +250,8 @@ Here's how we would get and set device variables:
 #include <Grandeur.h>
 #include <ESP8266WiFi.h>
 
-Project myProject;
-Device myDevice;
+Grandeur::Project myProject;
+Grandeur::Project::Device myDevice;
 
 void setupWiFi(void) {
   Serial.begin(9600);
@@ -268,15 +264,15 @@ void setupWiFi(void) {
   Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid.c_str(), passphrase.c_str());
 }
 
-void getCallback(Var result) {
-  // This function prints the variables stored in summary and sets the device pins.
-  Serial.printf("Voltage: %s\n", (int) result["data"]);
-  analogWrite(A0, (int) result["data"]);
+void writeVoltageToA0(const char* code, int voltage) {
+  // This function prints the voltage value and sets the A0 pin with its value.
+  Serial.printf("Voltage: %d\n", voltage);
+  analogWrite(A0, voltage);
 }
 
-void setCallback(Var result) {
-  // This function prints the updated values of the variables stored in summary.
-  Serial.printf("Updated Voltage: %s\n", (int) result["update"]);
+void printUpdatedVoltage(const char* code, int voltage) {
+  // This function prints the updated voltage value after the update is completed.
+  Serial.printf("Updated Voltage: %d\n", voltage);
 }
 
 void setup() {
@@ -289,30 +285,29 @@ void setup() {
 }
 
 void loop() {
-
   if(myProject.isConnected()) {
     // Getting voltage variable
-    myDevice.data().get("voltage", getCallback);
+    myDevice.data().get("voltage", writeVoltageToA0);
     // Updating voltage
     int voltage = analogRead(A0);
-    myDevice.data().set("voltage", voltage, setCallback);
+    myDevice.data().set("voltage", voltage, printUpdatedVoltage);
   }
 
   // This runs the SDK when the device WiFi is connected.
-  myProject.loop(WiFi.status() == WL_CONNECTED);
+  if(WiFi.status() == WL_CONNECTED) myProject.loop();
 }
 
 // **RESULT**
-// When the loop() starts, voltage is fetched. When it arrives from the cloud, getCallback is
-// called which prints its value and sets the A0 pin.
+// When the loop() starts, voltage is fetched. When it arrives from Grandeur, writeVoltageToA0 is
+// called which prints its value and writes it to the A0 pin.
 // Then the voltage is updated with the new value from the A0 pin. When the update completes,
-// setCallback is called with the updated values of voltage which is printed.
+// printUpdatedVoltage is called to print the updated value of voltage.
 ```
 
 ### Handling Updates From Grandeur
 
-You can not only `get()/set()` but also subscribe to a device variable, which means if an update occurs in that variable at any time, you'll instantly get notified of it.
-To subscribe to a variable, you just need to pass the variable name and a function to `data().on()`. The function you pass to `data().on()` is set as an **update handlers** for that variable, which means the code inside that function will be run whenever that variable is updated.
+You can not only `get()/set()` but also subscribe to a device variable, which means if an update occurs in that variable at any time, the device will instantly get it.
+To subscribe to a variable, you just need to pass the variable name and a function to `device(deviceId).data().on()`. The function you pass to `device(deviceId).data().on()` is set as an **update handler** for that variable, which means the code inside that function will be run whenever that variable is updated.
 
 Let's set an update handler for device voltage now:
 
@@ -320,8 +315,8 @@ Let's set an update handler for device voltage now:
 #include <Grandeur.h>
 #include <ESP8266WiFi.h>
 
-Project myProject;
-Device myDevice;
+Grandeur::Project myProject;
+Grandeur::Project::Device myDevice;
 
 void setupWiFi(void) {
   Serial.begin(9600);
@@ -334,9 +329,9 @@ void setupWiFi(void) {
   Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid.c_str(), passphrase.c_str());
 }
 
-void voltageUpdatedCallback(int voltage, const char* path) {
+void printUpdatedVoltage(const char* path, int voltage) {
   // This function prints the new value of the voltage variable.
-    Serial.printf("Updated Voltage: %d\n", voltage);
+  Serial.printf("Updated Voltage: %d\n", voltage);
 }
 
 void setup() {
@@ -346,12 +341,12 @@ void setup() {
   myProject = grandeur.init(YourApiKey, AccessToken);
   myDevice = myProject.device(YourDeviceID);
 
-  myDevice.data().on("voltage", voltageUpdatedCallback)
+  myDevice.data().on("voltage", printUpdatedVoltage)
 }
 
 void loop() {
   // This runs the SDK when the device WiFi is connected.
-  myProject.loop(WiFi.status() == WL_CONNECTED);
+  if(WiFi.status() == WL_CONNECTED) myProject.loop();
 }
 
 // **RESULT**
@@ -363,15 +358,15 @@ void loop() {
 
 Here we go through a general example to explain the **Arduino SDK** in action. For a little more broken-down approach, do have a look at [these examples][Examples] as well.
 
-To begin working with the **Arduino SDK**, the very first step is to [create a new project][Grandeur Dashboard] and [register a new device][Grandeur Devices] through the [Cloud Dashboard][Grandeur Dashboard]. Then create a new Arduino sketch in your workspace folder.
+To begin working with the **Arduino SDK**, you need a [project on Grandeur][Grandeur Dashboard] and a [device registered in that project.][Grandeur Devices].
 
 ### Create a New Sketch
 
-Create a new folder for your `arduino workspace`, create a `.ino` file in it with the same name as the folder, and open it with [Arduino IDE][Arduino IDE]. This is the sketch file where you'll write your device's program.
+Create a new folder on your desktop, create a `.ino` file in it with the same name as the folder, and open it with [Arduino IDE][Arduino IDE]. This is the sketch file where you'll write your device's program.
 
-### Include Grandeur.h into Your Sketch
+### Include Grandeur.h in Your Sketch
 
-After [cloning the Arduino SDK][installation] and [installing it][Installing an Arduino Library], you can import it into your sketch like this:
+After [installing Grandeur in your Arduino IDE][installation], you can import it into your sketch like this:
 
 ```cpp
 #include <Grandeur.h>
@@ -379,22 +374,22 @@ After [cloning the Arduino SDK][installation] and [installing it][Installing an 
 
 ### Initialize the SDK's Configurations
 
-**Arduino SDK** takes care of your device's connection with Grandeur. To use it into your sketch, you need to initialize its configurations first. You can do that using the global object `grandeur`. Initializing the SDK returns a reference to object of the `Project` class which exposes all the SDK's functions.
+**Arduino SDK** takes care of your device's connection with Grandeur. To use it into your sketch, you need to initialize its configurations first. You can do that using the global object `grandeur`. Initializing the SDK returns an object of `Grandeur::Project` class which exposes all the SDK's functions.
 
 ```cpp
 #include <Grandeur.h>
 
-Project myProject;
-Device myDevice;
+Grandeur::Project myProject;
+Grandeur::Project::Device myDevice;
 
 void setup() {
   myProject = grandeur.init(YourAPIKey, YourToken);
 }
 ```
 
-You can find the API Key on the [settings page][Grandeur Settings] of your project's dashboard. You get the **Access Token** when you register the device on Grandeur. But a device can only connect to Grandeur if it's paired with a user. And only the paired user has access to the device's data. For convenient testing, we have made device pairing function available on the [devices page][Grandeur Devices] too. You can find your device's ID and pair your device with a user account. If your project has no registered user yet, you can add one easily from the [accounts page][Grandeur Accounts].
+You can find the API Key on the [settings page][Grandeur Settings] of your project's dashboard. You get the **Access Token** when you register the device on Grandeur. But a device can only connect to Grandeur if it's paired with a user. And only a user that's paired with the device has access to the device's data. For convenient testing, we have **Pair Device Button** on the [devices page][Grandeur Devices] too. If your project has no registered users yet, you can add one from the [accounts page][Grandeur Accounts].
 
-### Handle the device's WiFi
+### Handle the Device's WiFi
 
 Here we illustrate this with the example of an ESP8266.
 
@@ -402,8 +397,8 @@ Here we illustrate this with the example of an ESP8266.
 #include <Grandeur.h>
 #include <ESP8266WiFi.h>
 
-Project myProject;
-Device myDevice;
+Grandeur::Project myProject;
+Grandeur::Project::Device myDevice;
 
 void setupWiFi(void) {
   Serial.begin(9600);
@@ -426,20 +421,20 @@ void setup() {
 
 void loop() {
   // This runs the SDK when the device WiFi is connected.
-  myProject.loop(WiFi.status() == WL_CONNECTED);
+  if(WiFi.status() == WL_CONNECTED) myProject.loop();
 }
 ```
 
 ### Initialize Your Device
 
-Before doing anything, you need to initialize your device with data from Grandeur to keep them both in sync. You can get all the device variables by using `get()` functions. Here's how you can get the device **state** from the cloud.
+Before doing anything, you need to sync your device with Grandeur. You can get all the device variables by using `device(deviceId).data().get()` function. Here's a demo.
 
 ```cpp
 #include <Grandeur.h>
 #include <ESP8266WiFi.h>
 
-Project myProject;
-Device myDevice;
+Grandeur::Project myProject;
+Grandeur::Project::Device myDevice;
 
 void setupWiFi(void) {
   Serial.begin(9600);
@@ -452,9 +447,9 @@ void setupWiFi(void) {
   Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid.c_str(), passphrase.c_str());
 }
 
-void getStateCallback(Var result) {
-  if(result["code"] == "DEVICE-DATA-FETCHED") {
-    bool state = result["data"];
+void initializePins(const char* code, Var variables) {
+  if(strcmp(code, "DEVICE-DATA-FETCHED") == 0) {
+    bool state = variables["state"];
     // You can set a digital pin here with the state value
     // to switch the hardware connected to it ON/OFF.
     digitalWrite(D0, state);
@@ -468,28 +463,28 @@ void setup() {
   
   myProject = grandeur.init(YourApiKey, YourToken);
   myDevice = myProject.device(YourDeviceID);
-  // This gets the device's state variable from Grandeur and passes it to
-  // getStateCallback() function.
-  myDevice.data().get("state", getStateCallback);
+  // This gets all the device variables from Grandeur and passes them to
+  // initializePins() function.
+  myDevice.data().get(initializePins);
 }
 
 void loop() {
   // This runs the SDK when the device WiFi is connected.
-  myProject.loop(WiFi.status() == WL_CONNECTED);
+  if(WiFi.status() == WL_CONNECTED) myProject.loop();
 }
 ```
 
 ### Set Update Handlers
 
-Update handlers are the functions which are called when a device variable is updated. The update could be from a user or the device itself. Without the handlers, your device would not be notified when a user turns it off from the web app.
-Here's how you can set an update handler in your sketch for the device's state.
+Update handlers are the functions which are called when a device variable is updated. The device variable could have been updated by the paired user or the device itself. Without the handlers, your device would not know and handle it when its user turns it off from the web app.
+Here's how you can set an update handler in your sketch for the device's `state`.
 
 ```cpp
 #include <Grandeur.h>
 #include <ESP8266WiFi.h>
 
-Project myProject;
-Device myDevice;
+Grandeur::Project myProject;
+Grandeur::Project::Device myDevice;
 
 void setupWiFi(void) {
   Serial.begin(9600);
@@ -502,16 +497,16 @@ void setupWiFi(void) {
   Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid.c_str(), passphrase.c_str());
 }
 
-void getStateCallback(Var result) {
-  if(result["code"] == "DEVICE-DATA-FETCHED") {
-    bool state = result["data"];
+void initializePins(const char* code, Var variables) {
+  if(strcmp(code, "DEVICE-DATA-FETCHED") == 0) {
+    bool state = variables["state"];
     // You can set a digital pin here with the state value
     // to switch the hardware connected to it ON/OFF.
     digitalWrite(D0, state);
   }
 }
 
-void stateUpdatedCallback(bool state, const char* path) {
+void writeToD0(const char* path, bool state) {
   // You can set a digital pin here with the newState value
   // to switch the hardware connected to it ON/OFF.
   digitalWrite(D0, state);
@@ -524,30 +519,30 @@ void setup() {
   
   myProject = grandeur.init(YourApiKey, YourToken);
   myDevice = myProject.device(YourDeviceID);
-  // This gets the device's state variable from Grandeur and passes it to
-  // getStateCallback() function.
-  myDevice.data().get("state", getStateCallback);
+  // This gets all the device variables from Grandeur and passes them to
+  // initializePins() function.
+  myDevice.data().get(initializePins);
   // This sets up the update handler for state. When an update to state occurs on Grandeur,
-  // stateUpdatedCallback() function is called.
-  myDevice.data().on("state", stateUpdatedCallback);
+  // writeToD0 function is called.
+  myDevice.data().on("state", writeToD0);
 }
 
 void loop() {
   // This runs the SDK when the device WiFi is connected.
-  myProject.loop(WiFi.status() == WL_CONNECTED);
+  if(WiFi.status() == WL_CONNECTED) myProject.loop();
 }
 ```
 
 ### Update Device Variables
 
-To see the live state of the device on the web app, you need to keep sending the updated state after every few seconds. We'll use the `set()` function to update the state value.
+To get the live stream of a device variable on the user-end, you need to keep sending the updated state after every few seconds. We'll use the `device(deviceId).data().set()` function to update the state value.
 
 ```cpp
 #include <Grandeur.h>
 #include <ESP8266WiFi.h>
 
-Project myProject;
-Device myDevice;
+Grandeur::Project myProject;
+Grandeur::Project::Device myDevice;
 
 void setupWiFi(void) {
   Serial.begin(9600);
@@ -560,24 +555,24 @@ void setupWiFi(void) {
   Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid.c_str(), passphrase.c_str());
 }
 
-void getStateCallback(Var result) {
-  if(result["code"] == "DEVICE-DATA-FETCHED") {
-    bool state = result["data"];
+void initializePins(const char* code, Var variables) {
+  if(strcmp(code, "DEVICE-DATA-FETCHED") == 0) {
+    bool state = variables["state"];
     // You can set a digital pin here with the state value
     // to switch the hardware connected to it ON/OFF.
     digitalWrite(D0, state);
   }
 }
 
-void stateUpdatedCallback(bool state, const char* path) {
+void writeToD0(const char* path, bool state) {
   // You can set a digital pin here with the newState value
   // to switch the hardware connected to it ON/OFF.
   digitalWrite(D0, state);
 }
 
-void setStateCallback(Var result) {
-  if(result["code"] == "DEVICE-DATA-UPDATED") {
-    Serial.printf("State is updated to: %d\n", (bool) result["update"]);
+void printUpdatedState(const char* code, bool state) {
+  if(strcmp(code, "DEVICE-DATA-UPDATED") == 0) {
+    Serial.printf("State is updated to: %d\n", state);
   }
 }
 
@@ -588,53 +583,55 @@ void setup() {
   
   myProject = grandeur.init(YourApiKey, YourToken);
   myDevice = myProject.device(YourDeviceID);
-  // This gets the device's state variable from Grandeur and passes it to
-  // getStateCallback() function.
-  myDevice.data().get("state", getStateCallback);
+  // This gets all the device variables from Grandeur and passes them to
+  // initializePins() function.
+  myDevice.data().get(initializePins);
   // This sets up the update handler for state. When an update to state occurs on Grandeur,
-  // stateUpdatedCallback() function is called.
-  myDevice.data().on("state", stateUpdatedCallback);
+  // writeToD0 function is called.
+  myDevice.data().on("state", writeToD0);
 }
 
 void loop() {
   bool state = digitalRead(D0);
-  // This sends the updated state to Grandeur and calls setStateCallback() when
-  // Grandeur acknowledges the update.
-  myDevice.data().set("state", state, setStateCallback);
+  // This sends the updated state to Grandeur and calls printUpdatedState() after
+  // the update completes.
+  myDevice.data().set("state", state, printUpdatedState);
 
   // This runs the SDK when the device WiFi is connected.
-  myProject.loop(WiFi.status() == WL_CONNECTED);
+  if(WiFi.status() == WL_CONNECTED) myProject.loop();
 }
 ```
 
 ### Test it With Your Web app
 
-You can build a web app for your product to control your hardware device over the cloud. [Here's a simple example for that][An Example Webapp].
+You can build a web app to control this device over Grandeur. [Here's a simple example for that][An Example Webapp].
 
 ## The Dexterity of Arduino SDK
 
 The Arduino SDK is aimed at providing extremely to-the-point functions, being almost invisible in your device program to make the integration of Grandeur in your product seamless. Here is what it does under the hood without you paying attention to the most painful things:
 
-* **Arduino SDK** takes care of your device's connection to [Grandeur][Grandeur]. **It can start trying to connect with Grandeur as soon as the device boots or you can manually tell the SDK when to begin.** There's a [`loop()`][loop] function that you place in the Arduino's `loop` whose sole function is to run the SDK. It accepts a **boolean expression as argument** and the SDK runs when the boolean expression evaluates to `true`. So, let's say if you pass the expression `WiFiState == CONNECTED` to it, the SDK would only run when the device's WiFi is connected.
+* **Arduino SDK** takes care of your device's connection to [Grandeur][Grandeur]. **It can start trying to connect with Grandeur as soon as the device boots or you can manually tell the SDK when to begin.** There's [`Grandeur::Project::loop`][loop] function that you place in the Arduino's `loop` whose sole function is to run the SDK. It accepts a **boolean expression as argument** and the SDK runs when the boolean expression evaluates to `true`. So, let's say if you pass the expression `WiFiState == CONNECTED` to it, the SDK would only run when the device's WiFi is connected. Or you can also wrap the `Grandeur::Project::loop` in an if-statement.
 
-* As soon as the WiFi gets connected, **Arduino SDK** begins trying to connect to *[Grandeur][Grandeur]* using the **connection credentials** you provide during `grandeur.init()`. When it connects, only then does the communication with Grandeur happen. And if somehow the connection breaks, SDK handles the reconnection and everything resumes right from where it left.
+* As soon as the WiFi gets connected, **Arduino SDK** begins trying to connect to **[Grandeur][Grandeur]** using the **credentials** you provide during `grandeur.init()`. When it connects, only then does the communication with Grandeur happen. And if somehow the connection breaks, SDK handles the reconnection and everything resumes right from where it left.
 
-*  **Arduino SDK** exposes the state of your device (`CONNECTED` or `DISCONNECTED`) through [`getState()`][getState] function to let you make your decisions based on that.
+* **Arduino SDK** maintains a network buffer. So if, for some reason, your device disconnects from the internet, the SDK buffers the messages during the offline period and flushes them in sequence when the device is back online.
 
-* **Arduino SDK** is event-driven. You can set **event handler** for device's connection or disconnection with Grandeur by using [`onConnection()`][onConnection]. So, when the device connects or disconnects from the cloud, the function passed to `onConnection()` is called.
+* **Arduino SDK** exposes the state of your device (`CONNECTED` or `DISCONNECTED`) through [`Grandeur::Project::getState`][getState] function to let you make your decisions based on that.
 
-* You can also set **update handlers** for device variables using [`data().on()`][on] function. So, when any of the device variables is updated, the corresponding function passed to `on()` is called.
+* **Arduino SDK** is event-driven. You can set **event handler** for device's connection or disconnection with Grandeur by using [`Grandeur::Project::onConnection`][onConnection]. So, when the device connects or disconnects with Grandeur, the function you passed to `onConnection()` is called.
+
+* You can also set **update handlers** for device variables using [`Grandeur::Project::Device::Data::on`][on] function. So, when any of the device variables is updated, the corresponding function you passed to `Grandeur::Project::Device::Data::on` is called.
 
 * **Async functions** are what make the event-drive of the SDK possible. They do all the same things as regular functions plus one extra. They receive a function parameter which they schedule for later. For example, all of the following are Async functions:
   
-  * `project.onConnection(Callback callback)`
-  * `project.device().data().on(String path, function callback)`
-  * `project.device().data().get(String path, function callback)`
-  * `project.device().data().set(String path, Var data, function callback)`
+  * `Grandeur::Project::onConnection(Callback callback)`
+  * `Grandeur::Project::Device::Data::on(String path, function callback)`
+  * `Grandeur::Project::Device::Data::get(String path, function callback)`
+  * `Grandeur::Project::Device::Data::set(String path, Var data, function callback)`
 
-  `get()` for example, requests Grandeur for a device variable and schedules the `callback` function for when the variable arrives, because obviously, they don't arrive instantaneously; there is always some latency involved in web communications.
+  `Grandeur::Project::Device::Data::get` for example, requests Grandeur for a device variable and schedules the `callback` function for when the variable arrives, because obviously, they don't arrive instantaneously; there is always some latency involved in web communications.
 
-* [`Var`][var] is a special variable type which can take form of any other type including int, double, String, etc, like in those dynamic typed languages like javascript. But it can also act like a container for other variables, like a javascript object or a C++ map, to form JSON. You can store variables in it as key-value pairs. This is device data space is — a container for device variables aka. `Var`.
+* [`Var`][var] is a special variable type which can take form of any other type including int, double, String, bool, etc, like in those dynamic typed languages like javascript. But it can also act like a container for other variables, like a javascript object or a C++ map, to form JSON. You can store variables in it as key-value pairs.
 
 ```cpp
 Var json; // The root
@@ -844,7 +841,7 @@ void loop() {
     Serial.println("Yay! Device has made a successful connection with Grandeur!\n");
   }
 
-  myProject.loop(true);
+  myProject.loop();
 }
 
 // **RESULT**
@@ -855,7 +852,7 @@ void loop() {
 
 ### onConnection
 
-> onConnection (callback : _Callback_) : returns _void_
+> onConnection (callback : _void (*)(bool)_) : returns _void_
 
 This method schedules a function to be called when the device's connection with Grandeur is made or broken. The function passed to it as argument is called an **event handler** for it handles events like connection/disconnection with Grandeur. Example below illustrates its usage.
 
@@ -902,10 +899,11 @@ void loop() {
 
 ### loop
 
+> loop () : returns _void_
 > loop (valve: _bool_) : returns _void_
 
 This method is the legs of the SDK. Without it, the SDK doesn't run. Therefore, it must be called in Arduino's `loop()` and without being suspected to any *delay*. **This method is what runs the underlying event loop and makes all the *Async* functions possible.**
-It can also accept an argument which we call **valve**. A **valve** is a boolean expression whose value decides if the SDK would run for current `loop` or not. For example, we can use it to dictate to the SDK to run only when the device WiFi is connected.
+It can also accept an argument which we call **valve**. A **valve** is a boolean expression whose value decides if the SDK would run for current `loop` or not. For example, we can use it to dictate to the SDK to run only when the device WiFi is connected. You can also use an if-statement instead.
 
 > **A Tidbit:** [Here][Using Millis Instead of Delay] is how you can use `millis()` instead of `delay()` if you want a function to run after every few moments without blocking the loop.
 
@@ -1009,7 +1007,7 @@ This method gets a device variable from Grandeur.
 
 | Name        | Type       | Description                                                  |
 |-------------|------------|--------------------------------------------------------------|
-| path        | _String_   | Path of the device variable using dot notation            |
+| path        | _String_   | Path of the device variable using dot notation               |
 | callback    | _Callback_ | A function to be called when get response is received        |
 
 #### Example
@@ -1018,9 +1016,9 @@ This method gets a device variable from Grandeur.
 Grandeur::Project myProject;
 Grandeur::Project::Device myDevice;
 
-void getVoltageCallback(Var result) {
+void getVoltageCallback(const char* code, int voltage) { // You can write any type int/double/bool/const char* in place of Var and it'll cast voltage to that type.
   // This method prints *voltage* variable from device data.
-  Serial.println(result["data"]<<"\n");
+  Serial.println(voltage);
 }
 
 void setup() {
@@ -1063,9 +1061,9 @@ This method updates a device variable on Grandeur with new data.
 Grandeur::Project myProject;
 Grandeur::Project::Device myDevice;
 
-void setVoltageCallback(Var result) {
+void setVoltageCallback(const char* code, int voltage) { // You can write any type int/double/bool/const char* in place of int and it'll cast voltage to that type.
   // This method prints "voltage" value after it is updated on Grandeur.
-  Serial.println(result["update"]);
+  Serial.println(voltage);
 }
 
 void setup() {
@@ -1116,11 +1114,10 @@ More on Callback [here][callback].
 Grandeur::Project myProject;
 Grandeur::Project::Device myDevice;
 
-void voltageUpdatedCallback(Var result) {
-  // When "voltage" update occurs on Grandeur, this function extracts
-  // its updated value and writes it to an analog pin.
+void voltageUpdatedCallback(const char* path, int voltage) {
+  // When "voltage" update occurs on Grandeur, this function
+  // writes it to an analog pin.
   Serial.println("Voltage update occurred!\n");
-  int voltage = result["voltage"];
   analogWrite(voltage, A0);
 }
 
