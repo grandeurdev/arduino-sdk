@@ -13,7 +13,7 @@
 // Connection macros
 #define GRANDEUR_URL "api.grandeur.tech"
 #define GRANDEUR_PORT 443
-#define GRANDEUR_FINGERPRINT ""
+#define GRANDEUR_FINGERPRINT NULL
 
 // Strings sizes
 #define FINGERPRINT_SIZE 256
