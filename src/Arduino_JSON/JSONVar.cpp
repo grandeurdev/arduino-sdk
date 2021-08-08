@@ -21,64 +21,56 @@
 
 #include "JSONVar.h"
 
-JSONVar::JSONVar(struct cJSON* json, struct cJSON* parent) :
-  _json(json),
-  _parent(parent)
+JSONVar::JSONVar(struct cJSON *json, struct cJSON *parent) : _json(json),
+                                                             _parent(parent)
 {
 }
 
-JSONVar::JSONVar(bool b) :
-  JSONVar()
+JSONVar::JSONVar(bool b) : JSONVar()
 {
   *this = b;
 }
 
-JSONVar::JSONVar(int i) :
-  JSONVar()
+JSONVar::JSONVar(int i) : JSONVar()
 {
   *this = i;
 }
 
-JSONVar::JSONVar(long l) :
-  JSONVar()
+JSONVar::JSONVar(long l) : JSONVar()
 {
   *this = l;
 }
 
-JSONVar::JSONVar(unsigned long ul) :
-  JSONVar()
+JSONVar::JSONVar(unsigned long ul) : JSONVar()
 {
   *this = ul;
 }
 
-JSONVar::JSONVar(double d) :
-  JSONVar()
+JSONVar::JSONVar(double d) : JSONVar()
 {
   *this = d;
 }
 
-JSONVar::JSONVar(const char* s)  :
-  JSONVar()
+JSONVar::JSONVar(const char *s) : JSONVar()
 {
   *this = s;
 }
 
-JSONVar::JSONVar(const String& s)  :
-  JSONVar()
+JSONVar::JSONVar(const String &s) : JSONVar()
 {
   *this = s;
 }
 
-JSONVar::JSONVar(const JSONVar& v)
+JSONVar::JSONVar(const JSONVar &v)
 {
   _json = cJSON_Duplicate(v._json, true);
   _parent = NULL;
 }
 
 #if __cplusplus >= 201103L || defined(__GXX_EXPERIMENTAL_CXX0X__)
-JSONVar::JSONVar(JSONVar&& v)
+JSONVar::JSONVar(JSONVar &&v)
 {
-  cJSON* tmp;
+  cJSON *tmp;
 
   // swap _json
   tmp = _json;
@@ -92,33 +84,33 @@ JSONVar::JSONVar(JSONVar&& v)
 }
 #endif
 
-JSONVar::JSONVar(nullptr_t)  :
-  JSONVar()
+JSONVar::JSONVar(nullptr_t) : JSONVar()
 {
   *this = nullptr;
 }
 
-JSONVar::JSONVar() :
-  JSONVar(NULL, NULL)
+JSONVar::JSONVar() : JSONVar(NULL, NULL)
 {
 }
 
 JSONVar::~JSONVar()
 {
-  if (_json != NULL && _parent == NULL) {
+  if (_json != NULL && _parent == NULL)
+  {
     cJSON_Delete(_json);
 
     _json = NULL;
   }
 }
 
-size_t JSONVar::printTo(Print& p) const
+size_t JSONVar::printTo(Print &p) const
 {
-  if (_json == NULL) {
+  if (_json == NULL)
+  {
     return 0;
   }
 
-  char* s = cJSON_PrintUnformatted(_json);
+  char *s = cJSON_PrintUnformatted(_json);
 
   size_t writen = p.print(s);
 
@@ -152,35 +144,42 @@ JSONVar::operator double() const
   return cJSON_IsNumber(_json) ? _json->valuedouble : NAN;
 }
 
-JSONVar::operator const char*() const
+JSONVar::operator const char *() const
 {
-  if (cJSON_IsString(_json)) {
+  if (cJSON_IsString(_json))
+  {
     return _json->valuestring;
   }
 
   return NULL;
 }
 
-void JSONVar::operator=(const JSONVar& v)
+void JSONVar::operator=(const JSONVar &v)
 {
-  if (&v == &undefined) {
-    if (cJSON_IsObject(_parent)) {
+  if (&v == &undefined)
+  {
+    if (cJSON_IsObject(_parent))
+    {
       cJSON_DeleteItemFromObjectCaseSensitive(_parent, _json->string);
 
       _json = NULL;
       _parent = NULL;
-    } else {
+    }
+    else
+    {
       replaceJson(cJSON_CreateNull());
     }
-  } else {
+  }
+  else
+  {
     replaceJson(cJSON_Duplicate(v._json, true));
   }
 }
 
 #if __cplusplus >= 201103L || defined(__GXX_EXPERIMENTAL_CXX0X__)
-JSONVar& JSONVar::operator=(JSONVar&& v)
+JSONVar &JSONVar::operator=(JSONVar &&v)
 {
-  cJSON* tmp;
+  cJSON *tmp;
 
   // swap _json
   tmp = _json;
@@ -221,12 +220,12 @@ void JSONVar::operator=(double d)
   replaceJson(cJSON_CreateNumber(d));
 }
 
-void JSONVar::operator=(const char* s)
+void JSONVar::operator=(const char *s)
 {
   replaceJson(cJSON_CreateString(s));
 }
 
-void JSONVar::operator=(const String& s)
+void JSONVar::operator=(const String &s)
 {
   *this = s.c_str();
 }
@@ -236,16 +235,16 @@ void JSONVar::operator=(nullptr_t)
   replaceJson(cJSON_CreateNull());
 }
 
-bool JSONVar::operator==(const JSONVar& v) const
+bool JSONVar::operator==(const JSONVar &v) const
 {
   return cJSON_Compare(_json, v._json, 1) ||
-          (_json == NULL && v._json == NULL);
+         (_json == NULL && v._json == NULL);
 }
 
-bool JSONVar::operator==(const char* v) const
+bool JSONVar::operator==(const char *v) const
 {
   return cJSON_Compare(_json, JSONVar(v)._json, 1) ||
-          (_json == NULL && JSONVar(v)._json == NULL);
+         (_json == NULL && JSONVar(v)._json == NULL);
 }
 
 bool JSONVar::operator==(nullptr_t) const
@@ -253,36 +252,41 @@ bool JSONVar::operator==(nullptr_t) const
   return (cJSON_IsNull(_json));
 }
 
-JSONVar JSONVar::operator[](const char* key)
+JSONVar JSONVar::operator[](const char *key)
 {
-  if (!cJSON_IsObject(_json)) {
+  if (!cJSON_IsObject(_json))
+  {
     replaceJson(cJSON_CreateObject());
   }
 
-  cJSON* json = cJSON_GetObjectItemCaseSensitive(_json, key);
+  cJSON *json = cJSON_GetObjectItemCaseSensitive(_json, key);
 
-  if (json == NULL) {
+  if (json == NULL)
+  {
     json = cJSON_AddNullToObject(_json, key);
   }
-  
-  return JSONVar(json, _json);    
+
+  return JSONVar(json, _json);
 }
 
-JSONVar JSONVar::operator[](const String& key)
+JSONVar JSONVar::operator[](const String &key)
 {
   return (*this)[key.c_str()];
 }
 
 JSONVar JSONVar::operator[](int index)
 {
-  if (!cJSON_IsArray(_json)) {
+  if (!cJSON_IsArray(_json))
+  {
     replaceJson(cJSON_CreateArray());
   }
 
-  cJSON* json = cJSON_GetArrayItem(_json, index);
+  cJSON *json = cJSON_GetArrayItem(_json, index);
 
-  if (json == NULL) {
-    while (index >= cJSON_GetArraySize(_json)) {
+  if (json == NULL)
+  {
+    while (index >= cJSON_GetArraySize(_json))
+    {
       json = cJSON_CreateNull();
 
       cJSON_AddItemToArray(_json, json);
@@ -292,16 +296,18 @@ JSONVar JSONVar::operator[](int index)
   return JSONVar(json, _json);
 }
 
-JSONVar JSONVar::operator[](const JSONVar& key)
+JSONVar JSONVar::operator[](const JSONVar &key)
 {
-  if (cJSON_IsArray(_json) && cJSON_IsNumber(key._json)) {
+  if (cJSON_IsArray(_json) && cJSON_IsNumber(key._json))
+  {
     int index = (int)key;
 
     return (*this)[index];
   }
 
-  if (cJSON_IsObject(_json) && cJSON_IsString(key._json)) {
-    const char* str = (const char*) key;
+  if (cJSON_IsObject(_json) && cJSON_IsString(key._json))
+  {
+    const char *str = (const char *)key;
 
     return (*this)[str];
   }
@@ -311,68 +317,77 @@ JSONVar JSONVar::operator[](const JSONVar& key)
 
 int JSONVar::length() const
 {
-  if (cJSON_IsString(_json)) {
+  if (cJSON_IsString(_json))
+  {
     return strlen(_json->string);
-  } else if (cJSON_IsArray(_json)) {
+  }
+  else if (cJSON_IsArray(_json))
+  {
     return cJSON_GetArraySize(_json);
-  } else {
+  }
+  else
+  {
     return -1;
   }
 }
 
 JSONVar JSONVar::keys() const
 {
-  if (!cJSON_IsObject(_json)) {
+  if (!cJSON_IsObject(_json))
+  {
     return JSONVar(NULL, NULL);
   }
 
   int length = cJSON_GetArraySize(_json);
 
-  const char* keys[length];
-  cJSON* child = _json->child;
+  const char *keys[length];
+  cJSON *child = _json->child;
 
-  for (int i = 0; i < length; i++, child = child->next) {
+  for (int i = 0; i < length; i++, child = child->next)
+  {
     keys[i] = child->string;
   }
 
   return JSONVar(cJSON_CreateStringArray(keys, length), NULL);
 }
 
-bool JSONVar::hasOwnProperty(const char* key) const
+bool JSONVar::hasOwnProperty(const char *key) const
 {
-  if (!cJSON_IsObject(_json)) {
+  if (!cJSON_IsObject(_json))
+  {
     return false;
   }
 
-  cJSON* json = cJSON_GetObjectItemCaseSensitive(_json, key);
+  cJSON *json = cJSON_GetObjectItemCaseSensitive(_json, key);
 
   return (json != NULL);
 }
 
-bool JSONVar::hasOwnProperty(const String& key) const
+bool JSONVar::hasOwnProperty(const String &key) const
 {
   return hasOwnProperty(key.c_str());
 }
 
-JSONVar JSONVar::parse(const char* s)
+JSONVar JSONVar::parse(const char *s)
 {
-  cJSON* json = cJSON_Parse(s);
+  cJSON *json = cJSON_Parse(s);
 
   return JSONVar(json, NULL);
 }
 
-JSONVar JSONVar::parse(const String& s)
+JSONVar JSONVar::parse(const String &s)
 {
   return parse(s.c_str());
 }
 
-String JSONVar::stringify(const JSONVar& value)
+String JSONVar::stringify(const JSONVar &value)
 {
-  if (value._json == NULL) {
+  if (value._json == NULL)
+  {
     return String((const char *)NULL);
   }
 
-  char* s = cJSON_PrintUnformatted(value._json);
+  char *s = cJSON_PrintUnformatted(value._json);
 
   String str = s;
 
@@ -381,43 +396,65 @@ String JSONVar::stringify(const JSONVar& value)
   return str;
 }
 
-String JSONVar::typeof_(const JSONVar& value)
+String JSONVar::typeof_(const JSONVar &value)
 {
-  struct cJSON* json = value._json;
+  struct cJSON *json = value._json;
 
-  if (json == NULL ||  cJSON_IsInvalid(json)) {
+  if (json == NULL || cJSON_IsInvalid(json))
+  {
     return "undefined";
-  } else if (cJSON_IsBool(json)) {
+  }
+  else if (cJSON_IsBool(json))
+  {
     return "boolean";
-  } else if (cJSON_IsNull(json)) {
+  }
+  else if (cJSON_IsNull(json))
+  {
     return "null"; // TODO: should this return "object" to be more JS like?
-  } else if (cJSON_IsNumber(json)) {
+  }
+  else if (cJSON_IsNumber(json))
+  {
     return "number";
-  } else if (cJSON_IsString(json)) {
+  }
+  else if (cJSON_IsString(json))
+  {
     return "string";
-  } else if (cJSON_IsArray(json)) {
+  }
+  else if (cJSON_IsArray(json))
+  {
     return "array"; // TODO: should this return "object" to be more JS like?
-  } else if (cJSON_IsObject(json)) {
+  }
+  else if (cJSON_IsObject(json))
+  {
     return "object";
-  } else {
+  }
+  else
+  {
     return "unknown";
   }
 }
 
-void JSONVar::replaceJson(struct cJSON* json)
+void JSONVar::replaceJson(struct cJSON *json)
 {
-  cJSON* old = _json;
+  cJSON *old = _json;
 
   _json = json;
 
-  if (old) {
-    if (_parent) {
-      if (cJSON_IsObject(_parent)) {
+  if (old)
+  {
+    if (_parent)
+    {
+      if (cJSON_IsObject(_parent))
+      {
         cJSON_ReplaceItemInObjectCaseSensitive(_parent, old->string, _json);
-      } else if (cJSON_IsArray(_parent)) {
+      }
+      else if (cJSON_IsArray(_parent))
+      {
         cJSON_ReplaceItemViaPointer(_parent, old, _json);
       }
-    } else {
+    }
+    else
+    {
       cJSON_Delete(old);
     }
   }

@@ -24,8 +24,8 @@
 String apiKey = "YOUR-PROJECT-APIKEY";
 String deviceID = "YOUR-DEVICE-ID";
 String token = "YOUR-ACCESS-TOKEN";
-const char* ssid = "YOUR-WIFI-SSID";
-const char* passphrase = "YOUR-WIFI-PASSWORD";
+const char *ssid = "YOUR-WIFI-SSID";
+const char *passphrase = "YOUR-WIFI-PASSWORD";
 
 // Handles our 5 second timer in loop().
 unsigned long currentTime = millis();
@@ -45,10 +45,11 @@ void startWiFi(void);
 // Handles Grandeur connection/disconnection events.
 void GrandeurConnectionCallback(bool state);
 // Data get/set/update callback functions:
-void initializeStatePin(const char* code, bool state);
-void setStatePinToNewValue(const char* path, bool state);
+void initializeStatePin(const char *code, bool state);
+void setStatePinToNewValue(const char *path, bool state);
 
-void setup() {
+void setup()
+{
   Serial.begin(9600);
   startWiFi();
   // This initializes the SDK's configurations and returns reference to your project.
@@ -63,55 +64,63 @@ void setup() {
   data.on("state", setStatePinToNewValue);
 }
 
-void loop() {
+void loop()
+{
   // The SDK only runs when the WiFi is connected.
   project.loop(WiFi.status() == WL_CONNECTED);
 }
 
-void setupWiFi(void) {
+void startWiFi(void)
+{
   // Disconnecting WiFi if it"s already connected
   WiFi.disconnect();
   // Setting it to Station mode which basically scans for nearby WiFi routers
   WiFi.mode(WIFI_STA);
   // Setting WiFi event handlers
-  onWiFiConnectedHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP& event) {
-    // This runs when the device connects with WiFi.
-    Serial.printf("\nDevice has successfully connected to WiFi. Its IP Address is: %s\n",
-      WiFi.localIP().toString().c_str());
-  });
-  onWiFiDisconnectedHandler = WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected& event) {
-    // This runs when the device disconnects with WiFi.
-    Serial.println("Device is disconnected from WiFi.");
-  });
+  onWiFiConnectedHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP &event)
+                                                   {
+                                                     // This runs when the device connects with WiFi.
+                                                     Serial.printf("\nDevice has successfully connected to WiFi. Its IP Address is: %s\n",
+                                                                   WiFi.localIP().toString().c_str());
+                                                   });
+  onWiFiDisconnectedHandler = WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected &event)
+                                                             {
+                                                               // This runs when the device disconnects with WiFi.
+                                                               Serial.println("Device is disconnected from WiFi.");
+                                                             });
   // Begin connecting to WiFi
   WiFi.begin(ssid, passphrase);
-  Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid.c_str(), passphrase.c_str());
+  Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid, passphrase);
 }
 
-void GrandeurConnectionCallback(bool status) {
-  switch(status) {
-    case CONNECTED: // Expands to true.
-      Serial.println("Device is connected with Grandeur.");
-      // On successful connection with Grandeur, we initialize the device's *state*.
-      // To do that, we get device state from Grandeur and set the *state pin* to its
-      // value.
-      data.get("state", initializeStatePin);
-      Serial.println("Listening for state update from Grandeur...");
+void GrandeurConnectionCallback(bool status)
+{
+  switch (status)
+  {
+  case CONNECTED: // Expands to true.
+    Serial.println("Device is connected with Grandeur.");
+    // On successful connection with Grandeur, we initialize the device's *state*.
+    // To do that, we get device state from Grandeur and set the *state pin* to its
+    // value.
+    data.get("state", initializeStatePin);
+    Serial.println("Listening for state update from Grandeur...");
 
-      // Initializing the millis counter for the five
-      // seconds timer.
-      currentTime = millis();
-      break;
-    case DISCONNECTED: // Expands to false.
-      Serial.println("Device's connection with Grandeur is broken.");
-      break;
+    // Initializing the millis counter for the five
+    // seconds timer.
+    currentTime = millis();
+    break;
+  case DISCONNECTED: // Expands to false.
+    Serial.println("Device's connection with Grandeur is broken.");
+    break;
   }
 }
 
-void initializeStatePin(const char* code, bool state) {
+void initializeStatePin(const char *code, bool state)
+{
   // This function sets the *state pin* to the *state value* that we received in data
   // from Grandeur.
-  if(code == "DEVICE-DATA-FETCHED") {
+  if (code == "DEVICE-DATA-FETCHED")
+  {
     Serial.printf("State is: %d\n", state);
     digitalWrite(statePin, state);
     return;
@@ -121,7 +130,8 @@ void initializeStatePin(const char* code, bool state) {
   return;
 }
 
-void setStatePinToNewValue(const char* path, bool state) {
+void setStatePinToNewValue(const char *path, bool state)
+{
   // This function sets the *state pin* to state value.
   Serial.printf("Updated State is: %d\n", state);
   digitalWrite(statePin, state);
