@@ -19,8 +19,8 @@
 // Device's connection configurations
 String apiKey = "YOUR-PROJECT-APIKEY";
 String token = "YOUR-ACCESS-TOKEN";
-const char* ssid = "YOUR-WIFI-SSID";
-const char* passphrase = "YOUR-WIFI-PASSWORD";
+const char *ssid = "YOUR-WIFI-SSID";
+const char *passphrase = "YOUR-WIFI-PASSWORD";
 
 // Declaring and initializing other variables
 Grandeur::Project myProject;
@@ -32,9 +32,10 @@ unsigned long current = millis();
 void WiFiEventCallback(WiFiEvent_t event);
 void setupWiFi(void);
 void connectionCallback(bool status);
-void insertCallback(const char* code);
+void insertCallback(const char *code);
 
-void setup() {
+void setup()
+{
   Serial.begin(9600);
   // This sets up the device WiFi.
   setupWiFi();
@@ -47,9 +48,12 @@ void setup() {
   myProject.onConnection(connectionCallback);
 }
 
-void loop() {
-  if(myProject.isConnected()) {
-    if(millis() - current >= 5000) {
+void loop()
+{
+  if (myProject.isConnected())
+  {
+    if (millis() - current >= 5000)
+    {
       // This if-condition makes sure that the code inside this block runs only after
       // every five seconds.
       Var logs;
@@ -60,27 +64,32 @@ void loop() {
       current = millis();
     }
   }
-  
+
   // The SDK only runs when the WiFi is connected.
-  myProject.loop(WiFi.status() == WL_CONNECTED);
+  if (WiFi.status() == WL_CONNECTED)
+    project.loop();
 }
 
-void WiFiEventCallback(WiFiEvent_t event) {
-  switch(event) {
-    case SYSTEM_EVENT_STA_GOT_IP:
-      // This runs when the device connects with WiFi.
-      Serial.printf("\nDevice has successfully connected to WiFi. Its IP Address is: %s\n",
-        WiFi.localIP().toString().c_str());
-      break;
-    case SYSTEM_EVENT_STA_DISCONNECTED:
-      // This runs when the device disconnects with WiFi.
-      Serial.println("Device is disconnected from WiFi.");
-      break;
-    default: break;
+void WiFiEventCallback(WiFiEvent_t event)
+{
+  switch (event)
+  {
+  case SYSTEM_EVENT_STA_GOT_IP:
+    // This runs when the device connects with WiFi.
+    Serial.printf("\nDevice has successfully connected to WiFi. Its IP Address is: %s\n",
+                  WiFi.localIP().toString().c_str());
+    break;
+  case SYSTEM_EVENT_STA_DISCONNECTED:
+    // This runs when the device disconnects with WiFi.
+    Serial.println("Device is disconnected from WiFi.");
+    break;
+  default:
+    break;
   }
 }
 
-void setupWiFi(void) {
+void setupWiFi(void)
+{
   // Disconnecting WiFi if it"s already connected
   WiFi.disconnect();
   // Setting it to Station mode which basically scans for nearby WiFi routers
@@ -92,23 +101,27 @@ void setupWiFi(void) {
   Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid, passphrase);
 }
 
-void connectionCallback(bool status) {
-  switch(status) {
-    case CONNECTED:
-      // On successful connection with Grandeur, we initialize the device's *state*.
-      // To do that, we set the *state pin* to the value of *state* from Grandeur.
-      Serial.println("Device is connected with Grandeur.");
-      Serial.println("Logging voltage to Grandeur...");
-      break;
-    case DISCONNECTED:
-      Serial.println("Device's connection with Grandeur is broken.");
-      break;
+void connectionCallback(bool status)
+{
+  switch (status)
+  {
+  case CONNECTED:
+    // On successful connection with Grandeur, we initialize the device's *state*.
+    // To do that, we set the *state pin* to the value of *state* from Grandeur.
+    Serial.println("Device is connected with Grandeur.");
+    Serial.println("Logging voltage to Grandeur...");
+    break;
+  case DISCONNECTED:
+    Serial.println("Device's connection with Grandeur is broken.");
+    break;
   }
 }
 
-void insertCallback(const char* code) {
+void insertCallback(const char *code)
+{
   // This function prints if the logs were successfully inserted into the datastore or not.
-  if(strcmp(code, "DATASTORE-DOCUMENTS-INSERTED") == 0) {
+  if (strcmp(code, "DATASTORE-DOCUMENTS-INSERTED") == 0)
+  {
     Serial.printf("Voltage is successfully logged to Grandeur.");
     return;
   }

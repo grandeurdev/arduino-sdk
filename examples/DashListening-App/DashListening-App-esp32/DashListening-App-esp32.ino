@@ -25,8 +25,8 @@
 String apiKey = "YOUR-PROJECT-APIKEY";
 String deviceID = "YOUR-DEVICE-ID";
 String token = "YOUR-ACCESS-TOKEN";
-const char* ssid = "YOUR-WIFI-SSID";
-const char* passphrase = "YOUR-WIFI-PASSWORD";
+const char *ssid = "YOUR-WIFI-SSID";
+const char *passphrase = "YOUR-WIFI-PASSWORD";
 
 // Handles our 5 second timer in loop().
 unsigned long currentTime = millis();
@@ -46,9 +46,10 @@ void startWiFi(void);
 // Handles Grandeur connection/disconnection events.
 void GrandeurConnectionCallback(bool state);
 // Function to call when acknowledgement for voltage update arrives from Grandeur.
-void afterVoltageIsUpdated(const char* code, int voltage);
+void afterVoltageIsUpdated(const char *code, int voltage);
 
-void setup() {
+void setup()
+{
   Serial.begin(9600);
   startWiFi();
   // This initializes the SDK's configurations and returns reference to your project.
@@ -60,11 +61,14 @@ void setup() {
   project.onConnection(GrandeurConnectionCallback);
 }
 
-void loop() {
+void loop()
+{
   // In this loop() function, after every five seconds, we send the updated values of our
   // device's voltage to Grandeur.
-  if(project.isConnected()) {
-    if(millis() - currentTime >= 5000) {
+  if (project.isConnected())
+  {
+    if (millis() - currentTime >= 5000)
+    {
       // This if-condition makes sure that the code inside this block runs only after
       // every five seconds.
 
@@ -80,25 +84,30 @@ void loop() {
   }
 
   // This runs the SDK only when the WiFi is connected.
-  project.loop(WiFi.status() == WL_CONNECTED);
+  if (WiFi.status() == WL_CONNECTED)
+    project.loop();
 }
 
-void WiFiEventCallback(WiFiEvent_t event) {
-  switch(event) {
-    case SYSTEM_EVENT_STA_GOT_IP:
-      // This runs when the device connects with WiFi.
-      Serial.printf("\nDevice has successfully connected to WiFi. Its IP Address is: %s\n",
-        WiFi.localIP().toString().c_str());
-      break;
-    case SYSTEM_EVENT_STA_DISCONNECTED:
-      // This runs when the device disconnects with WiFi.
-      Serial.println("Device is disconnected from WiFi.");
-      break;
-    default: break;
+void WiFiEventCallback(WiFiEvent_t event)
+{
+  switch (event)
+  {
+  case SYSTEM_EVENT_STA_GOT_IP:
+    // This runs when the device connects with WiFi.
+    Serial.printf("\nDevice has successfully connected to WiFi. Its IP Address is: %s\n",
+                  WiFi.localIP().toString().c_str());
+    break;
+  case SYSTEM_EVENT_STA_DISCONNECTED:
+    // This runs when the device disconnects with WiFi.
+    Serial.println("Device is disconnected from WiFi.");
+    break;
+  default:
+    break;
   }
 }
 
-void startWiFi(void) {
+void startWiFi(void)
+{
   // Disconnecting WiFi if it"s already connected
   WiFi.disconnect();
   // Setting it to Station mode which basically scans for nearby WiFi routers
@@ -110,25 +119,29 @@ void startWiFi(void) {
   Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid, passphrase);
 }
 
-void GrandeurConnectionCallback(bool status) {
-  switch(status) {
-    case CONNECTED: // Expands to true.
-      Serial.println("Device is connected with Grandeur.");
+void GrandeurConnectionCallback(bool status)
+{
+  switch (status)
+  {
+  case CONNECTED: // Expands to true.
+    Serial.println("Device is connected with Grandeur.");
 
-      // Initializing the millis counter for the five
-      // seconds timer.
-      currentTime = millis();
-      break;
-    case DISCONNECTED: // Expands to false.
-      Serial.println("Device's connection with Grandeur is broken.");
-      break;
+    // Initializing the millis counter for the five
+    // seconds timer.
+    currentTime = millis();
+    break;
+  case DISCONNECTED: // Expands to false.
+    Serial.println("Device's connection with Grandeur is broken.");
+    break;
   }
 }
 
-void afterVoltageIsUpdated(const char* code, int voltage) {
-  if(strcmp(code, "DEVICE-DATA-UPDATED") == 0) {
+void afterVoltageIsUpdated(const char *code, int voltage)
+{
+  if (strcmp(code, "DEVICE-DATA-UPDATED") == 0)
+  {
     Serial.printf("Voltage is updated to: %d\n", voltage);
-    
+
     /* You can set some pins or trigger events here which depend on successful
     ** voltage update.
     */

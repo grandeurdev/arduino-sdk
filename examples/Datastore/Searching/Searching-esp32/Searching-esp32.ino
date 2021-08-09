@@ -63,7 +63,7 @@ void loop() {
   }
   
   // The SDK only runs when the WiFi is connected.
-  myProject.loop(WiFi.status() == WL_CONNECTED);
+  if(WiFi.status() == WL_CONNECTED) project.loop();
 }
 
 void WiFiEventCallback(WiFiEvent_t event) {

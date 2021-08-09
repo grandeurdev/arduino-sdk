@@ -57,7 +57,7 @@ void loop() {
     Serial.println("Also checkout other examples: \n- DashListening-Device \n- DashListening-App \n- CrossListening.\n");
   }
   // This runs the SDK only when the WiFi is connected.
-  project.loop(WiFi.status() == WL_CONNECTED);
+  if(WiFi.status() == WL_CONNECTED) project.loop();
 }
 
 void startWiFi(void) {
