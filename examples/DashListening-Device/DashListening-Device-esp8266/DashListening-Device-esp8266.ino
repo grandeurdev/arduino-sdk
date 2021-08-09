@@ -67,7 +67,8 @@ void setup()
 void loop()
 {
   // The SDK only runs when the WiFi is connected.
-  project.loop(WiFi.status() == WL_CONNECTED);
+  if (WiFi.status() == WL_CONNECTED)
+    project.loop();
 }
 
 void startWiFi(void)
