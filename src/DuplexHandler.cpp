@@ -235,7 +235,7 @@ gId DuplexHandler::subscribe(const char *topic, Var payload, Callback updateHand
   DEBUG_GRANDEUR("Subscribing to topic:: %s.", topic);
 
   // Sending subscription request.
-  Message message = send("/topic/subscribe", payload, NULL);
+  Message message = send("/topic/subscribe", payload);
   // Setting update handler.
   _subscriptions.on(String(topic), updateHandler);
   // Buffer subscription request message regardless of connection/disconnection to handle the case
@@ -251,7 +251,7 @@ void DuplexHandler::unsubscribe(const char *topic, gId eventId, Var payload)
   DEBUG_GRANDEUR("Unsubscribing from topic:: %s.", JSON.stringify(payload).c_str());
 
   // Sending unsubscription request to Grandeur. and remove subscription request message from buffer for future reconnection.
-  send("/topic/unsubscribe", payload, NULL);
+  send("/topic/unsubscribe", payload);
   // Unset the update handler
   _subscriptions.off(String(topic));
   // Debuffer the subscription packet.
