@@ -21,7 +21,7 @@ Grandeur::Project::Datastore::Collection Grandeur::Project::Datastore::collectio
 }
 
 Grandeur::Project::Datastore::Collection::Collection(String name, DuplexHandler* duplexHandler)
-  : _name(name), _duplex(duplexHandler) {}
+  : _duplex(duplexHandler), _name(name) {}
 
 void Grandeur::Project::Datastore::Collection::insert(Var documents, Callback inserted) {
   // Insert documents to datastore
@@ -79,7 +79,7 @@ Grandeur::Project::Datastore::Collection::Pipeline::Pipeline(
   String collection,
   Var query,
   DuplexHandler* duplexHandler
-) : _collection(collection), _query(query), _duplex(duplexHandler) {}
+) : _duplex(duplexHandler), _collection(collection), _query(query) {}
 
 Grandeur::Project::Datastore::Collection::Pipeline Grandeur::Project::Datastore::Collection::Pipeline::match(Var filter) {
   // Add match stage to the pipeline
