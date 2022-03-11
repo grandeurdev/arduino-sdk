@@ -8,8 +8,8 @@
 #define DEBUG_GRANDEUR(format, args...) \
   DEBUG_PORT.printf(("[GRANDEUR-DEBUG] " + String(format) + "\n").c_str(), ##args)
 #else
-//#define DEBUG_GRANDEUR(format, args...) \
-    os_printf(("[GRANDEUR-DEBUG] " + String(format)).c_str(), ##args)
+//#define DEBUG_GRANDEUR(format, args...)
+//    os_printf(("[GRANDEUR-DEBUG] " + String(format)).c_str(), ##args)
 
 #ifndef DEBUG_GRANDEUR
 #define DEBUG_GRANDEUR(format, args...)

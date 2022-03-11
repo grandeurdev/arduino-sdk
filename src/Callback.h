@@ -8,10 +8,10 @@ class Callback {
 	private:
     // Stores pointer to the function.
 		void* _functionPtr;
-    // Stores the type of function arguments.
-    int _type;
     // Stores the number of function arguments.
     int _nArgs;
+    // Stores the type of function arguments.
+    int _type;
     // Returns function type as string.
     const char* mapType(int type);
     // Prints error to the debug port.

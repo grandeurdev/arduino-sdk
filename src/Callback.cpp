@@ -25,6 +25,7 @@ const char *Callback::mapType(int type)
   case STRING:
     return "string";
   }
+  return "none";
 }
 
 void Callback::printError(String type)
