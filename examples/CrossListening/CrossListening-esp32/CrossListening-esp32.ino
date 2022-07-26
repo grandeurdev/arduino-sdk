@@ -55,7 +55,7 @@ void afterVoltageIsUpdated(const char *code, int voltage);
 
 void setup()
 {
-  .begin(9600);
+  Serial.begin(9600);
   startWiFi();
   // This initializes the SDK's configurations and returns reference to your project.
   project = grandeur.init(apiKey, token);
