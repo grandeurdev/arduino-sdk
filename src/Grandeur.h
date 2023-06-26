@@ -38,8 +38,6 @@ class Grandeur::Project {
     Project(DuplexHandler* duplex);
     // Class that models a Grandeur device.
     class Device;
-    // Class that models datastore.
-    class Datastore;
 
     // Connection related methods:
     // Schedules a connection handler function to be called on successful connection establishment
@@ -52,7 +50,6 @@ class Grandeur::Project {
 
     // Instantiator methods — return reference to objects of their classes.
     Device device(String deviceId);
-    Datastore datastore(void);
 
     // This method runs the SDK.
     void loop(bool valve);
@@ -127,72 +124,6 @@ class Grandeur::Project::Device {
 
     // Instantiator method — returns reference to object of data class
     Data data();
-};
-
-class Grandeur::Project::Datastore {
-  private:
-    // Stores reference to duplex channel we are connected through to Grandeur.
-    DuplexHandler* _duplex;
-
-  public:
-    // Constructor
-    Datastore();
-    Datastore(DuplexHandler* duplexHandler);
-
-    // Class that models a datastore collection.
-    class Collection {
-      private:
-        // Stores reference to duplex channel we are connected through to Grandeur.
-        DuplexHandler* _duplex;
-        // Stores name of collection
-        String _name;
-
-      public:
-        // Constructor
-        Collection(String name, DuplexHandler* duplexHandler);
-
-        // Inserts documents.
-        void insert(Var documents, Callback inserted);
-        // Removes documents matching the filter.
-        void remove(Var filter, Callback removed);
-        // Updates documents matching the filter.
-        void update(Var filter, Var update, Callback updated);
-        // Performs a search a search on all documents.
-        void search(Var filter, Var projection, int nPage, Callback searched);
-
-        
-        // Class that forms a pipeline of datastore collection operations to send them all at once
-        // to Grandeur.
-        class Pipeline {
-          private:
-            // Stores reference to duplex channel we are connected through to Grandeur.
-            DuplexHandler* _duplex;
-            // Stores the collection name
-            String _collection;
-            // Stores the whole operations pipeline.
-            Var _query;
-
-          public:
-            // Constructor
-            Pipeline(String collection, Var query, DuplexHandler* duplexHandler);
-
-            // Adds a match stage to pipeline.
-            Pipeline match(Var filter);
-            // Add project stage to pipeline.
-            Pipeline project(Var specs);
-            // Adds group stage to pipeline.
-            Pipeline group(Var condition, Var fields);
-            // Adds sort stage to pipeline.
-            Pipeline sort(Var specs);
-            // Execute the query by sending function 
-            void execute(int nPage, Callback executed);
-        };
-
-        // Returns a new query pipeline.
-        Pipeline pipeline(void);
-    };
-    // Gets reference to a particular collection of documents.
-    Collection collection(String name);
 };
 
 extern Grandeur grandeur;

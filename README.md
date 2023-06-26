@@ -10,7 +10,7 @@ Introducing Grandeur: A backend as a service (Baas) platform for IoT. We have de
 
 Grandeur is designed keeping in mind all the challenges a hardware engineer can face in developing and commercializing a smart (IoT) product. And we made available out-of-the-box APIs to help you integrate your devices and apps.
 
-For example, you can use the **Auth API** to create *register* and *login* flows and make sure each user has access to its own data and no one other than the device admin itself should be able to interact with its device. You can store a humongous amount of data in cloud database to analyze and extract intelligent information from it and display useful graphs. Use our **datastore API** for that. You can host your product's website and your web app on Grandeur as well. It's **as simple as running literally a single command**. Also, your hardware device can listen for events and updates from your app, your app can listen for events and updates from your hardware device, and they can communicate with each other in realtime (with a latency of ~200ms). **Devices API** and **Device SDK** come into play here. But in no way would you have to waste your time in mixing and matching the APIs, checking which one works for your use case, and go through a huge learning curve -- like you would do while working with AWS or Google Cloud Platform. All the Grandeur APIs are completely integrated and speed and security is built in. The SDKs are designed around the whole ideology of **seamless integration.** 
+For example, you can use the **Auth API** to create *register* and *login* flows and make sure each user has access to its own data and no one other than the device admin itself should be able to interact with its device. You can store a humongous amount of data in cloud database to analyze and extract intelligent information from it and display useful graphs. Use our **device streams** for that. You can host your product's website and your web app on Grandeur as well. It's **as simple as running literally a single command**. Also, your hardware device can listen for events and updates from your app, your app can listen for events and updates from your hardware device, and they can communicate with each other in realtime (with a latency of ~200ms). **Devices API** and **Device SDK** come into play here. But in no way would you have to waste your time in mixing and matching the APIs, checking which one works for your use case, and go through a huge learning curve -- like you would do while working with AWS or Google Cloud Platform. All the Grandeur APIs are completely integrated and speed and security is built in. The SDKs are designed around the whole ideology of **seamless integration.** 
 
 Grandeur is not a regular IoT cloud. It's a complete IoT product development and management platform, designed for production environments. Here's how:
 
@@ -78,15 +78,11 @@ To get a deeper understanding of the core concepts Grandeur is built upon, dive 
     * [onConnection](#onconnection)
     * [loop](#loop)
     * [device](#device-function)
-    * [datastore](#datastore)
   * [Device](#device-class)
     * [Data](#data)
       * [get](#get)
       * [set](#set)
       * [on](#on)
-  * [Datastore](#datastore)
-    * [insert](#insert)
-    * [search](#search)
 * [Enhancements Under Consideration](#enhancements-under-consideration)
 
 ## Get Started
@@ -110,7 +106,7 @@ When you include `<Grandeur.h>` in your sketch, a global object `grandeur` is cr
 
 ### Initialization
 
-Initialization is as simple as calling `grandeur.init()` with your credentials (Project's API Key and Device's Access Token). The SDK uses your API key to select your project, and device ID and access token to limit its scope to only your device's data. It then returns a `Project` object which exposes other subclasses like `Device` and `Datastore`, and you can go programming your device from there.
+Initialization is as simple as calling `grandeur.init()` with your credentials (Project's API Key and Device's Access Token). The SDK uses your API key to select your project, and device ID and access token to limit its scope to only your device's data. It then returns a `Project` object which exposes other subclasses like `Device`, and you can go programming your device from there.
 
 ```cpp
 #include <Grandeur.h>
@@ -672,7 +668,7 @@ To resolve the energy efficiency issue of these old ACs, you decided to build an
 
 That's where the problem arose. You are a hardware startup, after all, that builds amazing electronics technology. But here you got to deal with a few more things as well. You have to build your app and figure out how to establish its communication with your hardware. You may decide to hire more engineers. But do you know how much of them will you have to hire? To give you a perspective, you generally need 8+ engineers just to do the server-end, like one to figure out your networking, one to design and manage your database, one to develop your API (the interface layer between your users and devices), about four for building your SDKs (one for each platform android, ios, web, and hardware) and then when you start scaling up a bit, one DevOps engineer. This makes it a package of $8000+ just to figure out the backend of your system and you haven't even validated your product yet. This turns out exhausting for your business. You have hit a concrete wall with no idea what to do about it.
 
-Then one day the sun of fate shown. You came across a platform that goes by the name of Grandeur. You went through its [website][Grandeur Technologies] and discovered a perfectly fitting solution for all your headaches. You wanted a solution for authentication of your users, it has the Auth feature in it. You needed online file storage to store maybe the profile pictures of your users and other stuff, it comes with a storage builtin. You were in dire need of a scalable out-of-the-box database to store power consumption logs of your device to show your users graphs on their monthly/yearly savings, it provides a cloud datastore service. And the most important of these all, you needed a realtime communication bridge between your hardware and your apps, THANK GOD, its SDKs are available for all the stacks including Arduino, web, and mobile (both android and ios).
+Then one day the sun of fate shown. You came across a platform that goes by the name of Grandeur. You went through its [website][Grandeur Technologies] and discovered a perfectly fitting solution for all your headaches. You wanted a solution for authentication of your users, it has the Auth feature in it. You needed online file storage to store maybe the profile pictures of your users and other stuff, it comes with a storage builtin. You were in dire need of a scalable out-of-the-box database to store power consumption logs of your device to show your users graphs on their monthly/yearly savings, it provides a cloud data storage service. And the most important of these all, you needed a realtime communication bridge between your hardware and your apps, THANK GOD, its SDKs are available for all the stacks including Arduino, web, and mobile (both android and ios).
 
 So here you are giving it a shot. You simply [registered for the platform][Grandeur], created your first project, downloaded their SDKs and started connecting your devices and apps through Grandeur. You didn't even have to worry about the security of your users and devices, because the data on Grandeur is protected under standard security protocols. Each user and device in a project is limited in its scope. All you had to worry about was designing your product core and develop your business logic. And in a matter of weeks, your product was out in people's hands, your apps live on app stores. People loved what you built and you were getting live feedback on it. You could see how many people have paired with your devices. You made an early entry into the market and now adding a dent to the universe.
 
@@ -684,7 +680,7 @@ In this subsection, we will explore the Grandeur platform in detail and see how 
 
 ### Project
 
-A project is the first thing you need to create to start working with Grandeur. A project is like a namespace, a completely isolated network of users and devices, along with separate file storage and a separate datastore. While you can create an unlimited number of projects, but no two projects can interact or share anything with one other.
+A project is the first thing you need to create to start working with Grandeur. A project is like a namespace, a completely isolated network of users and devices, along with a separate data storage. While you can create an unlimited number of projects, but no two projects can interact or share anything with one other.
 
 Each project is identified by a digital signature that we call the API key, just as your identification card or social security number identifies you as a citizen. To connect your apps or hardware to your project's network, this is what you need to provide to the SDKs. The API key is sent with every request to Grandeur and this is what defines the project of the request. Check out the [SDK][SDK] section to read more about it.
 
@@ -694,7 +690,7 @@ Each project is identified by a digital signature that we call the API key, just
 
 Grandeur is the API that exposes Grandeur to the outside world. Our SDKs utilize this API and map each functionality to a function. We have tried our best to make the integration of our SDKs into your codebase simple. For example, while developing your web app, you simply need to drop in the link of JS SDK CDN in your codebase and you are done. We have developed our SDKs for each platform in coherence with each other so you could work and collaborate everywhere seamlessly.
 
-This is how they work: In every SDK, there is a global object aka. `grandeur`. You can initialize your configurations (API Key and a couple of more stuff in case of hardware SDK) by calling `grandeur.init()`. This returns you a reference to your whole project (in case of your app) or just to your device (in case of hardware because hardware scope is limited to the device itself). In **JS SDK**, you can interact with the authentication API, the device API, the file storage and the datastore API. In the case of **Arduino SDK** your scope is limited to just the device's namespace. Check out the [Authentication and Access][Authentication and Access] section to get more insight into how scope varies across the different platforms (app and hardware).
+This is how they work: In every SDK, there is a global object aka. `grandeur`. You can initialize your configurations (API Key and a couple of more stuff in case of hardware SDK) by calling `grandeur.init()`. This returns you a reference to your whole project (in case of your app) or just to your device (in case of hardware because hardware scope is limited to the device itself). In **JS SDK**, you can interact with the authentication API and the devices API. In the case of **Arduino SDK** your scope is limited to just the device's namespace. Check out the [Authentication and Access][Authentication and Access] section to get more insight into how scope varies across the different platforms (app and hardware).
 
 ### User and Administrator
 
@@ -754,7 +750,7 @@ Previously, we have discussed in depth which entity (administrator, user, device
 
 You (as an administrator) create a project and therefore have global access to everything. You can access and manage your projects and their resources using the dashboard application. You want your users and devices to have limited access to your project's resources based on their scopes which you achieve by using our SDKs in your apps and hardware. Your project's API Key delegates your project's access to the SDKs and access tokens allow and limit, at the same time, this access to user and device scopes.
 
-The user scope is wider than the device scope. A user can access its profile, the registry of the devices it's paired to, the files in the project's storage and the data in the project's datastore. When a user logs in, an Auth token is returned. This token along with the API Key, being sent with every request, is what validates the authority of the request.
+The user scope is wider than the device scope. A user can access its profile, the registry of the devices it's paired to and all of their data. When a user logs in, an Auth token is returned. This token along with the API Key, being sent with every request, is what validates the authority of the request.
 
 The device scope is limited to the device's namespace in the device registry. When a user pairs with a device, an access token is returned for the device. This access token along with the API Key is what authenticates the device's connection to Grandeur.
 
@@ -770,7 +766,7 @@ In the **Arduino SDK**, we only use the realtime channel. A device cannot establ
 
 ### Allowed Origins
 
-This is another amazing topic and somehow related to access delegation in the end. As mentioned in the sections above that you can interact with your project's namespace through the JS SDK by initializing grandeur with your API key. This returns an object referring to your project which can be used to interact with its resources including its devices, datastore, and files storage. Putting this much responsibility on just the API key poses a security threat particularly in case of web apps as API Key can easily be stolen. Even though a user needs to log in first before making any request to the cloud, a hacker with having your API key can still cause some serious damage. For example, Registering bogus users to your project or creating a copycat site on your name for phishing to name a few. That's where cross-origin request sharing (CORS) policies come to play.
+This is another amazing topic and somehow related to access delegation in the end. As mentioned in the sections above that you can interact with your project's namespace through the JS SDK by initializing grandeur with your API key. This returns an object referring to your project which can be used to interact with its devices. Putting this much responsibility on just the API key poses a security threat particularly in case of web apps as API Key can easily be stolen. Even though a user needs to log in first before making any request to the cloud, a hacker with having your API key can still cause some serious damage. For example, Registering bogus users to your project or creating a copycat site on your name for phishing to name a few. That's where cross-origin request sharing (CORS) policies come to play.
 
 So to allow a web app to interact with your project using the Web SDK, you first need to whitelist the domain name your web app uses via the settings page in the dashboard. You cannot even send a request from your localhost without first whitelisting it.
 
@@ -816,7 +812,7 @@ void setup() {
 
 ## Project
 
-Project is the main class of the SDK. When your device connects with Grandeur, this class represents your grandeur project, from the device's perspective — there are only two resources your device can interact with: **device** and **datastore**, which are represented by their respective classes.
+Project is the main class of the SDK. When your device connects with Grandeur, this class represents your grandeur project, from the device's perspective — there is only one resource your device can interact with: **device**, which is represented by its respective classes.
 
 Project class exposes the following methods:
 
@@ -940,26 +936,6 @@ void setup() {
 
 // **RESULT**
 // Gets the object of Device class.
-```
-
-### datastore
-
-> datastore (void) : returns _Grandeur::Project::Datastore_
-
-This method returns a reference to object of the **Datastore** class. Datastore class exposes the functions of the datastore API which handles your queries to your project's datastore like: logging device variables to the cloud datastore, searching for data, etc.
-
-#### Example
-
-```cpp
-Grandeur::Project myProject;
-Grandeur::Project::Datastore myDatastore;
-void setup() {
-  myProject = grandeur.init(YourApiKey, YourToken);
-  myDatastore = myProject.datastore();
-}
-
-// **RESULT**
-// Gets the object of Datastore class.
 ```
 
 ## Device<a name="device-class"></a>
@@ -1135,117 +1111,6 @@ void loop() {
 ```
 
 You can subscribe to all device data variables with the `path`-less `on` function overload.
-
-## Datastore
-
-Datastore class gives you the functions to store and search for data in Grandeur datastore which a highly scalable database where you can log data points and retrieve them later to plot trend or device health graphs. Read about Datastore [here](https://www.hackster.io/grandeurtech/data-persistence-in-iot-with-grander-fd09ee).
-
-Datastore class exposes the following functions:
-
-### insert
-
-> insert (documents: _Var_, callback: _Callback_) : returns _void_
-
-This method inserts documents into datastore.
-
-#### Parameters
-
-| Name        | Type         | Description                                                        |
-|-------------|--------------|--------------------------------------------------------------------|
-| documents   | _Var_        | An array of documents (_Var_ s) to be inserted into the datastore. |
-| callback    | _Callback_   | A function to be called when insertion of documents completes.     |
-
-#### Example
-
-```cpp
-Grandeur::Project myProject;
-Grandeur::Project::Datastore myDatastore;
-
-void insertCallback(Var insertionResult) {
-  // This method just prints if the insertion is successful or not.
-  if(insertionResult["code"] == "DATASTORE-DOCUMENTS-INSERTED") Serial.println("Insertion successful.");
-  else Serial.println("Insertion Failed.");
-}
-
-void setup() {
-  myProject = grandeur.init(YourApiKey, YourToken);
-  myDatastore = myProject.datastore(YourDeviceID);
-}
-
-void loop() {
-  // This inserts a document containing voltage and current readings in datastore on every loop.
-  Var docs;
-  // Adding voltage and current readings to the first document of docs array.
-  // In JSON, the docs array looks like this:
-  // [{"voltage": analogRead(A0), "current": analogRead(A1)}]
-  docs[0]["voltage"] = analogRead(A0);
-  docs[0]["current"] = analogRead(A1);
-  // Inserting the docs in datastore. insertCallback() will be called when insertion process
-  // completes.
-  myDatastore.insert(docs, insertCallback);
-
-  if(WiFiIsConnected) myProject.loop();
-}
-
-// **RESULT**
-// Prints "Insertion successful." if documents are inserted. If an error occurred, it prints
-// "Insertion Failed."
-```
-
-### search
-
-> search (filter: _Var_, projection: _Var_, pageNumber: _int_, callback: _Callback_) : returns _void_
-
-This method searches for documents in datastore based on the `filter` supplied. `Filter` describes what documents to return and `projection` describes what fields to return in those documents. Documents are returned in pages and each page is **20 documents** in size. This is what the `pageNumber` is for. You'll get first page by specifying the `pageNumber` to 0 and 1 for second page. and so on.
-
-#### Parameters
-
-| Name        | Type         | Description                                                                            |
-|-------------|--------------|----------------------------------------------------------------------------------------|
-| filter      | _Var_        | A document describing the conditions that the documents to be returned are to satisfy. |
-| projection  | _Var_        | A document that describes what fields to return.                                       |
-| pageNumber  | _int_        | Number of the page to return.                                                          |
-| callback    | _Callback_   | A function to be called when documents are completed.                                  |
-
-#### Example
-
-```cpp
-Grandeur::Project myProject;
-Grandeur::Project::Datastore myDatastore;
-
-void searchCallback(Var searchResult) {
-  // This method just prints the documents if the search is successful.
-  if(searchResult["code"] == "DATASTORE-DOCUMENTS-FETCHED") {
-    Serial.print("Documents fetched from Grandeur: ");
-    Serial.println(searchResult["documents"].length());
-    // Printing all the fetched documents.
-    for(int i = 0; i < searchResult["documents"].length(); i++) {
-      Serial.println(JSON.stringify(searchResult["documents"][i]).c_str());
-      // Just to keep the watchdog timer from tripping.
-      delay(1);
-    }
-    Serial.println("");
-    return;
-  }
-  Serial.println("Search Failed.");
-}
-
-void setup() {
-  myProject = grandeur.init(YourApiKey, YourToken);
-  myDatastore = myProject.datastore(YourDeviceID);
-}
-
-void loop() {
-  // This fetches 1st page of all the documents stored in the datastore.
-  myDatastore.collection("myCollectionName").search({}, {}, 0, searchCallback);
-
-  if(WiFiIsConnected) myProject.loop();
-}
-
-// **RESULT**
-// Prints the documents if search is successful. If an error occurred, it prints
-// "Search Failed."
-```
 
 ## Enhancements Under Consideration:
 
