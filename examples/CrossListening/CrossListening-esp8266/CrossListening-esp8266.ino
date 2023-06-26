@@ -27,7 +27,7 @@
 // Device's connection configurations:
 String apiKey = "YOUR-PROJECT-APIKEY";
 String deviceID = "YOUR-DEVICE-ID";
-String token = "YOUR-ACCESS-TOKEN";
+String token = "YOUR-DEVICE-TOKEN";
 const char *ssid = "YOUR-WIFI-SSID";
 const char *passphrase = "YOUR-WIFI-PASSWORD";
 
