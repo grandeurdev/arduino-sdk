@@ -25,9 +25,9 @@
 #include <WiFi.h>
 
 // Device's connection configurations:
-String apiKey = "YOUR-PROJECT-APIKEY";
-String deviceID = "YOUR-DEVICE-ID";
-String token = "YOUR-DEVICE-TOKEN";
+String apiKey = "YOUR-PROJECT-APIKEY"; // Copy from https://console.grandeur.dev/access
+String deviceID = "YOUR-DEVICE-ID"; // Copy your device ID from https://console.grandeur.dev
+String token = "YOUR-DEVICE-TOKEN"; // Copy when you register a new device
 const char *ssid = "YOUR-WIFI-SSID";
 const char *passphrase = "YOUR-WIFI-PASSWORD";
 
