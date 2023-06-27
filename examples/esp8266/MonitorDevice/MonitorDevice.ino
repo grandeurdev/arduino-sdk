@@ -1,5 +1,5 @@
 /**
- * @file DashListening-App-esp8266.ino
+ * @file MonitorDevice.ino
  * @date 21.02.2021
  * @author Grandeur Technologies
  *
@@ -9,7 +9,6 @@
  * Grandeur.h is used for device's communication to Grandeur.
  * ESP8266WiFi.h is used for handling device's WiFi.
  * 
- * Dash listening is for one-way listening.
  * This example illustrates the use case of an app listening for updates from the device.
  * It would be useful in building a DEVICE MONITOR which would show how your devices are
  * behaving in terms of their energy units consumed for example.

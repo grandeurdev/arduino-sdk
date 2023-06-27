@@ -1,5 +1,5 @@
 /**
- * @file HelloGrandeur-esp32.ino
+ * @file HelloGrandeur.ino
  * @date 21.02.2021
  * @author Grandeur Technologies
  *

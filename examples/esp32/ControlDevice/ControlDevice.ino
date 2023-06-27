@@ -1,5 +1,5 @@
 /**
- * @file DashListening-App-esp32.ino
+ * @file ControlDevice.ino
  * @date 21.02.2021
  * @author Grandeur Technologies
  *
@@ -9,13 +9,12 @@
  * Grandeur.h is used for device's communication with Grandeur.
  * WiFi.h is used for handling device's WiFi.
  * 
- * Dash listening is for one-way listening.
- * This example illustrates the use case of an app listening for updates from the device.
- * It would be useful in building a DEVICE MONITOR which would show how your devices are
- * behaving in terms of their energy units consumed for example.
+ * This example illustrates the use case of a device listening for updates from the app.
+ * It would be useful in building an INTERNET SWITCH to help you control your device without
+ * caring about how your device responds to your commands.
  * 
- * After uploading this sketch to your ESP, go to your device's canvas and add
- * a display to monitor the voltage variable.
+ * After uploading this sketch to your ESP, go to your device's canvas and add a button
+ * to control the state variable.
 */
 
 #include <Grandeur.h>
@@ -34,9 +33,8 @@ unsigned long currentTime = millis();
 Grandeur::Project project;
 // Device data object to get/set/subscribe to device variables.
 Grandeur::Project::Device::Data data;
-// State and voltage pins to set.
+// State pin to set.
 int statePin = 4;
-int voltagePin = 2;
 
 // FUNCTION PROTOTYPES:
 // Handles WiFi connection/disconnection events.
@@ -45,8 +43,9 @@ void WiFiEventCallback(WiFiEvent_t event);
 void startWiFi(void);
 // Handles Grandeur connection/disconnection events.
 void GrandeurConnectionCallback(bool state);
-// Function to call when acknowledgement for voltage update arrives from Grandeur.
-void afterVoltageIsUpdated(const char *code, int voltage);
+// Data get/set/update callback functions:
+void initializeStatePin(const char *code, bool state);
+void setStatePinToNewValue(const char *path, bool state);
 
 void setup()
 {
@@ -59,31 +58,14 @@ void setup()
   // This schedules the GrandeurConnectionCallback() function to be called when connection with Grandeur
   // is made/broken.
   project.onConnection(GrandeurConnectionCallback);
+  // This schedules setStatePinToNewValue() function to be called when a change in device state occurs
+  // on Grandeur.
+  data.on("state", setStatePinToNewValue);
 }
 
 void loop()
 {
-  // In this loop() function, after every five seconds, we send the updated values of our
-  // device's voltage to Grandeur.
-  if (project.isConnected())
-  {
-    if (millis() - currentTime >= 5000)
-    {
-      // This if-condition makes sure that the code inside this block runs only after
-      // every five seconds.
-
-      Serial.println("Setting Voltage");
-      int voltage = analogRead(voltagePin);
-      // This updates the voltage of our device on Grandeur and schedules afterVoltageIsUpdated()
-      // function to be called when Grandeur responds with the DATA UPDATED message.
-      data.set("voltage", voltage, afterVoltageIsUpdated);
-
-      // This updates the current time for the five seconds timer.
-      currentTime = millis();
-    }
-  }
-
-  // This runs the SDK only when the WiFi is connected.
+  // The SDK only runs when the WiFi is connected.
   if (WiFi.status() == WL_CONNECTED)
     project.loop();
 }
@@ -112,7 +94,7 @@ void startWiFi(void)
   WiFi.disconnect();
   // Setting it to Station mode which basically scans for nearby WiFi routers
   WiFi.mode(WIFI_STA);
-  // Setting WiFi event handler
+  // Setting WiFi event handlers
   WiFi.onEvent(WiFiEventCallback);
   // Begin connecting to WiFi
   WiFi.begin(ssid, passphrase);
@@ -125,6 +107,11 @@ void GrandeurConnectionCallback(bool status)
   {
   case CONNECTED: // Expands to true.
     Serial.println("Device is connected with Grandeur.");
+    // On successful connection with Grandeur, we initialize the device's *state*.
+    // To do that, we get device state from Grandeur and set the *state pin* to its
+    // value.
+    data.get("state", initializeStatePin);
+    Serial.println("Listening for state update from Grandeur...");
 
     // Initializing the millis counter for the five
     // seconds timer.
@@ -136,18 +123,24 @@ void GrandeurConnectionCallback(bool status)
   }
 }
 
-void afterVoltageIsUpdated(const char *code, int voltage)
+void initializeStatePin(const char *code, bool state)
 {
-  if (strcmp(code, "DEVICE-DATA-UPDATED") == 0)
+  // This function sets the *state pin* to the *state value* that we received in data
+  // from Grandeur.
+  if (code == "DEVICE-DATA-FETCHED")
   {
-    Serial.printf("Voltage is updated to: %d\n", voltage);
-
-    /* You can set some pins or trigger events here which depend on successful
-    ** voltage update.
-    */
+    Serial.printf("State is: %d\n", state);
+    digitalWrite(statePin, state);
     return;
   }
-  // If the voltage could not be updated.
-  Serial.println("Failed to Update Voltage");
+  // If the data could not be fetched.
+  Serial.println("Failed to Fetch State");
   return;
+}
+
+void setStatePinToNewValue(const char *path, bool state)
+{
+  // This function sets the *state pin* to state value.
+  Serial.printf("Updated State is: %d\n", state);
+  digitalWrite(statePin, state);
 }
