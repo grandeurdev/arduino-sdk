@@ -46,11 +46,6 @@ Grandeur::Project::Device Grandeur::Project::device(String deviceId) {
   return Device(_duplex, deviceId);
 }
 
-Grandeur::Project::Datastore Grandeur::Project::datastore(void) {
-  // Return the new datastore object.
-  return Datastore(_duplex);
-}
-
 void Grandeur::Project::loop(bool valve) {
   // Running duplex loop.
   _duplex->loop(valve);

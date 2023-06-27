@@ -1,4 +1,5 @@
 #include <map>
+#include <vector>
 #include "Listener.h"
 
 #ifndef _EVENT_EMITTER_H_

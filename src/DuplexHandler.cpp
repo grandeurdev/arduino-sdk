@@ -191,14 +191,6 @@ void DuplexHandler::receive(Var header, Var payload)
   // Response to Set has data in payload["update"].
   else if (strcmp(task, "/device/data/set") == 0)
     data = payload["update"];
-  // For datastore, we delete code and message from the payload and send the rest.
-  else if (strcmp(task, "/datastore/insert") == 0 || strcmp(task, "/datastore/delete") == 0 ||
-           strcmp(task, "/datastore/update") == 0 || strcmp(task, "/datastore/pipeline") == 0)
-  {
-    data = payload;
-    data["code"] = undefined;
-    data["message"] = undefined;
-  }
 
   DEBUG_GRANDEUR("Response message:: code: %s, data: %s.", code, JSON.stringify(data).c_str());
 

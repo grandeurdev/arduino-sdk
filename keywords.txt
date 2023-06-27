@@ -7,12 +7,11 @@
 Grandeur	KEYWORD3
 grandeur	KEYWORD3
 Project	KEYWORD3
-Datastore	KEYWORD3
 Device	KEYWORD3
-Data KEYWORD3
+Data	KEYWORD3
 
 #######################################
-# Datatypes 
+# Datatypes
 #######################################
 
 Callback	KEYWORD1
@@ -26,22 +25,11 @@ onConnection	KEYWORD2
 isConnected	KEYWORD2
 parse	KEYWORD2
 stringify	KEYWORD2
-device 	KEYWORD2
-datastore	KEYWORD2
+device	KEYWORD2
 loop	KEYWORD2
 get	KEYWORD2
 set	KEYWORD2
-collection	KEYWORD2
-insert	KEYWORD2
-remove	KEYWORD2
-update	KEYWORD2
-search	KEYWORD2
-pipeline	KEYWORD2
-match	KEYWORD2
-project	KEYWORD2
-group	KEYWORD2
-sort	KEYWORD2
-execute	KEYWORD2
+on	KEYWORD2
 
 #######################################
 # Constants

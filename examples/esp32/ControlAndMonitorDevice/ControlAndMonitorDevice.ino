@@ -1,5 +1,5 @@
 /**
- * @file CrossListening-esp8266.ino
+ * @file ControlAndMonitorDevice.ino
  * @date 21.02.2021
  * @author Grandeur Technologies
  *
@@ -7,29 +7,27 @@
  * This file is part of the Arduino SDK for Grandeur.
  *
  * Grandeur.h is used for device's communication with Grandeur.
- * ESP8266WiFi.h is used for handling device's WiFi.
- * 
- * Cross listening means when the device listens for updates from the app and the app
- * listens for updates from the device.
+ * WiFi.h is used for handling device's WiFi.
+ *
  * This example illustrates pretty much every basic thing you'd need in order to monitor /
  * control your device through Grandeur. Here are some of those:
  * 1. Listen to Grandeur for updates in device variables.
  * 2. Publish updates in variables to Grandeur every 5 seconds.
  * 3. Running the SDK only when a certain condition is true; in our case, if the WiFi is connected.
  * 
- * After uploading this sketch to your ESP, go to https://canvas.grandeur.tech and add a button and
+ * After uploading this sketch to your ESP, go to your device's canvas and add a button and
  * a display to control state and monitor voltage variable, respectively.
 */
 
 #include <Grandeur.h>
-#include <ESP8266WiFi.h>
+#include <WiFi.h>
 
 // Device's connection configurations:
-String apiKey = "YOUR-PROJECT-APIKEY";
-String deviceID = "YOUR-DEVICE-ID";
-String token = "YOUR-ACCESS-TOKEN";
-const char *ssid = "YOUR-WIFI-SSID";
-const char *passphrase = "YOUR-WIFI-PASSWORD";
+String apiKey = YOUR_PROJECT_APIKEY; // Copy from https://console.grandeur.dev/access
+String deviceID = YOUR_DEVICE_ID; // Copy your device ID from https://console.grandeur.dev
+String token = YOUR_DEVICE_TOKEN; // Copy when you register a new device
+const char *ssid = YOUR_WIFI_SSID;
+const char *passphrase = YOUR_WIFI_PASSWORD;
 
 // Handles our 5 second timer in loop().
 unsigned long currentTime = millis();
@@ -38,13 +36,12 @@ Grandeur::Project project;
 // Device data object to get/set/subscribe to device variables.
 Grandeur::Project::Device::Data data;
 // State and voltage pins to set.
-int statePin = D0;
-int voltagePin = A0;
+int statePin = 4;
+int voltagePin = 2;
 
 // FUNCTION PROTOTYPES:
-// These handle WiFi connection/disconnection events.
-WiFiEventHandler onWiFiConnectedHandler;
-WiFiEventHandler onWiFiDisconnectedHandler;
+// Handles WiFi connection/disconnection events.
+void WiFiEventCallback(WiFiEvent_t event);
 // Starts the device WiFi.
 void startWiFi(void);
 // Handles Grandeur connection/disconnection events.
@@ -62,7 +59,7 @@ void setup()
   project = grandeur.init(apiKey, token);
   // Getting object of your device data.
   data = project.device(deviceID).data();
-  // This schedules the connectionCallback() function to be called when connection with Grandeur
+  // This schedules the GrandeurConnectionCallback() function to be called when connection with Grandeur
   // is made/broken.
   project.onConnection(GrandeurConnectionCallback);
   // This schedules setStatePinToNewValue() function to be called when a change in device state occurs
@@ -98,27 +95,35 @@ void loop()
     project.loop();
 }
 
+void WiFiEventCallback(WiFiEvent_t event)
+{
+  switch (event)
+  {
+  case SYSTEM_EVENT_STA_GOT_IP:
+    // This runs when the device connects with WiFi.
+    Serial.printf("\nDevice has successfully connected to WiFi. Its IP Address is: %s\n",
+                  WiFi.localIP().toString().c_str());
+    break;
+  case SYSTEM_EVENT_STA_DISCONNECTED:
+    // This runs when the device disconnects with WiFi.
+    Serial.println("Device is disconnected from WiFi.");
+    break;
+  default:
+    break;
+  }
+}
+
 void startWiFi(void)
 {
   // Disconnecting WiFi if it"s already connected
   WiFi.disconnect();
   // Setting it to Station mode which basically scans for nearby WiFi routers
   WiFi.mode(WIFI_STA);
-  // Setting WiFi event handlers
-  onWiFiConnectedHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP &event)
-                                                   {
-                                                     // This runs when the device connects with WiFi.
-                                                     Serial.printf("\nDevice has successfully connected to WiFi. Its IP Address is: %s\n",
-                                                                   WiFi.localIP().toString().c_str());
-                                                   });
-  onWiFiDisconnectedHandler = WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected &event)
-                                                             {
-                                                               // This runs when the device disconnects with WiFi.
-                                                               Serial.println("Device is disconnected from WiFi.");
-                                                             });
+  // Setting WiFi event handler
+  WiFi.onEvent(WiFiEventCallback);
   // Begin connecting to WiFi
   WiFi.begin(ssid, passphrase);
-  Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid.c_str(), passphrase.c_str());
+  Serial.printf("\nDevice is connecting to WiFi using SSID %s and Passphrase %s.\n", ssid, passphrase);
 }
 
 void GrandeurConnectionCallback(bool status)
