@@ -912,7 +912,7 @@ void setup() {
 }
 
 void loop() {
-  myProject.loop(WiFiState == CONNECTED);  // Same as "if(WiFiState == CONNECTED) myProject.loop();"
+  if(WiFiState == CONNECTED) myProject.loop();
 }
 // **RESULT**
 // Runs the SDK only when the WiFi is connected.

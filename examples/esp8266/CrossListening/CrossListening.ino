@@ -17,7 +17,7 @@
  * 2. Publish updates in variables to Grandeur every 5 seconds.
  * 3. Running the SDK only when a certain condition is true; in our case, if the WiFi is connected.
  * 
- * After uploading this sketch to your ESP, go to https://canvas.grandeur.tech and add a button and
+ * After uploading this sketch to your ESP, go to your device's canvas and add a button and
  * a display to control state and monitor voltage variable, respectively.
 */
 

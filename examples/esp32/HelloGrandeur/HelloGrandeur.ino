@@ -53,7 +53,7 @@ void loop() {
 
     // project.device(deviceID).data().get("state", getStateCallback);
 
-    Serial.println("Read the docs at https://github.com/grandeurtech/arduino-sdk.");
+    Serial.println("Read the docs at https://docs.grandeur.dev/references/device-sdk.");
     Serial.println("Also checkout other examples: \n- DashListening-Device \n- DashListening-App \n- CrossListening.\n");
   }
   // This runs the SDK only when the WiFi is connected.

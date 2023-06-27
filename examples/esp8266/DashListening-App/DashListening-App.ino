@@ -14,7 +14,7 @@
  * It would be useful in building a DEVICE MONITOR which would show how your devices are
  * behaving in terms of their energy units consumed for example.
  * 
- * After uploading this sketch to your ESP, go to https://canvas.grandeur.tech and add
+ * After uploading this sketch to your ESP, go to your device's canvas and add
  * a display to monitor the voltage variable.
 */
 

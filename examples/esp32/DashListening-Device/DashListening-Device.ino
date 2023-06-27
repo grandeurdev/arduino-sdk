@@ -14,7 +14,7 @@
  * It would be useful in building an INTERNET SWITCH to help you control your device without
  * caring about how your device responds to your commands.
  * 
- * After uploading this sketch to your ESP, go to https://canvas.grandeur.tech and add a button
+ * After uploading this sketch to your ESP, go to your device's canvas and add a button
  * to control the state variable.
 */
 
