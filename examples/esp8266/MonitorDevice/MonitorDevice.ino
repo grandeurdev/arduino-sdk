@@ -21,11 +21,11 @@
 #include <ESP8266WiFi.h>
 
 // Device's connection configurations:
-String apiKey = "YOUR-PROJECT-APIKEY"; // Copy from https://console.grandeur.dev/access
-String deviceID = "YOUR-DEVICE-ID"; // Copy your device ID from https://console.grandeur.dev
-String token = "YOUR-DEVICE-TOKEN"; // Copy when you register a new device
-const char *ssid = "YOUR-WIFI-SSID";
-const char *passphrase = "YOUR-WIFI-PASSWORD";
+String apiKey = YOUR_PROJECT_APIKEY; // Copy from https://console.grandeur.dev/access
+String deviceID = YOUR_DEVICE_ID; // Copy your device ID from https://console.grandeur.dev
+String token = YOUR_DEVICE_TOKEN; // Copy when you register a new device
+const char *ssid = YOUR_WIFI_SSID;
+const char *passphrase = YOUR_WIFI_PASSWORD;
 
 // Handles our 5 second timer in loop().
 unsigned long currentTime = millis();
